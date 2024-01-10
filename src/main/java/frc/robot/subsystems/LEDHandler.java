@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-package com.team1678.frc2023.subsystems;
-
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
@@ -15,26 +13,24 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import frc.robot.Constants;
+
 public class LEDHandler {
 
-    private final CANdle mCandle = new CANdle(Ports.CANDLE, "canivore1");
+    private final CANdle mCandle = new CANdle(Constants.LEDs.CANDLE_ID);
 
-    private static LEDs mInstance;
+    private static LED mInstance;
 
-    private final int kNumLeds = 59;
-
-    public static LEDs getInstance() {
-        if (mInstance == null) {
-            mInstance = new LEDs();
-        }
-        return mInstance;
-    }
-    
     public enum States {
-        SHOOTING,
-        TARGET_IN_RANGE,
-        NOTE_STORED,
-        NOTHING
+        SHOOTING(1),
+        TARGET_IN_RANGE(2),
+        NOTE_STORED(3),
+        NOTHING(0);
 
+        private final int priority;
+
+        States(int priority) {
+            this.priority = priority;
+        }
     }
 }
