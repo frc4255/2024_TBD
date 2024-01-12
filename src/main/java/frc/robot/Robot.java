@@ -14,7 +14,7 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  private final LED mLED = 
+  private final LED mLED = new LED();
 
   @Override
   public void robotInit() {
