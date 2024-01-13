@@ -15,6 +15,11 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
 
+    public static class LEDs {
+        public static final int CANDLE_ID = 0; //TODO: Find CANdle ID
+
+    }
+    
     public static final class Swerve {
         public static final int pigeonID = 1;
 
