@@ -11,13 +11,39 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
+import frc.robot.utils.Color;
 
 public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
 
     public static class LEDs {
-        public static final int CANDLE_ID = 0; //TODO: Find CANdle ID
+        public static final int LEFT_CANDLE_ID = 0;
+        public static final int RIGHT_CANDLE_ID = 1;
 
+        public static final int CODE_LOOP_THRESHOLD = 2;
+        
+        public static enum States {
+            SHOOTING(1, new Color(255,0,0)),
+            TARGET_IN_RANGE(2, new Color(0,255,0)),
+            NOTE_STORED(3, new Color(255, 128, 0)),
+            NOTHING(0, new Color(0,0,0));
+    
+            private final int priority;
+            private final Color color;
+    
+            States(int priority, Color color) {
+                this.priority = priority;
+                this.color = color;
+            }
+            
+            public int getPriority() {
+                return priority;
+            }
+    
+            public Color getColor() {
+                return color;
+            }
+        }
     }
     
     public static final class Swerve {

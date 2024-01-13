@@ -1,27 +1,45 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.led.CANdle;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.Constants.LEDs.States;
+import frc.robot.utils.LED;
+import frc.robot.utils.LEDGroup;
 
-public class LEDHandler {
+public class LEDHandler extends SubsystemBase {
+    private LEDGroup ledGroup;
 
-    private final CANdle mCandle = new CANdle(Constants.LEDs.CANDLE_ID);
+    private int codeLoops = 0;
 
-    private static LED mInstance;
+    private States currentState = States.NOTHING;
+    private States desiredState;
 
-    public enum States {
-        SHOOTING(1),
-        TARGET_IN_RANGE(2),
-        NOTE_STORED(3),
-        NOTHING(0);
+    public LEDHandler() {
+        ledGroup = new LEDGroup(
+            new LED(Constants.LEDs.LEFT_CANDLE_ID),
+            new LED(Constants.LEDs.RIGHT_CANDLE_ID)
+        );
+    }
 
-        private final int priority;
+    public void request(States desiredState) {
+        this.desiredState = desiredState;
+    }
 
-        States(int priority) {
-            this.priority = priority;
+    public int getCurrentPriority() {
+        return currentState.getPriority();
+    }
+
+    @Override
+    public void periodic() {
+        if (currentState != desiredState) {
+            if (codeLoops >= Constants.LEDs.CODE_LOOP_THRESHOLD) {
+                currentState = desiredState;
+                ledGroup.setLEDGroup(currentState);
+                codeLoops = 0;
+            } else {
+                codeLoops++;
+            }
         }
     }
 }
-//add led now
