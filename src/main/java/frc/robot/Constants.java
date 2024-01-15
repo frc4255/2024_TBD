@@ -15,6 +15,15 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
 
+    public final class Intake {
+        public static final int MOTOR_ID_0 = 0; //TODO: Needs the ID of the Motor
+        public static final int MOTOR_ID_1 = 0; //TODO: Needs the ID of the Motor
+
+        public static final double P = 0.0; //TODO
+        public static final double MOTOR_VOTAGE_1 = 1.2; //TODO get a voltage
+
+    }
+
     public static final class Swerve {
         public static final int pigeonID = 1;
 
