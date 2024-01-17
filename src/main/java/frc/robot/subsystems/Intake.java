@@ -20,16 +20,12 @@ import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 
 //elbow gear ratio is 86.02:1
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import java.lang.Math;
 
-public class Intake {
+public class Intake extends ProfiledPIDSubsystem {
 
     public final TalonFX IntakeMotor0 = new TalonFX(Constants.Intake.MOTOR_ID_0);
     public final TalonFX IntakeMotor1 = new TalonFX(Constants.Intake.MOTOR_ID_1);
-
-
-    public PIDController m_PID_Controller = new PIDController(Constants.Intake.P, 0, 0);
-
-
 
     private enum Setpoints {
         GROUND,
@@ -39,7 +35,9 @@ public class Intake {
     private final HashMap<Setpoints, Double> Setpoint = new HashMap<>();
     
     public Intake() {
-    
+    super(new ProfiledPIDController(Constants.Intake.P, 
+    0, 0, new TrapezoidProfile.Constraints(5, 10)));
+
 
     Setpoint.put(Setpoints.GROUND, null); //TODO get setpoints
     Setpoint.put(Setpoints.STOW, null); //TODO get setpoints
@@ -47,8 +45,34 @@ public class Intake {
 
     }
 
-      public void runIntake() {
-        IntakeMotor1.setVoltage(Constants.Intake.MOTOR_VOTAGE_1);
+    @Override
+    protected double getMeasurement() {
+      StatusSignal<Double> rawPos = IntakeMotor0.getPosition();
+
+      double pos = rawPos.getValueAsDouble();
+      double multipliedPos = (pos / 86.02);
+      double posRadians = (2 * Math.PI) * multipliedPos;
+
+      return posRadians;
+    }
+
+    @Override
+    protected void useOutput(double output, TrapezoidProfile.State setpoint) {
+        
+    }
+
+      public void runIntake(Setpoints DesiredPosition) {
+  
+        switch(DesiredPosition) {
+          case GROUND:
+            setGoal(Setpoint.get(Setpoints.GROUND));
+            break;
+          case STOW:
+            setGoal(Setpoint.get(Setpoints.STOW));  
+            break;
+  
+        }
+
         
       }
 
@@ -57,20 +81,20 @@ public class Intake {
         IntakeMotor1.stopMotor();
       }
 
-    public void setIntakePosition(Setpoints DesiredPosition) {
-      double pos;
+      public void setNewHomePos() {
+        StatusSignal<Double> current = IntakeMotor0.getStatorCurrent();
 
-      switch(DesiredPosition) {
-        case GROUND:
-          pos = Setpoint.get(Setpoints.GROUND);
-        case STOW:
-          pos = Setpoint.get(Setpoints.STOW);  
+        StatusSignal<Double> lastCyclesCurrent = current;
 
-      IntakeMotor0.setControl(new MotionMagicDutyCycle(pos));
- 
-      } 
+        double finalCurrent = current.getValueAsDouble();
+        double finalLastCyclesCurrent = lastCyclesCurrent.getValueAsDouble();
 
-    
-    }
+        double currentChange = finalCurrent - finalLastCyclesCurrent;
 
+        double currentThreshold = Constants.Intake.CURRENT_THRESHOLD;
+
+        if (currentChange > currentThreshold) {
+          IntakeMotor0.setPosition(0.0);
+        }
+      }
 }

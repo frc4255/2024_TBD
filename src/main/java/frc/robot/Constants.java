@@ -22,6 +22,8 @@ public final class Constants {
         public static final double P = 0.0; //TODO
         public static final double MOTOR_VOTAGE_1 = 1.2; //TODO get a voltage
 
+        public static final double CURRENT_THRESHOLD = 0.0; //TODO get a threshold.
+
     }
 
     public static final class Swerve {
