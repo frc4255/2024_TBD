@@ -7,6 +7,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 
@@ -24,77 +25,77 @@ import java.lang.Math;
 
 public class Intake extends ProfiledPIDSubsystem {
 
-    public final TalonFX IntakeMotor0 = new TalonFX(Constants.Intake.MOTOR_ID_0);
-    public final TalonFX IntakeMotor1 = new TalonFX(Constants.Intake.MOTOR_ID_1);
+    private final TalonFX m_IntakeArmMotor = new TalonFX(Constants.Intake.MOTOR_ID_0);
+    private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.MOTOR_ID_1);
+
+    private boolean isHomed = false;
+
+    private VoltageOut m_armJointRequest = new VoltageOut(0.0);
 
     private enum Setpoints {
         GROUND,
         STOW,
-      }
+    }
 
     private final HashMap<Setpoints, Double> Setpoint = new HashMap<>();
     
     public Intake() {
-    super(new ProfiledPIDController(Constants.Intake.P, 
-    0, 0, new TrapezoidProfile.Constraints(5, 10)));
+        super(new ProfiledPIDController(
+            Constants.Intake.P, 
+            0,
+            0,
+            new TrapezoidProfile.Constraints(5, 10)) //TODO: Tune
+        );
 
 
-    Setpoint.put(Setpoints.GROUND, null); //TODO get setpoints
-    Setpoint.put(Setpoints.STOW, null); //TODO get setpoints
-
-
+        Setpoint.put(Setpoints.GROUND, null); //TODO get setpoints
+        Setpoint.put(Setpoints.STOW, null); //TODO get setpoints
     }
 
     @Override
     protected double getMeasurement() {
-      StatusSignal<Double> rawPos = IntakeMotor0.getPosition();
-
-      double pos = rawPos.getValueAsDouble();
-      double multipliedPos = (pos / 86.02);
-      double posRadians = (2 * Math.PI) * multipliedPos;
-
-      return posRadians;
+        return ((m_IntakeArmMotor.getPosition().getValueAsDouble()) / 86.02)*(2*Math.PI);
     }
 
     @Override
     protected void useOutput(double output, TrapezoidProfile.State setpoint) {
-        
+        m_IntakeArmMotor.setControl(m_armJointRequest.withOutput(output));
     }
 
-      public void runIntake(Setpoints DesiredPosition) {
-  
-        switch(DesiredPosition) {
-          case GROUND:
-            setGoal(Setpoint.get(Setpoints.GROUND));
-            break;
-          case STOW:
-            setGoal(Setpoint.get(Setpoints.STOW));  
-            break;
-  
-        }
+    public void runIntake(Setpoints desiredPos) {
+        switch(desiredPos) {
+            case GROUND:
+                setGoal(Setpoint.get(Setpoints.GROUND));
+                break;
+            case STOW:
+                setGoal(Setpoint.get(Setpoints.STOW));  
+                break;
+        }   
+    }
 
-        
-      }
+    public void stopIntake() {
+        m_IntakeMotor.stopMotor();
+    }
 
-      public void stopIntake() {
-        IntakeMotor1.setVoltage(0.0);
-        IntakeMotor1.stopMotor();
-      }
+    /* Used for physical button on robot */
+    public void setIntakeAsHomed() {
+        m_IntakeArmMotor.setPosition(0.0);
+        isHomed = true;
+    }
 
-      public void setNewHomePos() {
-        StatusSignal<Double> current = IntakeMotor0.getStatorCurrent();
+    /* Used to set a new home position on the fly */
 
-        StatusSignal<Double> lastCyclesCurrent = current;
+    public void startHomeSequence() {
+        isHomed = false;
+        m_IntakeArmMotor.setControl(m_armJointRequest.withOutput(1.5));
+    }
 
-        double finalCurrent = current.getValueAsDouble();
-        double finalLastCyclesCurrent = lastCyclesCurrent.getValueAsDouble();
+    public double getArmMotorCurrent() {
+        return m_IntakeArmMotor.getStatorCurrent().getValueAsDouble();
+    }
 
-        double currentChange = finalCurrent - finalLastCyclesCurrent;
+    @Override
+    public void periodic() {
 
-        double currentThreshold = Constants.Intake.CURRENT_THRESHOLD;
-
-        if (currentChange > currentThreshold) {
-          IntakeMotor0.setPosition(0.0);
-        }
-      }
+    }
 }
