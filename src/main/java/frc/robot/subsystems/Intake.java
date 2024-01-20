@@ -5,6 +5,7 @@ import java.util.ResourceBundle.Control;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -28,9 +29,11 @@ public class Intake extends ProfiledPIDSubsystem {
     private final TalonFX m_IntakeArmMotor = new TalonFX(Constants.Intake.MOTOR_ID_0);
     private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.MOTOR_ID_1);
 
-    private boolean isHomed = false;
+    private boolean m_isHomed = false;
+    private boolean m_isIntakeDeployed = false;
 
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
+    private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
 
     private enum Setpoints {
         GROUND,
@@ -62,15 +65,38 @@ public class Intake extends ProfiledPIDSubsystem {
         m_IntakeArmMotor.setControl(m_armJointRequest.withOutput(output));
     }
 
-    public void runIntake(Setpoints desiredPos) {
-        switch(desiredPos) {
-            case GROUND:
-                setGoal(Setpoint.get(Setpoints.GROUND));
-                break;
-            case STOW:
-                setGoal(Setpoint.get(Setpoints.STOW));  
-                break;
-        }   
+    public void intakeStow() {
+        setGoal(Constants.Intake.INTAKE_STOW_SETPOINT);
+        m_isIntakeDeployed = false;
+    }
+
+    public void intakeDeploy() {
+        setGoal(Constants.Intake.INTAKE_DEPLOY_SETPOINT);
+        m_isIntakeDeployed = true;
+    }
+    
+    /**
+     * Toggle deployment of the intake at the elbow joint.
+     * This method sets the goal of the ProfiledPIDController to the opposite state
+     * based on whether the intake is currently deployed or stowed.
+     */
+    public void toggleIntake() {
+        setGoal(
+            m_isIntakeDeployed 
+                ? Constants.Intake.INTAKE_STOW_SETPOINT 
+                : Constants.Intake.INTAKE_DEPLOY_SETPOINT
+        );
+
+        m_isIntakeDeployed = !m_isIntakeDeployed;
+    }
+
+    public boolean isHomed() {
+        return m_isHomed;
+    }
+
+    public void runIntake() {
+        /* TODO: Find optimal speed. Start low so that we don't kill our single note lmao. */
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.1));
     }
 
     public void stopIntake() {
@@ -80,13 +106,14 @@ public class Intake extends ProfiledPIDSubsystem {
     /* Used for physical button on robot */
     public void setIntakeAsHomed() {
         m_IntakeArmMotor.setPosition(0.0);
-        isHomed = true;
+        m_isHomed = true;
     }
 
     /* Used to set a new home position on the fly */
 
     public void startHomeSequence() {
-        isHomed = false;
+        m_isHomed = false;
+        /* TODO: Find optimal voltage. */
         m_IntakeArmMotor.setControl(m_armJointRequest.withOutput(1.5));
     }
 
@@ -96,6 +123,5 @@ public class Intake extends ProfiledPIDSubsystem {
 
     @Override
     public void periodic() {
-
     }
 }

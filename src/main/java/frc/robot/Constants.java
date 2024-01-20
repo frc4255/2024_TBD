@@ -24,6 +24,8 @@ public final class Constants {
 
         public static final double CURRENT_THRESHOLD = 0.0; //TODO get a threshold.
 
+        public static final double INTAKE_DEPLOY_SETPOINT = 0.0; // TODO: Tune INTAKE_DEPLOY setpoint.
+        public static final double INTAKE_STOW_SETPOINT = 0.0; // TODO: Tune INTAKE_STOW setpoint.
     }
 
     public static final class Swerve {

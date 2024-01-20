@@ -3,11 +3,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
-public class onTheFlyHome extends Command {
+public class OnTheFlyHome extends Command {
 
     private Intake s_Intake;
 
-    public onTheFlyHome(Intake s_Intake) {
+    public OnTheFlyHome(Intake s_Intake) {
         this.s_Intake = s_Intake;
 
         addRequirements(s_Intake);
