@@ -32,6 +32,7 @@ public class Intake extends ProfiledPIDSubsystem {
     private boolean m_isHomed = false;
     private boolean m_isIntakeDeployed = false;
 
+    private VoltageOut m_ArmManualMoveRequest = new VoltageOut(0.0);
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
     private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
 
@@ -99,6 +100,10 @@ public class Intake extends ProfiledPIDSubsystem {
         m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.1));
     }
 
+    public void moveIntakeTowardsGoal() {
+        m_IntakeArmMotor.setControl(m_ArmManualMoveRequest);
+    }
+
     public void stopIntake() {
         m_IntakeMotor.stopMotor();
     }
@@ -121,6 +126,10 @@ public class Intake extends ProfiledPIDSubsystem {
         return m_IntakeArmMotor.getStatorCurrent().getValueAsDouble();
     }
 
+    public double getArmPosition() {
+        return ((m_IntakeArmMotor.getPosition().getValueAsDouble()) / 86.02)*(2*Math.PI);
+    }
+    
     @Override
     public void periodic() {
     }

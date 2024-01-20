@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-
+import frc.robot.subsystems.Intake;
+import frc.robot.commands.moveIntake;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -19,6 +20,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(1);
+    private final Intake s_Intake = new Intake();
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -31,6 +33,7 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value); 
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
+    private final JoystickButton stowIntake = new JoystickButton(driver, XboxController.Button.kA.value);
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
 
@@ -47,6 +50,7 @@ public class RobotContainer {
             )
         );
 
+
         // Configure the button bindings
         configureButtonBindings();
     }
@@ -60,6 +64,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        stowIntake.onTrue(new moveIntake(s_Intake));
     }
 
     /**
