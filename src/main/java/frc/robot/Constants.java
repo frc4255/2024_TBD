@@ -15,6 +15,12 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
 
+    public final class Pivot {
+        public static final int PIVOT_MOTOR_ID = 0; //TODO needs pivot ID
+
+        public static final double P = 0.0; //TODO
+    }
+
     public final class Intake {
         public static final int MOTOR_ID_0 = 0; //TODO: Needs the ID of the Motor
         public static final int MOTOR_ID_1 = 0; //TODO: Needs the ID of the Motor
