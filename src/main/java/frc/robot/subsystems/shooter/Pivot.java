@@ -31,6 +31,8 @@ public class Pivot extends ProfiledPIDSubsystem {
 
     private VoltageOut m_pivotRequest = new VoltageOut(0.0);
 
+    private boolean m_isHomed = false; 
+
     public Pivot() {
         super(new ProfiledPIDController(
             Constants.Pivot.P, 
@@ -49,4 +51,33 @@ public class Pivot extends ProfiledPIDSubsystem {
         m_pivotMotor.setControl(m_pivotRequest.withOutput(output));
     }
 
+    public void movePivotTowardsGoal() {
+        m_pivotMotor.setControl(m_pivotRequest);
+    }
+
+    public void setPivotAsHomed() {
+        m_pivotMotor.setPosition(0.0);
+        m_isHomed = true;
+    }
+
+    public void startPivotHomeSequence() {
+        m_isHomed = false;
+        /* TODO: Find optimal voltage. */
+        m_pivotMotor.setControl(m_pivotRequest.withOutput(1.5));
+    }
+
+    public double getPivotMotorCurrent() {
+        return m_pivotMotor.getStatorCurrent().getValueAsDouble();
+    }
+
+    public double getArmPosition() {
+        return ((m_pivotMotor.getPosition().getValueAsDouble()))*(2*Math.PI);
+    }
+
+    public void stopPivot() {
+        m_pivotMotor.stopMotor();
+    }
+    @Override
+    public void periodic() {
+    }
 }

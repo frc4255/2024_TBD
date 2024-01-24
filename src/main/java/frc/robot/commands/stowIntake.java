@@ -5,7 +5,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 
 public class stowIntake extends Command {
-        private Intake s_Intake;
+    private Intake s_Intake;
 
     public stowIntake(Intake s_Intake) {
         this.s_Intake = s_Intake;

@@ -19,6 +19,8 @@ public final class Constants {
         public static final int PIVOT_MOTOR_ID = 0; //TODO needs pivot ID
 
         public static final double P = 0.0; //TODO
+
+        public static final double PIVOT_CURRENT_THRESHOLD = 0.0; //TODO get a threshold.
     }
 
     public final class Intake {

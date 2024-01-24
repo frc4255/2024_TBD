@@ -11,6 +11,8 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.moveIntake;
+import frc.robot.commands.stowIntake;
+import frc.robot.commands.deployIntake;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -34,6 +36,7 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
     private final JoystickButton stowIntake = new JoystickButton(driver, XboxController.Button.kA.value);
+    private final JoystickButton deployIntake = new JoystickButton(driver, XboxController.Button.kB.value);
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
 
@@ -64,7 +67,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        stowIntake.onTrue(new moveIntake(s_Intake));
+        stowIntake.onTrue(new stowIntake(s_Intake));
+        deployIntake.onTrue(new deployIntake(s_Intake));
     }
 
     /**
