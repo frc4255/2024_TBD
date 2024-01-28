@@ -91,10 +91,6 @@ public class Intake extends ProfiledPIDSubsystem {
         m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.2));
     }
 
-    public void moveIntakeTowardsGoal() {
-        m_IntakeArmMotor.setControl(m_ArmManualMoveRequest);
-    }
-
     public void stopIntake() {
         m_IntakeMotor.stopMotor();
     }

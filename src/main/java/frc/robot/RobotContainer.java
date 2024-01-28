@@ -10,9 +10,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Intake;
+
 import frc.robot.commands.moveIntake;
-import frc.robot.commands.stowIntake;
 import frc.robot.commands.deployIntake;
+
+import frc.robot.commands.ToggleIntake;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
