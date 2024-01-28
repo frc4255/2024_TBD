@@ -11,12 +11,12 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-
 import frc.robot.Constants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 
@@ -36,34 +36,25 @@ public class Intake extends ProfiledPIDSubsystem {
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
     private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
 
-    private enum Setpoints {
-        GROUND,
-        STOW,
-    }
-
-    private final HashMap<Setpoints, Double> Setpoint = new HashMap<>();
-    
     public Intake() {
         super(new ProfiledPIDController(
             Constants.Intake.P, 
             0,
             0,
-            new TrapezoidProfile.Constraints(5, 10)) //TODO: Tune
+            new TrapezoidProfile.Constraints(8, 6.5)) //TODO: Tune
         );
 
-
-        Setpoint.put(Setpoints.GROUND, null); //TODO get setpoints
-        Setpoint.put(Setpoints.STOW, null); //TODO get setpoints
     }
 
     @Override
     protected double getMeasurement() {
-        return ((m_IntakeArmMotor.getPosition().getValueAsDouble()) / 86.02)*(2*Math.PI);
+        return getArmPosition();
     }
 
     @Override
     protected void useOutput(double output, TrapezoidProfile.State setpoint) {
         m_IntakeArmMotor.setControl(m_armJointRequest.withOutput(output));
+        SmartDashboard.putNumber("PID Controller Out", output);
     }
 
     public void intakeStow() {
@@ -97,7 +88,7 @@ public class Intake extends ProfiledPIDSubsystem {
 
     public void runIntake() {
         /* TODO: Find optimal speed. Start low so that we don't kill our single note lmao. */
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.1));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.2));
     }
 
     public void moveIntakeTowardsGoal() {
@@ -132,5 +123,15 @@ public class Intake extends ProfiledPIDSubsystem {
     
     @Override
     public void periodic() {
+        super.periodic();
+        /*SmartDashboard.putNumber("Arm joint position", getArmPosition());
+        SmartDashboard.putNumber("PID Error", super.getController().getPositionError());
+        SmartDashboard.putNumber("Intake motor out", m_IntakeMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Intake stator current", m_IntakeMotor.getStatorCurrent().getValueAsDouble());*/
+
+        SmartDashboard.putNumber("Motor voltage", m_IntakeArmMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Error", super.getController().getPositionError());
+        SmartDashboard.putNumber("Motor supply voltage", m_IntakeArmMotor.getSupplyVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Arm joint position", getArmPosition());
     }
 }

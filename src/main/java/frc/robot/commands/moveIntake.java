@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class moveIntake extends Command {
@@ -15,27 +16,19 @@ public class moveIntake extends Command {
 
     @Override
     public void initialize() {
-        s_Intake.moveIntakeTowardsGoal();
+        s_Intake.enable();
+        s_Intake.runIntake();
+        s_Intake.toggleIntake();
     }
 
+    @Override
+    public void execute() {
+    }
+    
     @Override
     public void end(boolean interrupted) {
         s_Intake.stopIntake();
-
-        if (!interrupted) {
-            s_Intake.intakeDeploy();
-        }
-    }
-
-    @Override
-    public boolean isFinished() {
-        if (s_Intake.getArmPosition() == Constants.Intake.INTAKE_STOW_SETPOINT) {
-            return true;
-        } else if (s_Intake.getArmPosition() == Constants.Intake.INTAKE_DEPLOY_SETPOINT) {
-            return true;
-        } else {
-            return false;
-        }
+        s_Intake.toggleIntake();
     }
 }
 
