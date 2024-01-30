@@ -25,12 +25,22 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import java.lang.Math;
 
 public class Intake extends ProfiledPIDSubsystem {
+    private HashMap<Setpoints, Double> FinalIntakeSetpoints = new HashMap<>();
+
+    private enum Setpoints {
+        DEPLOY,
+        STOW,
+        OUTOFWAY
+      }
+
+    private final HashMap<Setpoints, Double> IntakeSetpoint = new HashMap<>();
 
     private final TalonFX m_IntakeArmMotor = new TalonFX(Constants.Intake.MOTOR_ID_0);
     private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.MOTOR_ID_1);
 
     private boolean m_isHomed = false;
     private boolean m_isIntakeDeployed = false;
+    private boolean m_OutOfWay = false;
 
     private VoltageOut m_ArmManualMoveRequest = new VoltageOut(0.0);
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
@@ -41,9 +51,26 @@ public class Intake extends ProfiledPIDSubsystem {
             Constants.Intake.P, 
             0,
             0,
-            new TrapezoidProfile.Constraints(8, 6.5)) //TODO: Tune
-        );
+            new TrapezoidProfile.Constraints(8, 6.5)); //TODO: Tune
 
+            IntakeSetpoint.put(Setpoints.DEPLOY, frc.robot.Constants.Intake.INTAKE_DEPLOY_SETPOINT); //TODO get setpoints
+            IntakeSetpoint.put(Setpoints.STOW, frc.robot.Constants.Intake.INTAKE_STOW_SETPOINT); //TODO get setpoints 
+            IntakeSetpoint.put(Setpoints.OUTOFWAY, null); //TODO get setpoints
+        );
+    }
+
+    public void setIntakeGoal(Setpoints DesiredPosition) {
+        switch (DesiredPosition) {
+            case DEPLOY:
+                setGoal(FinalIntakeSetpoints.get(Setpoints.DEPLOY));
+                break;
+            case STOW:
+                setGoal(FinalIntakeSetpoints.get(Setpoints.STOW));
+                break;
+            case OUTOFWAY:
+                setGoal(FinalIntakeSetpoints.get(Setpoints.OUTOFWAY));
+                break;
+        }
     }
 
     @Override
@@ -58,13 +85,18 @@ public class Intake extends ProfiledPIDSubsystem {
     }
 
     public void intakeStow() {
-        setGoal(Constants.Intake.INTAKE_STOW_SETPOINT);
+        setIntakeGoal(Setpoints.STOW);
         m_isIntakeDeployed = false;
     }
 
     public void intakeDeploy() {
-        setGoal(Constants.Intake.INTAKE_DEPLOY_SETPOINT);
+        setIntakeGoal(Setpoints.DEPLOY);
         m_isIntakeDeployed = true;
+    }
+
+    public void intakeOutOfWay() {
+        setIntakeGoal(Setpoints.OUTOFWAY);
+        m_OutOfWay = true;
     }
     
     /**
