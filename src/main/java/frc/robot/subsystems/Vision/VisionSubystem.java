@@ -24,6 +24,9 @@ public class VisionSubystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+        results.clear();
+        
         for (Camera cam : cameras) {
             cam.updateEstimate();
 
@@ -37,7 +40,7 @@ public class VisionSubystem extends SubsystemBase {
     public List<PoseAndTimestamp> getResults() {
         return results;
     }
-    
+
     public static class PoseAndTimestamp {
         Pose2d pose;
         double timestamp;

@@ -43,7 +43,7 @@ public class Camera {
         EstimatedRobotPose res = opt.isPresent() ? opt.get() : null;
 
         if (res != null) {
-            estimate = Optional.of(new PoseAndTimestamp(res.estimatedPose.toPose2d(), res.timestampSeconds/1000));
+            estimate = Optional.of(new PoseAndTimestamp(res.estimatedPose.toPose2d(), res.timestampSeconds));
         }
     }
 
