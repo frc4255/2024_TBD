@@ -1,6 +1,6 @@
 package frc.robot.commands;
 
-import frc.robot.Constants;
+import frc.robot.Constants.Intake.Setpoints;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -15,17 +15,14 @@ public class ToggleIntake extends Command {
 
     @Override
     public void initialize() {
-        s_Intake.toggleIntake();
+        s_Intake.requestGoal(Setpoints.DEPLOY);
         s_Intake.runIntake();
     }
 
     @Override
     public void end(boolean interrupted) {
-        s_Intake.toggleIntake();
+        s_Intake.requestGoal(Setpoints.STOW);
         s_Intake.stopIntake();
-
-        if (interrupted) {
-        }
     }
 }
 

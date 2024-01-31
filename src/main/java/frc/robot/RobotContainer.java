@@ -11,10 +11,6 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Intake;
 
-import frc.robot.commands.moveIntake;
-import frc.robot.commands.deployIntake;
-
-import frc.robot.commands.ToggleIntake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -73,7 +69,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        runIntake.whileTrue(new moveIntake(s_Intake));
+        runIntake.whileTrue(new ToggleIntake(s_Intake));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()));
     }
 

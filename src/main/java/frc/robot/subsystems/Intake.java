@@ -1,48 +1,26 @@
 package frc.robot.subsystems;
 
-import java.util.HashMap;
-import java.util.ResourceBundle.Control;
-
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import frc.robot.Constants;
-import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants.Intake.Setpoints;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
-
-//elbow gear ratio is 86.02:1
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+
 import java.lang.Math;
 
 public class Intake extends ProfiledPIDSubsystem {
-    private HashMap<Setpoints, Double> FinalIntakeSetpoints = new HashMap<>();
-
-    private enum Setpoints {
-        DEPLOY,
-        STOW,
-        OUTOFWAY
-      }
-
-    private final HashMap<Setpoints, Double> IntakeSetpoint = new HashMap<>();
-
     private final TalonFX m_IntakeArmMotor = new TalonFX(Constants.Intake.MOTOR_ID_0);
     private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.MOTOR_ID_1);
 
     private boolean m_isHomed = false;
-    private boolean m_isIntakeDeployed = false;
-    private boolean m_OutOfWay = false;
 
-    private VoltageOut m_ArmManualMoveRequest = new VoltageOut(0.0);
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
     private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
 
@@ -51,24 +29,29 @@ public class Intake extends ProfiledPIDSubsystem {
             Constants.Intake.P, 
             0,
             0,
-            new TrapezoidProfile.Constraints(8, 6.5)); //TODO: Tune
-
-            IntakeSetpoint.put(Setpoints.DEPLOY, frc.robot.Constants.Intake.INTAKE_DEPLOY_SETPOINT); //TODO get setpoints
-            IntakeSetpoint.put(Setpoints.STOW, frc.robot.Constants.Intake.INTAKE_STOW_SETPOINT); //TODO get setpoints 
-            IntakeSetpoint.put(Setpoints.OUTOFWAY, null); //TODO get setpoints
+            new TrapezoidProfile.Constraints(8, 6.5)) //TODO: Tune
         );
     }
 
-    public void setIntakeGoal(Setpoints DesiredPosition) {
+    public void requestGoal(Setpoints DesiredPosition) {
+
+        if (!m_isHomed) {
+            DriverStation.reportWarning(
+                "WARNING: INTAKE GOAL WAS REQUESTED WHILE INTAKE IS NOT HOMED.",
+                false
+            );
+            return;
+        }
+
         switch (DesiredPosition) {
             case DEPLOY:
-                setGoal(FinalIntakeSetpoints.get(Setpoints.DEPLOY));
+                setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
                 break;
             case STOW:
-                setGoal(FinalIntakeSetpoints.get(Setpoints.STOW));
+                setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
                 break;
-            case OUTOFWAY:
-                setGoal(FinalIntakeSetpoints.get(Setpoints.OUTOFWAY));
+            case OUT_OF_WAY:
+                setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
                 break;
         }
     }
@@ -82,36 +65,6 @@ public class Intake extends ProfiledPIDSubsystem {
     protected void useOutput(double output, TrapezoidProfile.State setpoint) {
         m_IntakeArmMotor.setControl(m_armJointRequest.withOutput(output));
         SmartDashboard.putNumber("PID Controller Out", output);
-    }
-
-    public void intakeStow() {
-        setIntakeGoal(Setpoints.STOW);
-        m_isIntakeDeployed = false;
-    }
-
-    public void intakeDeploy() {
-        setIntakeGoal(Setpoints.DEPLOY);
-        m_isIntakeDeployed = true;
-    }
-
-    public void intakeOutOfWay() {
-        setIntakeGoal(Setpoints.OUTOFWAY);
-        m_OutOfWay = true;
-    }
-    
-    /**
-     * Toggle deployment of the intake at the elbow joint.
-     * This method sets the goal of the ProfiledPIDController to the opposite state
-     * based on whether the intake is currently deployed or stowed.
-     */
-    public void toggleIntake() {
-        setGoal(
-            m_isIntakeDeployed 
-                ? Constants.Intake.INTAKE_STOW_SETPOINT 
-                : Constants.Intake.INTAKE_DEPLOY_SETPOINT
-        );
-
-        m_isIntakeDeployed = !m_isIntakeDeployed;
     }
 
     public boolean isHomed() {
@@ -145,6 +98,7 @@ public class Intake extends ProfiledPIDSubsystem {
         return m_IntakeArmMotor.getStatorCurrent().getValueAsDouble();
     }
 
+    // elbow gear ratio is 86.02:1
     public double getArmPosition() {
         return ((m_IntakeArmMotor.getPosition().getValueAsDouble()) / 86.02)*(2*Math.PI);
     }
