@@ -1,74 +1,53 @@
-package frc.robot.subsystems.Shooter;
+package frc.robot.subsystems.shooter;
 
-import java.util.HashMap;
-import java.util.ResourceBundle.Control;
+import java.lang.Math;
 
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.controls.ControlRequest;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-
-import frc.robot.Constants;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.MathUtil;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
-
-//elbow gear ratio is 86.02:1
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-import java.lang.Math;
-import java.sql.Driver;
 
 import frc.robot.Constants;
-import edu.wpi.first.math.MathUtil;
-import frc.robot.subsystems.Swerve;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.FieldLayout;
-import java.lang.Math;
+import frc.robot.FieldLayout.FieldPiece.POI;
 
 public class Pivot extends ProfiledPIDSubsystem {
 
-    private Swerve m_Swerve;
-
+    private Supplier<Pose2d> m_PoseSupplier;
+    
     private final TalonFX m_pivotMotor = new TalonFX(Constants.Pivot.PIVOT_MOTOR_ID);
 
     private VoltageOut m_pivotRequest = new VoltageOut(0.0);
 
-
-    private boolean m_isHomed = false; 
-
-    private final HashMap<Double, Double> PivotSetpoint = new HashMap<>();
+    private boolean m_isHomed = false; //TODO
    
-    public Pivot() {
+    public Pivot(Supplier<Pose2d> m_PoseSupplier) {
         super(new ProfiledPIDController(
             Constants.Pivot.P, 
             0,
             0,
-            new TrapezoidProfile.Constraints(5, 10))); //TODO: Tune
+            new TrapezoidProfile.Constraints(5, 10))
+        ); //TODO: Tune
 
-        PivotSetpoint.put(null, null); //TODO get angle and Distance
-        PivotSetpoint.put(null, null); //TODO get angle and Distance
-        PivotSetpoint.put(null, null); //TODO get angle and Distance
-        PivotSetpoint.put(null, null); //TODO get angle and Distance
-        PivotSetpoint.put(null, null); //TODO get angle and Distance
-        PivotSetpoint.put(null, null); //TODO get angle and Distance
-        PivotSetpoint.put(null, null); //TODO get angle and Distance
-        PivotSetpoint.put(null, null); //TODO get angle and Distance
-
+        this.m_PoseSupplier = m_PoseSupplier;
     }
     
     @Override
     protected double getMeasurement() {
-        return ((m_pivotMotor.getPosition().getValueAsDouble())*(2*Math.PI));
+        return ((m_pivotMotor.getPosition().getValueAsDouble() / 133.47)*(2*Math.PI));
     }
 
     @Override
@@ -76,24 +55,66 @@ public class Pivot extends ProfiledPIDSubsystem {
         m_pivotMotor.setControl(m_pivotRequest.withOutput(output));
     }
 
-    public void pivotAngle() {
-        double botsStartingPoseX = m_Swerve.getPose().getX();
-        double botsStartingPoseY = m_Swerve.getPose().getY();
+    public double getDistance() {
+        Pose2d robotPose = m_PoseSupplier.get();
 
-        double SpeakerPoseX = 0.0;
-        double SpeakerPoseY = 0.0;
-        
-       if (DriverStation.getAlliance().get() == Alliance.Red) {
-            SpeakerPoseX = Units.inchesToMeters(0.0);
-            SpeakerPoseY = Units.inchesToMeters(218.42);
+        Pose2d speakerPose =
+            DriverStation.getAlliance().get() == Alliance.Red ?
+            FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
+            FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
 
-       } else if (DriverStation.getAlliance().get() == Alliance.Blue) {
-            SpeakerPoseX = Units.inchesToMeters(652.73);
-            SpeakerPoseY = Units.inchesToMeters(218.42);
+        return Math.sqrt(
+            Math.pow((speakerPose.getX() - robotPose.getX()), 2) +
+            Math.pow((speakerPose.getY() - robotPose.getY()), 2)
+        );
+    }
 
-       }
+    public boolean inRange(double dist) {
+        return dist <= ShooterConstants.MAX_DISTANCE;
+    }
 
-        double DistanceFromSpeaker = Math.tan(botsStartingPoseY - );
+    private List<Map.Entry<Double, Double>> getClosestValues(double dist) {
+        Map.Entry<Double, Double> minValue = null;
+        Map.Entry<Double, Double> maxValue = null;
+
+        List<Map.Entry<Double, Double>> entries =
+            new ArrayList<>(ShooterConstants.LOOKUP_TABLE.entrySet());
+
+        for (Map.Entry<Double, Double> entry : entries) {
+            if (entry.getKey() >= dist) {
+                maxValue = entry;
+                break;
+            }
+            minValue = entry;
+        }
+
+        return Arrays.asList(minValue, maxValue);
+    }
+
+    public void alignPivotToSpeaker() {
+        double dist = getDistance();
+
+        /* Make sure we are within the max range */
+        if (!inRange(dist)) {
+            return;
+        }
+
+        /* 
+            * Get two Hashmaps containing the two maps that surround our current distance
+            * from speaker
+        */
+        List<Map.Entry<Double, Double>> startAndEndDist = getClosestValues(dist);
+        Map.Entry<Double, Double> startDist = startAndEndDist.get(0);
+        Map.Entry<Double, Double> endDist = startAndEndDist.get(1);
+
+        /* Get how far between the two values we are */
+        double t = ((dist - startDist.getKey())) / (endDist.getKey() - startDist.getKey());
+
+        /* 
+            * Once we have all the information we need, we can perform linear interpolation between
+            * the two values 
+        */
+        setGoal(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t));
     }
 
     public void movePivotTowardsGoal() {

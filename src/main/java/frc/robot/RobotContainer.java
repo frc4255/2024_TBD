@@ -12,16 +12,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-<<<<<<< HEAD
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.moveIntake;
 import frc.robot.commands.stowIntake;
 import frc.robot.commands.deployIntake;
-=======
 import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.Vision.VisionSubystem;
+import frc.robot.subsystems.shooter.Pivot;
 
->>>>>>> fbe5d1e1ebda91e066c45658fbd85b0f51d429df
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -50,8 +48,10 @@ public class RobotContainer {
     private final JoystickButton stowIntake = new JoystickButton(driver, XboxController.Button.kA.value);
     private final JoystickButton deployIntake = new JoystickButton(driver, XboxController.Button.kB.value);
     /* Subsystems */
+
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{rightCam, leftCam});
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
+    private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
