@@ -40,7 +40,7 @@ public class Hopper {
      * @param speed0 Duty Cycle speed of Hopper motors
      * @param speed1 Duty Cycle speed of hopper motors
      */
-    public void movemotor(double speed0, double speed1) {
+    public void setMotorsSpeed(double speed0, double speed1) {
         m_HopperMotor0.setControl(m_HopperMotor0Request.withOutput(speed0));
         m_HopperMotor1.setControl(m_HopperMotor1Request.withOutput(speed1));
     }
@@ -53,14 +53,17 @@ public class Hopper {
         return m_HopperMotor1.getStatorCurrent().getValueAsDouble();
     }
 
-
-    public void periodic() {
+    private void checkForGamePiece() {
         int red = m_colorSensor.getRed(); // Get the raw color value from the red ADC
         int blue = m_colorSensor.getBlue(); // Get the raw color value from the blue ADC
         int green = m_colorSensor.getGreen(); // Get the raw color value from the green ADC
-        int IR = m_colorSensor.getIR(); // Get the raw proximity value from the sensor ADC (8 bit).
+        int IR = m_colorSensor.getIR(); //  KEEP FOR NOW WE MIGHT NEED FOR LATER (edge cases) Get the raw proximity value from the sensor ADC (8 bit).
+
         if ((115 <= red && red >= 255) && (36 <= green && green >= 182) && (6 <= blue && blue >= 147)) {
-            // the color sensor probably detects orange, move the motors
+            m_hasGamePiece = true;
         }
+    }
+    public void periodic() {
+       checkForGamePiece();
     }
 }
