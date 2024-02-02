@@ -28,7 +28,7 @@ public class Pivot extends ProfiledPIDSubsystem {
 
     private Supplier<Pose2d> m_PoseSupplier;
     
-    private final TalonFX m_pivotMotor = new TalonFX(Constants.Pivot.PIVOT_MOTOR_ID);
+    private final TalonFX m_pivotMotor = new TalonFX(ShooterConstants.PIVOT_MOTOR_ID);
 
     private VoltageOut m_pivotRequest = new VoltageOut(0.0);
 
@@ -36,7 +36,7 @@ public class Pivot extends ProfiledPIDSubsystem {
    
     public Pivot(Supplier<Pose2d> m_PoseSupplier) {
         super(new ProfiledPIDController(
-            Constants.Pivot.P, 
+            ShooterConstants.PIVOT_P, 
             0,
             0,
             new TrapezoidProfile.Constraints(5, 10))

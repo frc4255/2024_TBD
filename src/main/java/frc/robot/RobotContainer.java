@@ -13,9 +13,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Intake;
-import frc.robot.commands.moveIntake;
-import frc.robot.commands.stowIntake;
-import frc.robot.commands.deployIntake;
+
+
 import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.Vision.VisionSubystem;
 import frc.robot.subsystems.shooter.Pivot;
@@ -28,7 +27,7 @@ import frc.robot.subsystems.shooter.Pivot;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(1);
+    private final Joystick driver = new Joystick(0);
     private final Intake s_Intake = new Intake();
 
     /* Drive Controls */
@@ -45,8 +44,8 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value); 
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
-    private final JoystickButton stowIntake = new JoystickButton(driver, XboxController.Button.kA.value);
-    private final JoystickButton deployIntake = new JoystickButton(driver, XboxController.Button.kB.value);
+    private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+    private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
     /* Subsystems */
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{rightCam, leftCam});
@@ -70,6 +69,9 @@ public class RobotContainer {
         configureButtonBindings();
     }
 
+    public void disableAllPIDs() {
+        s_Intake.disable();
+    }
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
      * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -79,8 +81,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        stowIntake.onTrue(new stowIntake(s_Intake));
-        deployIntake.onTrue(new deployIntake(s_Intake));
+        runIntake.whileTrue(new ToggleIntake(s_Intake));
+        homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()));
     }
 
     /**
