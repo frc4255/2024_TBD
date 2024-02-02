@@ -28,7 +28,6 @@ import frc.robot.subsystems.shooter.Pivot;
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
-    private final Intake s_Intake = new Intake();
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -51,6 +50,7 @@ public class RobotContainer {
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{rightCam, leftCam});
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
+    private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
