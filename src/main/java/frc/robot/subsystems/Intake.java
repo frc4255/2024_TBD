@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
 import java.lang.Math;
+import java.util.function.Supplier;
 
 public class Intake extends ProfiledPIDSubsystem {
     private final TalonFX m_IntakeArmMotor = new TalonFX(Constants.Intake.MOTOR_ID_0);
@@ -24,13 +25,17 @@ public class Intake extends ProfiledPIDSubsystem {
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
     private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
 
-    public Intake() {
+    private Supplier<Boolean> m_CollisionAvoidanceSupplier;
+
+    public Intake(Supplier<Boolean> CollisionAvoidanceSupplier) {
         super(new ProfiledPIDController(
             Constants.Intake.P, 
             0,
             0,
             new TrapezoidProfile.Constraints(8, 6.5)) //TODO: Tune
         );
+
+        m_CollisionAvoidanceSupplier = CollisionAvoidanceSupplier;
     }
 
     public void requestGoal(Setpoints DesiredPosition) {
