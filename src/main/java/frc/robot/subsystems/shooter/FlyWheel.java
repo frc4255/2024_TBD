@@ -10,34 +10,60 @@ public class FlyWheel {
     PIDController m_LeftPIDController = new PIDController(ShooterConstants.FLYWHEEL_P, 0, 0);
 
     //TODO: Name left side right sid ebased off facing some direction
-    private final TalonFX m_FlyWheelMotor0 = new TalonFX(Constants.FlyWheel.MOTOR_ID_0);
-    private final TalonFX m_FlyWheelMotor1 = new TalonFX(Constants.FlyWheel.MOTOR_ID_1);
+    private final TalonFX m_FlyWheelMotor0;
+    private final TalonFX m_FlyWheelMotor1;
 
+    /* Handled by Command */
     boolean isRunning = false;
 
-    public FlyWheel() {
-
+    public FlyWheel() {;
+        m_FlyWheelMotor0 = new TalonFX(Constants.FlyWheel.MOTOR_ID_0);
+        m_FlyWheelMotor1 = new TalonFX(Constants.FlyWheel.MOTOR_ID_1);
     }
-    public void startFlyWheel() {
-        m_RightPIDController.calculate(0, 6000);
-        m_LeftPIDController.calculate(0, 4000);
-        
-        m_FlyWheelMotor0.setVoltage((m_LeftPIDController.getSetpoint() / 511.998046875) * 12);
-        m_FlyWheelMotor1.setVoltage((m_RightPIDController.getSetpoint() / 511.998046875) * 12);
+    
+    public void run() {
+        m_FlyWheelMotor0.setVoltage(
+            m_RightPIDController.calculate(
+                m_FlyWheelMotor0.getVelocity().getValueAsDouble(),
+                2000
+            )
+        );
 
-        if (m_FlyWheelMotor0.getMotorVoltage().getValueAsDouble() != 0.0 || 
-        m_FlyWheelMotor1.getMotorVoltage().getValueAsDouble() != 0.0) {
-            isRunning = true;
-        }
+        m_FlyWheelMotor0.setVoltage(
+            m_RightPIDController.calculate(
+                m_FlyWheelMotor0.getVelocity().getValueAsDouble(),
+                2000
+            )            
+        );
+        m_FlyWheelMotor1.setVoltage(
+            m_LeftPIDController.calculate(
+                m_FlyWheelMotor0.getVelocity().getValueAsDouble(), 
+                1320));
     }
 
-    public void runFlyWheel() {
-        m_FlyWheelMotor0.setVoltage((m_LeftPIDController.getSetpoint() / 511.998046875) * 12);
-        m_FlyWheelMotor1.setVoltage((m_RightPIDController.getSetpoint() / 511.998046875) * 12);
+    public void idle() {
+        m_FlyWheelMotor0.setVoltage(
+            m_RightPIDController.calculate(
+                m_FlyWheelMotor0.getVelocity().getValueAsDouble(),
+                800
+            )
+        );
+        m_FlyWheelMotor1.setVoltage(
+            m_LeftPIDController.calculate(
+                m_FlyWheelMotor0.getVelocity().getValueAsDouble(), 
+                528));
+    }
 
-        if (m_FlyWheelMotor0.getMotorVoltage().getValueAsDouble() != 0.0 ||
-         m_FlyWheelMotor1.getMotorVoltage().getValueAsDouble() != 0.0) {
-            isRunning = true;
-        }
+    public void stop() {
+        m_FlyWheelMotor0.stopMotor();
+        m_FlyWheelMotor1.stopMotor();
+    }
+
+    public void setIsRunning(boolean isRunning) {
+        this.isRunning = isRunning;
+    }
+
+    public boolean getIsRunning() {
+        return isRunning;
     }
 }
