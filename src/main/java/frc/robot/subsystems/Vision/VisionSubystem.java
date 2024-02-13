@@ -31,7 +31,7 @@ public class VisionSubystem extends SubsystemBase {
             cam.updateEstimate();
 
             Optional<PoseAndTimestamp> camEst = cam.getEstimate();
-            if (camEst.isPresent()) {
+            if (camEst != null) {
                 results.add(camEst.get());
             }
         }
