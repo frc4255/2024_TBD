@@ -73,7 +73,7 @@ public class Intake extends ProfiledPIDSubsystem {
 
     public void runIntake() {
         /* TODO: Find optimal speed. Start low so that we don't kill our single note lmao. */
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.2));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.5));
     }
 
     public void stopIntake() {

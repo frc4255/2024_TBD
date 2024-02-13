@@ -15,6 +15,7 @@ public class ToggleIntake extends Command {
 
     @Override
     public void initialize() {
+        s_Intake.enable();
         s_Intake.requestGoal(Setpoints.DEPLOY);
         s_Intake.runIntake();
     }
