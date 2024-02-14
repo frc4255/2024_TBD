@@ -25,17 +25,13 @@ public class Intake extends ProfiledPIDSubsystem {
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
     private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
 
-    private Supplier<Boolean> m_CollisionAvoidanceSupplier;
-
-    public Intake(Supplier<Boolean> CollisionAvoidanceSupplier) {
+    public Intake() {
         super(new ProfiledPIDController(
             Constants.Intake.P, 
             0,
             0,
             new TrapezoidProfile.Constraints(8, 6.5)) //TODO: Tune
         );
-
-        m_CollisionAvoidanceSupplier = CollisionAvoidanceSupplier;
     }
 
     public void requestGoal(Setpoints DesiredPosition) {
