@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.Map;
+
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -14,6 +16,34 @@ import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
+
+    public final class Intake {
+        public static final int MOTOR_ID_0 = 11; //TODO: Needs the ID of the Motor
+        public static final int MOTOR_ID_1 = 10; //TODO: Needs the ID of the Motor
+
+        public static final double P = 20; //TODO
+        public static final double MOTOR_VOTAGE_1 = 1.2; //TODO get a voltage
+
+        public static final double CURRENT_THRESHOLD = 0.0; //TODO get a threshold.
+
+        public static final double INTAKE_DEPLOY_SETPOINT = 0.1; // TODO: Tune INTAKE_DEPLOY setpoint.
+        public static final double INTAKE_STOW_SETPOINT = 2.3; // TODO: Tune INTAKE_STOW setpoint.
+
+        public enum Setpoints {
+            DEPLOY,
+            STOW,
+            OUT_OF_WAY
+        }
+
+        public static final Map<Setpoints, Double> intakeSetpoints = Map.of(
+            Setpoints.DEPLOY,
+            0.15,
+            Setpoints.STOW,
+            2.4,
+            Setpoints.OUT_OF_WAY,
+            2.0
+        );
+    }
 
     public static final class Swerve {
         public static final int pigeonID = 1;

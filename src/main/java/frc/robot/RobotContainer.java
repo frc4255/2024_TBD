@@ -1,5 +1,8 @@
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -9,6 +12,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Intake;
+
+
+import frc.robot.subsystems.Vision.Camera;
+import frc.robot.subsystems.Vision.VisionSubystem;
+import frc.robot.subsystems.shooter.Pivot;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -18,22 +27,30 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(1);
+    private final Joystick driver = new Joystick(0);
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
+    /* Cameras
+    private final Camera rightCam = new Camera(new PhotonCamera("rightCam"), new Transform3d()); //TODO: Get right camera transform
+    private final Camera leftCam = new Camera(new PhotonCamera("leftCam"), new Transform3d()); //TODO: Get left camera transform
     /* Driver Buttons */
 
     /* TODO: Change to driver preference */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value); 
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
+    private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+    private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
 
+    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
+    private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
+    private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
+    private final Intake s_Intake = new Intake();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -47,10 +64,14 @@ public class RobotContainer {
             )
         );
 
+
         // Configure the button bindings
         configureButtonBindings();
     }
 
+    public void disableAllPIDs() {
+        s_Intake.disable();
+    }
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
      * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -60,6 +81,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        runIntake.whileTrue(new ToggleIntake(s_Intake));
+        homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()));
     }
 
     /**

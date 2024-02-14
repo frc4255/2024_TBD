@@ -5,6 +5,7 @@ import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
@@ -12,6 +13,8 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 
+import frc.robot.subsystems.Vision.VisionSubystem;
+import frc.robot.subsystems.Vision.VisionSubystem.PoseAndTimestamp;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -24,8 +27,11 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     public AHRS gyro;
 
-    public Swerve() {
+    private VisionSubystem vision;
+
+    public Swerve(VisionSubystem vision) {
         gyro = new AHRS();
+        this.vision = vision;
         /*
         * Keep this commented until when we migrate to the pidgeon
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -45,7 +51,9 @@ public class Swerve extends SubsystemBase {
                 Constants.Swerve.SWERVE_KINEMATICS,
                 getGyroYaw(),
                 getModulePositions(),
-                new Pose2d()
+                new Pose2d(),
+                VecBuilder.fill(0.1, 0.1, 0.1),
+                VecBuilder.fill(0.5, 0.5, 0.5)
             );
     }
 
@@ -129,6 +137,13 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic(){
         m_SwervePoseEstimator.update(getGyroYaw(), getModulePositions());
+
+        for (PoseAndTimestamp poseAndTimestamp : vision.getResults()) {
+            m_SwervePoseEstimator.addVisionMeasurement(
+                poseAndTimestamp.getPose(),
+                poseAndTimestamp.getTimestamp()
+            );
+        }
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
