@@ -21,6 +21,12 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
 
+    public final class FlyWheel {
+        public static final int MOTOR_ID_0 = 0; //TODO get motor ID
+        public static final int MOTOR_ID_1 = 0; //TODO get motor ID
+
+    }
+
     public static final class Hopper {
         public static final int MOTOR_ID_0 = 0;
         public static final int MOTOR_ID_1 = 1; 

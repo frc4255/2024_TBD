@@ -17,7 +17,6 @@ import frc.robot.subsystems.Intake;
 
 import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.Vision.VisionSubystem;
-import frc.robot.subsystems.shooter.Pivot;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,7 +33,7 @@ public class RobotContainer {
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-    /* Cameras */
+    /* Cameras
     private final Camera rightCam = new Camera(new PhotonCamera("rightCam"), new Transform3d()); //TODO: Get right camera transform
     private final Camera leftCam = new Camera(new PhotonCamera("leftCam"), new Transform3d()); //TODO: Get left camera transform
     /* Driver Buttons */
@@ -47,10 +46,9 @@ public class RobotContainer {
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
     /* Subsystems */
 
-    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{rightCam, leftCam});
+    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
-    private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
-    private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
+    private final Intake s_Intake = new Intake();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
