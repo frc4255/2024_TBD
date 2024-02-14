@@ -29,7 +29,7 @@ public class Intake extends ProfiledPIDSubsystem {
             Constants.Intake.P, 
             0,
             0,
-            new TrapezoidProfile.Constraints(8, 6.5)) //TODO: Tune
+            new TrapezoidProfile.Constraints(9, 10)) //TODO: Tune
         );
     }
 
@@ -73,7 +73,7 @@ public class Intake extends ProfiledPIDSubsystem {
 
     public void runIntake() {
         /* TODO: Find optimal speed. Start low so that we don't kill our single note lmao. */
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.5));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.9));
     }
 
     public void stopIntake() {
