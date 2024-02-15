@@ -17,7 +17,6 @@ import frc.robot.subsystems.Intake;
 
 import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.Vision.VisionSubystem;
-import frc.robot.subsystems.shooter.Pivot;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -49,7 +48,6 @@ public class RobotContainer {
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
-    private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
     private final Intake s_Intake = new Intake();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
