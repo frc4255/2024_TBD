@@ -14,11 +14,11 @@ public class RunFlyWheel extends Command {
 
     @Override
     public void initialize() {
- 
+        s_FlyWheel.run();
     }
 
     @Override
     public void end(boolean interrupted) {
-        
+        s_FlyWheel.stop();
     }
 }

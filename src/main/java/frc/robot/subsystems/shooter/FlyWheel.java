@@ -15,12 +15,12 @@ public class FlyWheel extends SubsystemBase {
 
     boolean readyToShoot = false;
 
-    /* Handled by Command */
-    boolean isRunning = false;
-
     public FlyWheel() {;
         m_RightFlywheelMotor = new TalonFX(Constants.FlyWheel.MOTOR_ID_0);
         m_LeftFlywheelMotor = new TalonFX(Constants.FlyWheel.MOTOR_ID_1);
+
+        m_RightPIDController.setTolerance(100);
+        m_LeftPIDController.setTolerance(100);
     }
     
     public void run() {
@@ -60,20 +60,16 @@ public class FlyWheel extends SubsystemBase {
         m_LeftFlywheelMotor.stopMotor();
     }
 
-    public void setIsRunning(boolean isRunning) {
-        this.isRunning = isRunning;
-    }
-
-    public boolean getIsRunning() {
-        return isRunning;
-    }
-
     public boolean isReady() {
-        if (m_LeftFlywheelMotor.getVelocity().getValueAsDouble() >= 1320 && 
-        m_RightFlywheelMotor.getVelocity().getValueAsDouble() >= 2000) {
-            readyToShoot = true;
-        }
+        return m_LeftPIDController.atSetpoint() && m_RightPIDController.atSetpoint();
+    }
 
-        return readyToShoot;
+    @Override
+    public void periodic() {
+        if (isReady()) {
+            readyToShoot = true;
+        } else {
+            readyToShoot = false;
+        }
     }
 }

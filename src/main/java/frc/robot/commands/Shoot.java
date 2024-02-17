@@ -3,14 +3,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.Intake;
-import frc.robot.commands.MoveIntakeOutOfWay;
 
 public class Shoot extends Command {
     private Pivot s_Pivot;
     private FlyWheel s_FlyWheel;
     private Hopper s_Hopper;
     private Intake s_Intake;
-    private MoveIntakeOutOfWay s_MoveIntakeOutOfWay;
 
     public Shoot(Pivot s_Pivot, FlyWheel s_FlyWheel, Hopper s_Hopper, Intake s_Intake) {
         this.s_Pivot = s_Pivot;
@@ -23,11 +21,16 @@ public class Shoot extends Command {
 
     @Override
     public void initialize() {
+        s_Pivot.enable();
+
         s_FlyWheel.run();
         s_Pivot.alignPivotToSpeaker();
+    }
 
-        if (s_FlyWheel.isReady() && s_Hopper.hasGamePeice()) {
-            s_Hopper.setMotorsSpeed(8, 8);
+    @Override
+    public void execute() {
+        if (s_FlyWheel.isReady()) {
+            s_Hopper.setMotorsSpeed(0.5, 0.5);
         }
     }
 
@@ -35,7 +38,6 @@ public class Shoot extends Command {
     public void end(boolean interrupted) {
       s_FlyWheel.idle();
       s_Hopper.stop();
-      s_Pivot.stopPivot();
-      
+      s_Pivot.movePivotToHome();
     }
 }

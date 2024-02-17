@@ -117,6 +117,10 @@ public class Pivot extends ProfiledPIDSubsystem {
         setGoal(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t));
     }
 
+    public void movePivotToHome() {
+        setGoal(0.01);
+    }
+    
     public void movePivotTowardsGoal() {
         m_pivotMotor.setControl(m_pivotRequest);
     }

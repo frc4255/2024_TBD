@@ -55,8 +55,6 @@ public class RobotContainer {
     private final Hopper s_Hopper = new Hopper();
     private final FlyWheel s_FlyWheel = new FlyWheel();
 
-    private final RunFlyWheel s_RunFlyWheel = new RunFlyWheel(s_FlyWheel);
-    private final Shoot s_Shoot = new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake);
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         s_Swerve.setDefaultCommand(
@@ -89,8 +87,8 @@ public class RobotContainer {
         runIntake.whileTrue(new ToggleIntake(s_Intake));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()));
 
-        shootNote.onTrue(s_Shoot);
-        RunFlyWheel.whileTrue(s_RunFlyWheel);
+        shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake));
+        RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
     }
 
     /**
