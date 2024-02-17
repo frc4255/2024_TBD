@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import java.lang.Math;
 import java.util.function.Supplier;
 
-public class Intake extends ProfiledPIDSubsystem implements Supplier<Boolean>{
+public class Intake extends ProfiledPIDSubsystem {
     private final TalonFX m_IntakeArmMotor = new TalonFX(Constants.Intake.MOTOR_ID_0);
     private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.MOTOR_ID_1);
 
@@ -38,11 +38,6 @@ public class Intake extends ProfiledPIDSubsystem implements Supplier<Boolean>{
         this.m_ShouldMoveIntake = m_ShouldMoveIntake;
     }
 
-    @Override
-    public Boolean get() {
-        // Use the BooleanSupplier to provide the boolean value dynamically
-        return m_ShouldMoveIntake.getAsBoolean();
-    }
 
     public void requestGoal(Setpoints DesiredPosition) {
 
@@ -126,5 +121,12 @@ public class Intake extends ProfiledPIDSubsystem implements Supplier<Boolean>{
         SmartDashboard.putNumber("Error", super.getController().getPositionError());
         SmartDashboard.putNumber("Motor supply voltage", m_IntakeArmMotor.getSupplyVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Arm joint position", getArmPosition());
+
+
+        boolean shouldMoveIntake = m_ShouldMoveIntake.get();
+
+        if (shouldMoveIntake) {
+            setGoal(Constants.Intake.INTAKE_DEPLOY_SETPOINT);
+        }
     }
 }

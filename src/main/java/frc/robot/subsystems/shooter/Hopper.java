@@ -7,9 +7,10 @@ import com.revrobotics.ColorSensorV3.ProximitySensorMeasurementRate;
 import com.revrobotics.ColorSensorV3.ProximitySensorResolution;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Hopper {
+public class Hopper extends SubsystemBase{
 
     private final I2C.Port i2cPort = I2C.Port.kOnboard; // Change the I2C port below to match the connection of your color sensor 🤓🤓🤓
 
@@ -45,6 +46,11 @@ public class Hopper {
         m_HopperMotor1.setControl(m_HopperMotor1Request.withOutput(speed1));
     }
 
+    public void stop() {
+        m_HopperMotor0.stopMotor();
+        m_HopperMotor1.stopMotor();
+    }
+
     public double getMotor0Current () {
         return m_HopperMotor0.getStatorCurrent().getValueAsDouble();
     }    
@@ -67,7 +73,7 @@ public class Hopper {
     public boolean hasGamePeice() {
         return m_hasGamePiece;
     }
-    
+
     public void periodic() {
        checkForGamePiece();
     }
