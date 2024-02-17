@@ -21,11 +21,12 @@ public class Intake extends ProfiledPIDSubsystem {
     private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.MOTOR_ID_1);
 
     private boolean m_isHomed = false;
+    private boolean m_isRunning = false;
 
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
     private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
 
-    private Supplier<Boolean> m_ShouldMoveIntake;
+    private Supplier<Boolean> m_CollisionAvoidanceSupplier;
 
     public Intake(Supplier<Boolean> m_ShouldMoveIntake) {
         super(new ProfiledPIDController(
@@ -35,7 +36,7 @@ public class Intake extends ProfiledPIDSubsystem {
             new TrapezoidProfile.Constraints(8, 6.5)) //TODO: Tune
         );
 
-        this.m_ShouldMoveIntake = m_ShouldMoveIntake;
+        this.m_CollisionAvoidanceSupplier = m_ShouldMoveIntake;
     }
 
 
@@ -51,14 +52,13 @@ public class Intake extends ProfiledPIDSubsystem {
 
         switch (DesiredPosition) {
             case DEPLOY:
-                setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
+                m_isRunning = true;
                 break;
             case STOW:
-                setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
+                m_isRunning = false;
                 break;
-            case OUT_OF_WAY:
-                setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
-                break;
+            default:
+                m_isRunning = false;
         }
     }
 
@@ -123,10 +123,12 @@ public class Intake extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("Arm joint position", getArmPosition());
 
 
-        boolean shouldMoveIntake = m_ShouldMoveIntake.get();
-
-        if (shouldMoveIntake) {
-            setGoal(Constants.Intake.INTAKE_DEPLOY_SETPOINT);
+        if (m_CollisionAvoidanceSupplier.get()) {
+            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
+        } else if (m_isRunning) {
+            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
+        } else {
+            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
         }
     }
 }
