@@ -63,6 +63,11 @@ public class Hopper {
             m_hasGamePiece = true;
         }
     }
+
+    public boolean hasGamePeice() {
+        return m_hasGamePiece;
+    }
+    
     public void periodic() {
        checkForGamePiece();
     }

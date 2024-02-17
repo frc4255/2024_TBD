@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import java.lang.Math;
 import java.util.function.Supplier;
 
-public class Intake extends ProfiledPIDSubsystem {
+public class Intake extends ProfiledPIDSubsystem implements Supplier<Boolean>{
     private final TalonFX m_IntakeArmMotor = new TalonFX(Constants.Intake.MOTOR_ID_0);
     private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.MOTOR_ID_1);
 
@@ -25,13 +25,23 @@ public class Intake extends ProfiledPIDSubsystem {
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
     private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
 
-    public Intake() {
+    private Supplier<Boolean> m_ShouldMoveIntake;
+
+    public Intake(Supplier<Boolean> m_ShouldMoveIntake) {
         super(new ProfiledPIDController(
             Constants.Intake.P, 
             0,
             0,
             new TrapezoidProfile.Constraints(8, 6.5)) //TODO: Tune
         );
+
+        this.m_ShouldMoveIntake = m_ShouldMoveIntake;
+    }
+
+    @Override
+    public Boolean get() {
+        // Use the BooleanSupplier to provide the boolean value dynamically
+        return m_ShouldMoveIntake.getAsBoolean();
     }
 
     public void requestGoal(Setpoints DesiredPosition) {

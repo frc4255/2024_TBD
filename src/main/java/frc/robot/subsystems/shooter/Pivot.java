@@ -143,6 +143,10 @@ public class Pivot extends ProfiledPIDSubsystem {
     public void stopPivot() {
         m_pivotMotor.stopMotor();
     }
+
+    public boolean shouldMoveIntake() {
+        return (super.getController().getGoal().position) >= 0.481;
+    }
     @Override
     public void periodic() {
     }

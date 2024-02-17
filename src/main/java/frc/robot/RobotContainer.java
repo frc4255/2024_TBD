@@ -12,8 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Intake;
-
+import frc.robot.subsystems.shooter.*;
 
 import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.Vision.VisionSubystem;
@@ -48,8 +47,9 @@ public class RobotContainer {
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
-    private final Intake s_Intake = new Intake();
-
+    private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
+    private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
+    
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         s_Swerve.setDefaultCommand(
