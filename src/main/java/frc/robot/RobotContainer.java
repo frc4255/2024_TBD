@@ -12,8 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Intake;
-
+import frc.robot.subsystems.shooter.*;
 
 import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.Vision.VisionSubystem;
@@ -44,11 +43,18 @@ public class RobotContainer {
 
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
+
+    private final JoystickButton shootNote = new JoystickButton(driver, XboxController.Button.kA.value);
+    private final JoystickButton RunFlyWheel = new JoystickButton(driver, XboxController.Button.kB.value);
     /* Subsystems */
 
-    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
+    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
-    private final Intake s_Intake = new Intake();
+    private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
+
+    private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
+    private final Hopper s_Hopper = new Hopper();
+    private final FlyWheel s_FlyWheel = new FlyWheel();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -81,6 +87,9 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         runIntake.whileTrue(new ToggleIntake(s_Intake));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()));
+
+        shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake));
+        RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
     }
 
     /**
