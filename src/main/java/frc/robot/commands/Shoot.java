@@ -55,9 +55,6 @@ public class Shoot extends Command {
             Rotation2d.fromRadians(
                 Math.toRadians(
                     m_drivetrainPID.calculate(s_Swerve.getHeading().getDegrees(), Math.atan2(speakerPose.getY() - robotPose.getX(), speakerPose.getX() - robotPose.getX())))));
-        
-        m_drivetrainPID.calculate(s_Swerve.getHeading().getDegrees(), Math.atan2(speakerPose.getY() - robotPose.getX(), speakerPose.getX() - robotPose.getX()));
-
 
         if (s_FlyWheel.isReady()) {
             s_Hopper.setMotorsSpeed(0.5, 0.5);
