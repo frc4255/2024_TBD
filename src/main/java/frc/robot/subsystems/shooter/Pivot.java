@@ -74,12 +74,13 @@ public class Pivot extends ProfiledPIDSubsystem {
     }
 
     private List<Map.Entry<Double, Double>> getClosestValues(double dist) {
-        Map.Entry<Double, Double> minValue = null;
+        Map.Entry<Double, Double> minValue = null; //TODO: Initialize this to something to avoid any chance of a null pointer exception
         Map.Entry<Double, Double> maxValue = null;
 
         List<Map.Entry<Double, Double>> entries =
             new ArrayList<>(ShooterConstants.LOOKUP_TABLE.entrySet());
 
+        /* TODO: Edit this to account for if the list is unordered */
         for (Map.Entry<Double, Double> entry : entries) {
             if (entry.getKey() >= dist) {
                 maxValue = entry;
@@ -117,6 +118,29 @@ public class Pivot extends ProfiledPIDSubsystem {
         setGoal(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t));
     }
 
+    public void alignPivotToGivenDistance(double distance) {
+        /* Make sure we are within the max range */
+        if (!inRange(distance)) {
+            return;
+        }
+
+        /* 
+            * Get two Hashmaps containing the two maps that surround our current distance
+            * from speaker
+        */
+        List<Map.Entry<Double, Double>> startAndEndDist = getClosestValues(distance);
+        Map.Entry<Double, Double> startDist = startAndEndDist.get(0);
+        Map.Entry<Double, Double> endDist = startAndEndDist.get(1);
+
+        /* Get how far between the two values we are */
+        double t = ((distance - startDist.getKey())) / (endDist.getKey() - startDist.getKey());
+
+        /* 
+            * Once we have all the information we need, we can perform linear interpolation between
+            * the two values 
+        */
+        setGoal(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t));
+    }
     public void movePivotToHome() {
         setGoal(0.01);
     }
