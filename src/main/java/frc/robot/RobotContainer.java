@@ -87,7 +87,9 @@ public class RobotContainer {
         runIntake.whileTrue(new ToggleIntake(s_Intake));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()));
 
-        shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake));
+        shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
+            () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
+            
         RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
     }
 
