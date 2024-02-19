@@ -63,6 +63,9 @@ public final class Constants {
         );
     }
 
+    public static final class DrivetrainPID {
+        public static final double DRIVETRAIN_P = 0.0; //TODO test and find a good value for P
+    }
     public static final class Swerve {
         public static final int pigeonID = 1;
 
