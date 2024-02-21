@@ -14,24 +14,31 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
 import java.lang.Math;
+import java.util.function.Supplier;
 
 public class Intake extends ProfiledPIDSubsystem {
     private final TalonFX m_IntakeArmMotor = new TalonFX(Constants.Intake.MOTOR_ID_0);
     private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.MOTOR_ID_1);
 
     private boolean m_isHomed = false;
+    private boolean m_isRunning = false;
 
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
     private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
 
-    public Intake() {
+    private Supplier<Boolean> m_CollisionAvoidanceSupplier;
+
+    public Intake(Supplier<Boolean> m_ShouldMoveIntake) {
         super(new ProfiledPIDController(
             Constants.Intake.P, 
             0,
             0,
             new TrapezoidProfile.Constraints(9, 10)) //TODO: Tune
         );
+
+        this.m_CollisionAvoidanceSupplier = m_ShouldMoveIntake;
     }
+
 
     public void requestGoal(Setpoints DesiredPosition) {
 
@@ -45,14 +52,13 @@ public class Intake extends ProfiledPIDSubsystem {
 
         switch (DesiredPosition) {
             case DEPLOY:
-                setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
+                m_isRunning = true;
                 break;
             case STOW:
-                setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
+                m_isRunning = false;
                 break;
-            case OUT_OF_WAY:
-                setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
-                break;
+            default:
+                m_isRunning = false;
         }
     }
 
@@ -73,7 +79,7 @@ public class Intake extends ProfiledPIDSubsystem {
 
     public void runIntake() {
         /* TODO: Find optimal speed. Start low so that we don't kill our single note lmao. */
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.9));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.75));
     }
 
     public void stopIntake() {
@@ -115,5 +121,14 @@ public class Intake extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("Error", super.getController().getPositionError());
         SmartDashboard.putNumber("Motor supply voltage", m_IntakeArmMotor.getSupplyVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Arm joint position", getArmPosition());
+
+
+        if (m_CollisionAvoidanceSupplier.get()) {
+            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
+        } else if (m_isRunning) {
+            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
+        } else {
+            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
+        }
     }
 }

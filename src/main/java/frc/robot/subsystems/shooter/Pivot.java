@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -43,6 +44,8 @@ public class Pivot extends ProfiledPIDSubsystem {
         ); //TODO: Tune
 
         this.m_PoseSupplier = m_PoseSupplier;
+
+        m_pivotMotor.setNeutralMode(NeutralModeValue.Brake);
     }
     
     @Override
@@ -117,6 +120,10 @@ public class Pivot extends ProfiledPIDSubsystem {
         setGoal(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t));
     }
 
+    public void movePivotToHome() {
+        setGoal(0.01);
+    }
+    
     public void movePivotTowardsGoal() {
         m_pivotMotor.setControl(m_pivotRequest);
     }
@@ -142,6 +149,10 @@ public class Pivot extends ProfiledPIDSubsystem {
 
     public void stopPivot() {
         m_pivotMotor.stopMotor();
+    }
+
+    public boolean shouldMoveIntake() {
+        return (super.getController().getGoal().position) >= 0.481;
     }
     @Override
     public void periodic() {

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import java.util.Map;
 
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -17,6 +19,12 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
 
+    public final class FlyWheel {
+        public static final int MOTOR_ID_0 = 40; //TODO get motor ID
+        public static final int MOTOR_ID_1 = 41; //TODO get motor ID
+
+    }
+
     public final class Intake {
         public static final int MOTOR_ID_0 = 11; //TODO: Needs the ID of the Motor
         public static final int MOTOR_ID_1 = 10; //TODO: Needs the ID of the Motor
@@ -26,7 +34,7 @@ public final class Constants {
 
         public static final double CURRENT_THRESHOLD = 0.0; //TODO get a threshold.
 
-        public static final double INTAKE_DEPLOY_SETPOINT = 0.1; // TODO: Tune INTAKE_DEPLOY setpoint.
+        public static final double INTAKE_DEPLOY_SETPOINT = 0.25; // TODO: Tune INTAKE_DEPLOY setpoint.
         public static final double INTAKE_STOW_SETPOINT = 2.3; // TODO: Tune INTAKE_STOW setpoint.
 
         public enum Setpoints {
@@ -45,6 +53,9 @@ public final class Constants {
         );
     }
 
+    public static final class DrivetrainPID {
+        public static final double DRIVETRAIN_P = 0.0; //TODO test and find a good value for P
+    }
     public static final class Swerve {
         public static final int pigeonID = 1;
 

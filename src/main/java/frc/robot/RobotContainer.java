@@ -12,12 +12,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Intake;
-
+import frc.robot.subsystems.shooter.*;
 
 import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.Vision.VisionSubystem;
-import frc.robot.subsystems.shooter.Pivot;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -41,16 +39,23 @@ public class RobotContainer {
 
     /* TODO: Change to driver preference */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value); 
-    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kStart.value);
 
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
+
+    private final JoystickButton shootNote = new JoystickButton(driver, XboxController.Button.kA.value);
+    private final JoystickButton RunFlyWheel = new JoystickButton(driver, XboxController.Button.kB.value);
+
+    private final JoystickButton runHopper = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     /* Subsystems */
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
-    private final Intake s_Intake = new Intake();
+    private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
+    private final Hopper s_Hopper = new Hopper();
+    private final FlyWheel s_FlyWheel = new FlyWheel();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -81,8 +86,15 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        runIntake.whileTrue(new ToggleIntake(s_Intake));
+        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()));
+
+        shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
+            () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
+            
+        RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
+        runHopper.toggleOnTrue(new RunHopperForShot(s_Hopper));
+
     }
 
     /**
