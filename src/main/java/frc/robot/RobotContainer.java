@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.shooter.*;
@@ -45,7 +45,10 @@ public class RobotContainer {
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
 
     private final JoystickButton shootNote = new JoystickButton(driver, XboxController.Button.kA.value);
-    private final JoystickButton RunFlyWheel = new JoystickButton(driver, XboxController.Button.kB.value);
+    private final JoystickButton RunFlyWheelBind = new JoystickButton(driver, XboxController.Button.kB.value);
+
+    private final POVButton RunHopper = new POVButton(driver, 180);
+    private final POVButton RunPivot = new POVButton(driver, 0);
     /* Subsystems */
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
@@ -90,7 +93,10 @@ public class RobotContainer {
         shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
             () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
             
-        RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
+        RunFlyWheelBind.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
+
+        RunHopper.whileTrue(new RunHopper(s_Hopper));
+        RunPivot.whileTrue(new RunPivot(s_Pivot));
     }
 
     /**
