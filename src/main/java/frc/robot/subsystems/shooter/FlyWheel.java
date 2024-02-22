@@ -1,9 +1,12 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.shooter.*;
+
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class FlyWheel extends SubsystemBase {
@@ -12,6 +15,8 @@ public class FlyWheel extends SubsystemBase {
 
     private final TalonFX m_RightFlywheelMotor;
     private final TalonFX m_LeftFlywheelMotor;
+
+    private VoltageOut m_rightRequest = new VoltageOut(0.0);
 
     boolean readyToShoot = false;
 
@@ -24,18 +29,28 @@ public class FlyWheel extends SubsystemBase {
         m_LeftPIDController.setTolerance(100);
     }
     
+    public double getRightFlywheelRPM() {
+        return (m_RightFlywheelMotor.getVelocity().getValueAsDouble() * 60) / 0.8;
+    }
+
+    public double getLeftFlywheelRPM() {
+        return (m_LeftFlywheelMotor.getVelocity().getValueAsDouble() * 60) / 0.8;
+    }
+
     public void run() {
-        m_RightFlywheelMotor.setVoltage(
-            m_RightPIDController.calculate(
-                m_RightFlywheelMotor.getVelocity().getValueAsDouble(),
-                1500
+        m_RightFlywheelMotor.setControl(
+            m_rightRequest.withOutput(
+                m_RightPIDController.calculate(
+                    getRightFlywheelRPM(),
+                    5200
+                )
             )
         );
 
         m_LeftFlywheelMotor.setVoltage(
             m_LeftPIDController.calculate(
-                m_RightFlywheelMotor.getVelocity().getValueAsDouble(), 
-                1000
+                getLeftFlywheelRPM(), 
+                5000
             )
         );
     }
@@ -43,14 +58,14 @@ public class FlyWheel extends SubsystemBase {
     public void idle() {
         m_RightFlywheelMotor.setVoltage(
             m_RightPIDController.calculate(
-                m_RightFlywheelMotor.getVelocity().getValueAsDouble(),
+                getRightFlywheelRPM(),
                 800
             )
         );
 
         m_LeftFlywheelMotor.setVoltage(
             m_LeftPIDController.calculate(
-                m_RightFlywheelMotor.getVelocity().getValueAsDouble(), 
+                getLeftFlywheelRPM(), 
                 528
             )
         );
@@ -67,6 +82,8 @@ public class FlyWheel extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+        SmartDashboard.putNumber("Flywheel velocity rpm", getRightFlywheelRPM());
         if (isReady()) {
             readyToShoot = true;
         } else {

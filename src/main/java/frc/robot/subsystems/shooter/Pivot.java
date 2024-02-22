@@ -15,10 +15,15 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.math.MathUtil;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
 import frc.robot.Constants;
@@ -26,7 +31,12 @@ import frc.robot.FieldLayout;
 import frc.robot.FieldLayout.FieldPiece.POI;
 
 public class Pivot extends ProfiledPIDSubsystem {
-
+    private ShuffleboardTab tab = Shuffleboard.getTab("Pivot");
+    private GenericEntry PivotAdjuster = tab.add("Pivot setpoint adjuster", 0)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", 0, "max", 1)).getEntry();
+    private GenericEntry pivotAngle = tab.add("Angle", -1).getEntry();
+    private GenericEntry readFromPivotAdjuster = tab.add("Read angle", -1).getEntry();
     private Supplier<Pose2d> m_PoseSupplier;
     
     private final TalonFX m_pivotMotor = new TalonFX(ShooterConstants.PIVOT_MOTOR_ID);
@@ -56,6 +66,13 @@ public class Pivot extends ProfiledPIDSubsystem {
     @Override
     protected void useOutput(double output, TrapezoidProfile.State setpoint) {
         m_pivotMotor.setControl(m_pivotRequest.withOutput(output));
+        SmartDashboard.putNumber("Pivot Controller Out", output);
+    }
+
+    public void setPivotSetpoint() {
+        double pivotAdjuster = PivotAdjuster.getDouble(0);
+        SmartDashboard.putNumber("adjuster", pivotAdjuster);
+        setGoal(pivotAdjuster);
     }
 
     public double getDistance() {
@@ -152,9 +169,18 @@ public class Pivot extends ProfiledPIDSubsystem {
     }
 
     public boolean shouldMoveIntake() {
-        return (super.getController().getGoal().position) >= 0.481;
+        return (super.getController().getGoal().position) >= 0.2;
     }
     @Override
     public void periodic() {
+        super.periodic();
+
+        SmartDashboard.putNumber("Pivot Angle", getMeasurement());
+        SmartDashboard.putNumber("Read desired angle", PivotAdjuster.get().getDouble());
+        SmartDashboard.putNumber("Pivot Current", m_pivotMotor.getStatorCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("PID Error Pivot", super.getController().getPositionError());
+        SmartDashboard.putNumber("Pivot goal", getController().getGoal().position);
+       // tab.add("Read Angle", PivotAdjuster.get().getDouble());
+       // tab.add("Pivot angle", getMeasurement());
     }
 }
