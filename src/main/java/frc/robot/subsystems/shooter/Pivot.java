@@ -97,19 +97,17 @@ public class Pivot extends ProfiledPIDSubsystem {
     }
 
     private List<Map.Entry<Double, Double>> getClosestValues(double dist) {
-        Map.Entry<Double, Double> minValue = null; //TODO: Initialize this to something to avoid any chance of a null pointer exception
+        Map.Entry<Double, Double> minValue = null;
         Map.Entry<Double, Double> maxValue = null;
-
-        List<Map.Entry<Double, Double>> entries =
-            new ArrayList<>(ShooterConstants.LOOKUP_TABLE.entrySet());
-
-        /* TODO: Edit this to account for if the list is unordered */
-        for (Map.Entry<Double, Double> entry : entries) {
-            if (entry.getKey() >= dist) {
-                maxValue = entry;
-                break;
+    
+        for (Map.Entry<Double, Double> entry : ShooterConstants.LOOKUP_TABLE.entrySet()) {
+            double key = entry.getKey();
+            if (key <= dist && (minValue == null || key > minValue.getKey())) {
+                minValue = entry;
             }
-            minValue = entry;
+            if (key >= dist && (maxValue == null || key < maxValue.getKey())) {
+                maxValue = entry;
+            }
         }
 
         return Arrays.asList(minValue, maxValue);
@@ -138,7 +136,7 @@ public class Pivot extends ProfiledPIDSubsystem {
             * Once we have all the information we need, we can perform linear interpolation between
             * the two values 
         */
-        setGoal(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t));
+        setGoal(MathUtil.clamp(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t), 0.0, 0.7));
     }
 
     public void alignPivotToGivenDistance(double distance) {
@@ -202,6 +200,7 @@ public class Pivot extends ProfiledPIDSubsystem {
     public void periodic() {
         super.periodic();
 
+        SmartDashboard.putNumber("Distance from Target", getDistance());
         SmartDashboard.putNumber("Pivot Angle", getMeasurement());
         SmartDashboard.putNumber("Read desired angle", PivotAdjuster.get().getDouble());
         SmartDashboard.putNumber("Pivot Current", m_pivotMotor.getStatorCurrent().getValueAsDouble());
