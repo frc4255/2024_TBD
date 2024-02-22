@@ -78,7 +78,6 @@ public class Intake extends ProfiledPIDSubsystem {
     }
 
     public void runIntake() {
-        /* TODO: Find optimal speed. Start low so that we don't kill our single note lmao. */
         m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.75));
     }
 
@@ -96,7 +95,6 @@ public class Intake extends ProfiledPIDSubsystem {
 
     public void startHomeSequence() {
         m_isHomed = false;
-        /* TODO: Find optimal voltage. */
         m_IntakeArmMotor.setControl(m_armJointRequest.withOutput(1.5));
     }
 
@@ -115,15 +113,16 @@ public class Intake extends ProfiledPIDSubsystem {
         /*SmartDashboard.putNumber("Arm joint position", getArmPosition());
         SmartDashboard.putNumber("PID Error", super.getController().getPositionError());
         SmartDashboard.putNumber("Intake motor out", m_IntakeMotor.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Intake stator current", m_IntakeMotor.getStatorCurrent().getValueAsDouble());*/
+        SmartDashboard.putNumber("Intake stator current", m_IntakeMotor.getStatorCurrent().getValueAsDouble());
 
         SmartDashboard.putNumber("Motor voltage", m_IntakeArmMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Error", super.getController().getPositionError());
         SmartDashboard.putNumber("Motor supply voltage", m_IntakeArmMotor.getSupplyVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Arm joint position", getArmPosition());
+        SmartDashboard.putNumber("Arm joint position", getArmPosition());*/
 
 
         if (m_CollisionAvoidanceSupplier.get()) {
+            enable();
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
         } else if (m_isRunning) {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));

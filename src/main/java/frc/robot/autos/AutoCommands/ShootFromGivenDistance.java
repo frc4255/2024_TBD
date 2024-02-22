@@ -43,6 +43,7 @@ public class ShootFromGivenDistance extends Command {
 
     @Override
     public boolean isFinished() {
-       return s_Hopper.hasGamePeice(); 
+        return false;
+       //return s_Hopper.hasGamePeice(); 
     }
 }

@@ -23,24 +23,24 @@ public class FivePiece extends SequentialCommandGroup {
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(
-                    new ToggleIntake(s_Intake).withTimeout(1), //TODO
+                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(1), //TODO
                     new ShootFromGivenDistance(1, 10, s_Pivot, s_Hopper, s_Flywheel),
-                    new ToggleIntake(s_Intake).withTimeout(1),
+                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(1),
                     new ShootFromGivenDistance(3, 0, s_Pivot, s_Hopper, s_Flywheel)
                 )
             ),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path1),
                 new SequentialCommandGroup(
-                    new ToggleIntake(s_Intake).withTimeout(1),
-                    new Shoot(s_Pivot, s_Flywheel, s_Hopper, s_Intake)
+                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(1)
+                    //new Shoot(s_Pivot, s_Flywheel, s_Hopper, s_Intake, s_Hopper)
                 )
             ),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path2),
                 new SequentialCommandGroup(
-                    new ToggleIntake(s_Intake).withTimeout(1),
-                    new Shoot(s_Pivot, s_Flywheel, s_Hopper, s_Intake)
+                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(1)
+                    //new Shoot(s_Pivot, s_Flywheel, s_Hopper, s_Intake)
                 )
             )
         );

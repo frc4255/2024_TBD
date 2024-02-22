@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.FivePiece;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -52,6 +53,9 @@ public class RobotContainer {
     private final JoystickButton runHopper = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
     private final JoystickButton adjustPivotManually = new JoystickButton(driver, XboxController.Button.kY.value);
+    
+    private final POVButton subwooferShot = new POVButton(driver, 90);
+    private final POVButton protectedShot = new POVButton(driver, 180);
     /* Subsystems */
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
@@ -93,6 +97,7 @@ public class RobotContainer {
     public void disableAllPIDs() {
         s_Intake.disable();
         s_Pivot.disable();
+        s_FlyWheel.stop();
     }
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
@@ -114,6 +119,8 @@ public class RobotContainer {
 
         adjustPivotManually.onTrue(new InstantCommand(() -> s_Pivot.enable()).andThen(new AdjustPivotSetpointManually(s_Pivot)));
 
+        subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot));
+        protectedShot.toggleOnTrue(new ProtectedShoot(s_Hopper, s_FlyWheel, s_Pivot));
     }
 
     /**

@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class FlyWheel extends SubsystemBase {
+    /* TODO: Might need D if it continues to oscillate  */
     PIDController m_RightPIDController = new PIDController(ShooterConstants.FLYWHEEL_P, 0, 0);
     PIDController m_LeftPIDController = new PIDController(ShooterConstants.FLYWHEEL_P, 0, 0);
 
@@ -19,6 +20,8 @@ public class FlyWheel extends SubsystemBase {
     private VoltageOut m_rightRequest = new VoltageOut(0.0);
 
     boolean readyToShoot = false;
+    boolean isRunning = false;
+    boolean stopped = true;
 
     public FlyWheel() {;
         m_RightFlywheelMotor = new TalonFX(Constants.FlyWheel.MOTOR_ID_0);
@@ -38,6 +41,11 @@ public class FlyWheel extends SubsystemBase {
     }
 
     public void run() {
+        isRunning = true;
+        stopped = false;
+    }
+
+    private void updateValues() {
         m_RightFlywheelMotor.setControl(
             m_rightRequest.withOutput(
                 m_RightPIDController.calculate(
@@ -55,7 +63,7 @@ public class FlyWheel extends SubsystemBase {
         );
     }
 
-    public void idle() {
+    private void updateIdle() {
         m_RightFlywheelMotor.setVoltage(
             m_RightPIDController.calculate(
                 getRightFlywheelRPM(),
@@ -71,9 +79,14 @@ public class FlyWheel extends SubsystemBase {
         );
     }
 
+    public void idle() {
+        isRunning = false;
+        stopped = false;
+    }
+
     public void stop() {
-        m_RightFlywheelMotor.stopMotor();
-        m_LeftFlywheelMotor.stopMotor();
+        stopped = true;
+        isRunning = false;
     }
 
     public boolean isReady() {
@@ -82,12 +95,25 @@ public class FlyWheel extends SubsystemBase {
 
     @Override
     public void periodic() {
+        
+        if (stopped) {
+            m_RightFlywheelMotor.stopMotor();
+            m_LeftFlywheelMotor.stopMotor();
+        } else if (isRunning) {
+            updateValues();
+        } else {
+            updateIdle();
+        }
 
-        SmartDashboard.putNumber("Flywheel velocity rpm", getRightFlywheelRPM());
+        SmartDashboard.putNumber("Right Flywheel rpm", getRightFlywheelRPM());
+        SmartDashboard.putNumber("Left Flywheel rpm", getLeftFlywheelRPM());
+
         if (isReady()) {
             readyToShoot = true;
         } else {
             readyToShoot = false;
         }
+
+        SmartDashboard.putBoolean("Ready to shoot", readyToShoot);
     }
 }

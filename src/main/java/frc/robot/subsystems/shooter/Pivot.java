@@ -69,6 +69,9 @@ public class Pivot extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("Pivot Controller Out", output);
     }
 
+    public void set(double goal) {
+        setGoal(goal);
+    }
     public void setPivotSetpoint() {
         double pivotAdjuster = PivotAdjuster.getDouble(0);
         SmartDashboard.putNumber("adjuster", pivotAdjuster);
