@@ -10,7 +10,8 @@ public class ShooterConstants {
     public static final double MAX_DISTANCE = 0;
     public static final Map<Double, Double> LOOKUP_TABLE = Map.of();
 
-    public static final double FLYWHEEL_P = 0.015; //TODO
+    public static final double RIGHT_FLYWHEEL_P = 0.001; //TODO
+    public static final double LEFT_FLYWHEEL_P = 0.001;
 
     public static final class Hopper {
         public static final int MOTOR_ID_0 = 20;

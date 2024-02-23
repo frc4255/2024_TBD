@@ -78,7 +78,7 @@ public class Intake extends ProfiledPIDSubsystem {
     }
 
     public void runIntake() {
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.75));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.9));
     }
 
     public void stopIntake() {
@@ -121,13 +121,18 @@ public class Intake extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("Arm joint position", getArmPosition());*/
 
 
+        SmartDashboard.putBoolean("Collision Avoidance", m_CollisionAvoidanceSupplier.get());
         if (m_CollisionAvoidanceSupplier.get()) {
             enable();
-            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
+            setGoal(2.0);
+            //setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
         } else if (m_isRunning) {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
         } else {
-            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
+            setGoal(2.0);
+           // setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
         }
+
+        SmartDashboard.putNumber("Intake PID error", getController().getPositionError());
     }
 }
