@@ -24,5 +24,8 @@ public class ToggleIntake extends Command {
         s_Intake.requestGoal(Setpoints.STOW);
         s_Intake.stopIntake();
     }
+
+    
+    
 }
 

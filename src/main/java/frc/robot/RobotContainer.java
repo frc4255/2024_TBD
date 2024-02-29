@@ -49,6 +49,7 @@ public class RobotContainer {
 
     private final POVButton RunHopper = new POVButton(driver, 180);
     private final POVButton RunPivot = new POVButton(driver, 0);
+    private final POVButton Climb = new POVButton(driver, 90);
     /* Subsystems */
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
@@ -57,6 +58,7 @@ public class RobotContainer {
     private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
     private final Hopper s_Hopper = new Hopper();
     private final FlyWheel s_FlyWheel = new FlyWheel();
+    private final Climber s_Climber = new Climber();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -97,6 +99,8 @@ public class RobotContainer {
 
         RunHopper.whileTrue(new RunHopper(s_Hopper));
         RunPivot.whileTrue(new RunPivot(s_Pivot));
+
+        Climb.toggleOnTrue(new Climb(s_Climber));
     }
 
     /**

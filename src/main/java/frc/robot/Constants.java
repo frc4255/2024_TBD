@@ -19,6 +19,28 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
 
+    public final class Climber {
+        public static final int CLIMBER_MOTOR_ID_0 = 0; //TODO get motor ID
+
+        public static final double CLIMBER_P = 0.0; //TODO get a kP value
+
+        public static final double CLIMBER_EXTENDED = 0.0; //TODO
+        public static final double CLIMBER_RETRACTED = 0.0; //TODO
+
+        public enum Setpoints {
+            EXTENDED,
+            RETRACTED
+        }
+
+        public static final Map<Setpoints, Double> climberSetpoints = Map.of(
+            Setpoints.EXTENDED,
+            0.0, //TODO get setpoint
+            Setpoints.RETRACTED,
+            0.0 //TODO get setpoint
+        );
+
+    }
+
     public final class FlyWheel {
         public static final int MOTOR_ID_0 = 0; //TODO get motor ID
         public static final int MOTOR_ID_1 = 0; //TODO get motor ID
