@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.FivePiece;
+import frc.robot.autos.TestAuton;
+import frc.robot.autos.ThreePiece;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.shooter.*;
@@ -50,12 +52,12 @@ public class RobotContainer {
     private final JoystickButton shootNote = new JoystickButton(driver, XboxController.Button.kA.value);
     private final JoystickButton RunFlyWheel = new JoystickButton(driver, XboxController.Button.kB.value);
 
-    private final JoystickButton runHopper = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton InverseToggleIntake = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
     private final JoystickButton adjustPivotManually = new JoystickButton(driver, XboxController.Button.kY.value);
     
     private final POVButton subwooferShot = new POVButton(driver, 90);
-    private final POVButton protectedShot = new POVButton(driver, 180);
+    private final POVButton protectedShot = new POVButton(driver, 270);
     /* Subsystems */
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
@@ -89,7 +91,9 @@ public class RobotContainer {
     private void configureAutoChooser() {
         autoChooser = new SendableChooser<>();
         autoChooser.addOption("5 Piece Auto", new FivePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper));
-        autoChooser.addOption("Do Nothing", null);
+        autoChooser.addOption("3 Piece", new ThreePiece(s_Swerve, s_Intake, s_Hopper, s_FlyWheel, s_Pivot));
+        autoChooser.addOption("Test", new TestAuton(s_Swerve, s_Hopper, s_FlyWheel, s_Pivot));
+        autoChooser.addOption("Do nothing", null);
 
         SmartDashboard.putData(autoChooser);
     }
@@ -115,7 +119,7 @@ public class RobotContainer {
             () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
             
         RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
-        runHopper.toggleOnTrue(new RunHopperForShot(s_Hopper));
+        InverseToggleIntake.whileTrue( new InverseToggleIntake(s_Intake, s_Hopper));
 
         adjustPivotManually.onTrue(new InstantCommand(() -> s_Pivot.enable()).andThen(new AdjustPivotSetpointManually(s_Pivot)));
 

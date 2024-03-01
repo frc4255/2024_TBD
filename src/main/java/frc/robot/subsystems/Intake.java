@@ -78,9 +78,12 @@ public class Intake extends ProfiledPIDSubsystem {
     }
 
     public void runIntake() {
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.9));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.7));
     }
 
+    public void InverserunIntake() {
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.7));
+    }
     public void stopIntake() {
         m_IntakeMotor.stopMotor();
     }
@@ -123,16 +126,15 @@ public class Intake extends ProfiledPIDSubsystem {
 
         SmartDashboard.putBoolean("Collision Avoidance", m_CollisionAvoidanceSupplier.get());
         if (m_CollisionAvoidanceSupplier.get()) {
-            enable();
+            m_enabled = true;
             setGoal(2.0);
             //setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
         } else if (m_isRunning) {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
         } else {
-            setGoal(2.0);
-           // setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
+            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
         }
 
-        SmartDashboard.putNumber("Intake PID error", getController().getPositionError());
+        SmartDashboard.putNumber("Intake motor current", m_IntakeMotor.getTorqueCurrent().getValueAsDouble());
     }
 }

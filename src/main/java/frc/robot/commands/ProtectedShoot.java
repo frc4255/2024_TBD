@@ -23,7 +23,7 @@ public class ProtectedShoot extends Command {
         s_Pivot.enable();
 
         s_Flywheel.run();
-        s_Pivot.set(0.45);
+        s_Pivot.set(0.42);
     }
 
     @Override
@@ -36,6 +36,7 @@ public class ProtectedShoot extends Command {
     @Override
     public void end(boolean interrupted) {
         s_Flywheel.idle();
+        s_Hopper.stop();
         s_Pivot.set(0.01);
     }
 }
