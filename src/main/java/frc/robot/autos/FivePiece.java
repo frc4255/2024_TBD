@@ -3,7 +3,11 @@ package frc.robot.autos;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
@@ -19,7 +23,14 @@ public class FivePiece extends SequentialCommandGroup {
         PathPlannerPath path1 = PathPlannerPath.fromPathFile("5 Piece Auton 2");
         PathPlannerPath path2 = PathPlannerPath.fromPathFile("5 Piece Auton 3");
 
+        Pose2d initialTransformedPose = 
+            DriverStation.getAlliance().get() == Alliance.Red ?
+            path0.flipPath().getPreviewStartingHolonomicPose() :
+            path0.getPreviewStartingHolonomicPose();
+
         addCommands(
+            new InstantCommand(() -> s_Swerve.setHeading(initialTransformedPose.getRotation())),
+            new InstantCommand(() -> s_Swerve.setPose(initialTransformedPose)),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(

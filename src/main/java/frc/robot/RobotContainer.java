@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.FivePiece;
 import frc.robot.autos.TestAuton;
-import frc.robot.autos.ThreePiece;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.shooter.*;
@@ -91,7 +90,6 @@ public class RobotContainer {
     private void configureAutoChooser() {
         autoChooser = new SendableChooser<>();
         autoChooser.addOption("5 Piece Auto", new FivePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper));
-        autoChooser.addOption("3 Piece", new ThreePiece(s_Swerve, s_Intake, s_Hopper, s_FlyWheel, s_Pivot));
         autoChooser.addOption("Test", new TestAuton(s_Swerve, s_Hopper, s_FlyWheel, s_Pivot));
         autoChooser.addOption("Do nothing", null);
 
