@@ -56,12 +56,12 @@ public final class Constants {
     public static final class Swerve {
         public static final int pigeonID = 1;
 
-        public static final COTSTalonFXSwerveConstants CHOSEN_MODULE =  //TODO: This must be tuned to specific robot
+        public static final COTSTalonFXSwerveConstants CHOSEN_MODULE = 
         COTSTalonFXSwerveConstants.SDS.MK4i.Falcon500(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L2);
 
         /* Drivetrain Constants */
-        public static final double TRACK_WIDTH = Units.inchesToMeters(21.73); //TODO: This must be tuned to specific robot
-        public static final double WHEEL_BASE = Units.inchesToMeters(21.73); //TODO: This must be tuned to specific robot
+        public static final double TRACK_WIDTH = Units.inchesToMeters(22.75);
+        public static final double WHEEL_BASE = Units.inchesToMeters(22.75);
         public static final double WHEEL_CIRCUMFERENCE = CHOSEN_MODULE.wheelCircumference;
 
         /* Swerve Kinematics 
@@ -105,13 +105,13 @@ public final class Constants {
         public static final double ANGLE_KD = CHOSEN_MODULE.angleKD;
 
         /* Drive Motor PID Values */
-        public static final double DRIVE_KP = 0.12; //TODO: This must be tuned to specific robot
+        public static final double DRIVE_KP = 0.12;
         public static final double DRIVE_KI = 0.0;
         public static final double DRIVE_KD = 0.0;
         public static final double DRIVE_KF = 0.0;
 
         /* Drive Motor Characterization Values From SYSID */
-        public static final double DRIVE_KS = 0.32; //TODO: This must be tuned to specific robot
+        public static final double DRIVE_KS = 0.32;
         public static final double DRIVE_KV = 1.51;
         public static final double DRIVE_KA = 0.27;
 
