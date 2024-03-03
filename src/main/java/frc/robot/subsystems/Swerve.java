@@ -24,6 +24,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.DoubleArrayEntry;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,6 +40,13 @@ public class Swerve extends SubsystemBase {
     public AHRS gyro;
 
     private VisionSubystem vision;
+
+    /* Telemetry */
+    private DataLog log;
+    
+    private DoubleArrayLogEntry m_VisionPoseEstimateLogger;
+    private DoubleArrayLogEntry m_RobotPoseEstimateLogger;
+    private DoubleLogEntry m_gyroHeadingLogger;
 
     public Swerve(VisionSubystem vision) {
         gyro = new AHRS();
@@ -62,6 +74,13 @@ public class Swerve extends SubsystemBase {
                 VecBuilder.fill(0.1, 0.1, 0.1),
                 VecBuilder.fill(0.5, 0.5, 0.5)
             );
+
+        /* Telemetry */
+        log = DataLogManager.getLog();
+
+        m_VisionPoseEstimateLogger = new DoubleArrayLogEntry(log, "/Swerve/VisionPoseEstimate");
+        m_RobotPoseEstimateLogger = new DoubleArrayLogEntry(log, "/Swerve/PoseEstimate");
+        m_gyroHeadingLogger = new DoubleLogEntry(log, "/Swerve/GyroHeading");
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
