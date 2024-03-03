@@ -71,7 +71,7 @@ public class Swerve extends SubsystemBase {
                                     translation.getX(), 
                                     translation.getY(), 
                                     rotation, 
-                                    getHeading()
+                                    getGyroYaw()
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(), 
@@ -88,7 +88,7 @@ public class Swerve extends SubsystemBase {
     private void follow(ChassisSpeeds speeds) {
         drive(
             new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond),
-            speeds.omegaRadiansPerSecond,
+            -speeds.omegaRadiansPerSecond,
             false,
             false
         );
@@ -103,7 +103,7 @@ public class Swerve extends SubsystemBase {
                 this::follow, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
                 new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                         new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                        new PIDConstants(4.5, 0.0, 0.0), // Rotation PID constants
+                        new PIDConstants(3, 0.0, 0.0), // Rotation PID constants
                         4.5, // Max module speed, in m/s
                         0.5, // Drive base radius in meters. Distance from robot center to furthest module.
                         new ReplanningConfig() // Default path replanning config. See the API for the options here
@@ -171,6 +171,7 @@ public class Swerve extends SubsystemBase {
 
     public void zeroHeading(){
         gyro.setAngleAdjustment(0);
+        gyro.reset();
         m_SwervePoseEstimator.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), new Rotation2d()));
     }
 
@@ -195,8 +196,11 @@ public class Swerve extends SubsystemBase {
                 poseAndTimestamp.getPose(),
                 poseAndTimestamp.getTimestamp()
             );
+
+            SmartDashboard.putNumberArray("Vision Robot Pose", new Double[]{poseAndTimestamp.getPose().getX(), poseAndTimestamp.getPose().getY(), poseAndTimestamp.getPose().getRotation().getDegrees()});
         }
         
+        SmartDashboard.putNumberArray("Robot Pose", new Double[]{getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees()});
         /*
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
