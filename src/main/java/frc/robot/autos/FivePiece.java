@@ -10,13 +10,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
+import frc.robot.autos.AutoCommands.AutonShoot;
+import frc.robot.autos.AutoCommands.PivotToAngle;
 import frc.robot.autos.AutoCommands.ShootFromGivenDistance;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.SubwooferShoot;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.shooter.*;
 
+/* TODO: Tune timings and angles */
 public class FivePiece extends SequentialCommandGroup {
     public FivePiece(Swerve s_Swerve, Pivot s_Pivot, FlyWheel s_Flywheel, Intake s_Intake, Hopper s_Hopper) {
         PathPlannerPath path0 = PathPlannerPath.fromPathFile("5 Piece Auton 1");
@@ -24,37 +29,48 @@ public class FivePiece extends SequentialCommandGroup {
         PathPlannerPath path2 = PathPlannerPath.fromPathFile("5 Piece Auton 3");
 
         addCommands(
-            new InstantCommand(() -> s_Swerve.setHeading(DriverStation.getAlliance().get() == Alliance.Red ?
-            path0.flipPath().getPreviewStartingHolonomicPose().getRotation() :
-            path0.getPreviewStartingHolonomicPose().getRotation()
-            )),
-            new InstantCommand(() -> s_Swerve.setPose( DriverStation.getAlliance().get() == Alliance.Red ?
-            path0.flipPath().getPreviewStartingHolonomicPose() :
-            path0.getPreviewStartingHolonomicPose()
-            )),
+            new InstantCommand(() -> s_Swerve.setHeading(
+                    DriverStation.getAlliance().get() == Alliance.Red ?
+                    path0.flipPath().getPreviewStartingHolonomicPose().getRotation() :
+                    path0.getPreviewStartingHolonomicPose().getRotation()
+                )
+            ),
+            new InstantCommand(() -> s_Swerve.setPose(
+                    DriverStation.getAlliance().get() == Alliance.Red ?
+                    path0.flipPath().getPreviewStartingHolonomicPose() :
+                    path0.getPreviewStartingHolonomicPose()
+                )
+            ),
+            new SubwooferShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(3),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(
-                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(1), //TODO
-                    new ShootFromGivenDistance(1, 10, s_Pivot, s_Hopper, s_Flywheel),
                     new ToggleIntake(s_Intake, s_Hopper).withTimeout(1),
-                    new ShootFromGivenDistance(3, 0, s_Pivot, s_Hopper, s_Flywheel)
+                    new PivotToAngle(s_Pivot, 0.3),
+                    new WaitCommand(1),
+                    new AutonShoot(s_Flywheel, s_Hopper).withTimeout(1),
+                    new PivotToAngle(s_Pivot, 0.2),
+                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(1),
+                    new WaitCommand(1),
+                    new AutonShoot(s_Flywheel, s_Hopper).withTimeout(1)
                 )
             ),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path1),
                 new SequentialCommandGroup(
+                    new PivotToAngle(s_Pivot, 0.2),
                     new ToggleIntake(s_Intake, s_Hopper).withTimeout(1)
-                    //new Shoot(s_Pivot, s_Flywheel, s_Hopper, s_Intake, s_Hopper)
                 )
             ),
+            new AutonShoot(s_Flywheel, s_Hopper).withTimeout(1),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path2),
                 new SequentialCommandGroup(
+                    new PivotToAngle(s_Pivot, 0.2),
                     new ToggleIntake(s_Intake, s_Hopper).withTimeout(1)
-                    //new Shoot(s_Pivot, s_Flywheel, s_Hopper, s_Intake)
                 )
-            )
+            ),
+            new AutonShoot(s_Flywheel, s_Hopper).withTimeout(1)
         );
     }
 }
