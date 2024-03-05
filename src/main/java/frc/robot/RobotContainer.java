@@ -124,7 +124,7 @@ public class RobotContainer {
         adjustPivotManually.onTrue(new InstantCommand(() -> s_Pivot.enable()).andThen(new AdjustPivotSetpointManually(s_Pivot)));
 
         subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot));
-        protectedShot.toggleOnTrue(new ProtectedShoot(s_Hopper, s_FlyWheel, s_Pivot));
+        protectedShot.toggleOnTrue(new ProtectedShoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
     }
 
     /**
