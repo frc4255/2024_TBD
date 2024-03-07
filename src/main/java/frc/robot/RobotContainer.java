@@ -39,7 +39,7 @@ public class RobotContainer {
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
 
-    private final Camera leftCam = new Camera(new PhotonCamera("cam"), new Transform3d(new Translation3d(0.3, 0.23, 0.203), new Rotation3d())); //TODO: Get right camera transform
+    private final Camera leftCam = new Camera(new PhotonCamera("cam"), new Transform3d(new Translation3d(0.3, 0.23, 0.18), new Rotation3d(0, 61.9, 0))); //TODO: Get right camera transform
     //private final Camera leftCam = new Camera(new PhotonCamera("leftCam"), new Transform3d()); //TODO: Get left camera transform
     /* Driver Buttons */
 
@@ -115,8 +115,9 @@ public class RobotContainer {
         runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
-        shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
-            () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
+        shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
+       // shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
+         //   () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
             
         RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
         InverseToggleIntake.whileTrue( new InverseToggleIntake(s_Intake, s_Hopper));
