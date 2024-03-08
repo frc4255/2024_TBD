@@ -73,9 +73,8 @@ public class Pivot extends ProfiledPIDSubsystem {
         setGoal(goal);
     }
     public void setPivotSetpoint() {
-        double pivotAdjuster = PivotAdjuster.getDouble(0);
-        SmartDashboard.putNumber("adjuster", pivotAdjuster);
-        setGoal(pivotAdjuster);
+      //  double pivotAdjuster = PivotAdjuster.getDouble(0);
+        setGoal(0.2);
     }
 
     public double getDistance() {
@@ -200,6 +199,7 @@ public class Pivot extends ProfiledPIDSubsystem {
     public void periodic() {
         super.periodic();
 
+        SmartDashboard.putNumber("adjuster", PivotAdjuster.getDouble(0));
         SmartDashboard.putNumber("Distance from Target", getDistance());
         SmartDashboard.putNumber("Pivot Angle", getMeasurement());
         SmartDashboard.putNumber("Read desired angle", PivotAdjuster.get().getDouble());
