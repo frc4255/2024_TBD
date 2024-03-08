@@ -116,7 +116,7 @@ public class RobotContainer {
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
         shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
-            () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
+            () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), () -> s_VisionSubystem.getCameraArray()));
             
         RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
         InverseToggleIntake.whileTrue( new InverseToggleIntake(s_Intake, s_Hopper));

@@ -59,4 +59,8 @@ public class VisionSubystem extends SubsystemBase {
         }
     }
 
+    public Camera[] getCameraArray() {
+        return cameras;
+    }
+
 }

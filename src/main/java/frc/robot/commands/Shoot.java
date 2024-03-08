@@ -1,10 +1,15 @@
 package frc.robot.commands;
 
 import java.lang.Math;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.math.MathUtil;
@@ -27,15 +32,17 @@ public class Shoot extends Command {
     private Swerve s_Swerve;
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
+    private Supplier<Camera[]> CameraSupplier;
 
     private PIDController m_drivetrainPID = new PIDController(Constants.DrivetrainPID.DRIVETRAIN_P, 0, 0);
-
+    
     public Shoot(Pivot s_Pivot, FlyWheel s_FlyWheel, Hopper s_Hopper, 
-            Intake s_Intake, Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup) {
+            Intake s_Intake, Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, Supplier<Camera[]> CameraSupplier) {
         this.s_Pivot = s_Pivot;
         this.s_FlyWheel = s_FlyWheel;
         this.s_Hopper = s_Hopper;
         this.s_Intake = s_Intake;
+        this.CameraSupplier = CameraSupplier;
 
         addRequirements(s_Pivot, s_Hopper, s_FlyWheel, s_Intake, s_Swerve);
 
@@ -53,27 +60,51 @@ public class Shoot extends Command {
 
     @Override
     public void execute() {
+
+        Optional<PhotonTrackedTarget> target = null;
+
+        int speakerId = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
+
+        for (Camera cam : CameraSupplier.get()) {
+            for (PhotonTrackedTarget trgt : cam.targets) {
+                if (trgt.getFiducialId() == speakerId) {
+                    target = Optional.of(trgt);
+                    break;
+                }
+            }
+        }
+        
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.STICK_DEADBAND);
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.STICK_DEADBAND);
-        Pose2d robotPose = s_Swerve.getPose();
 
-        Pose2d speakerPose =
-            DriverStation.getAlliance().get() == Alliance.Red ?
-            FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
-            FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
+        if (target.isPresent()) {
+            s_Swerve.drive(
+                new Translation2d(translationVal, strafeVal)
+                    .times(Constants.Swerve.MAX_SPEED), 
+                m_drivetrainPID.calculate(target.get().getYaw(), 0),
+                false,
+                false);
+        } else {
+            Pose2d robotPose = s_Swerve.getPose();
 
-        s_Swerve.drive(
-            new Translation2d(translationVal, strafeVal)
-                .times(Constants.Swerve.MAX_SPEED), 
-            m_drivetrainPID.calculate(
-                s_Swerve.getHeading().getDegrees(), 
-                    Math.atan(
-                        (speakerPose.getY() - robotPose.getX()) /
-                        (speakerPose.getX() - robotPose.getX()))
-                ), 
-            false,
-            false);
+            Pose2d speakerPose =
+                DriverStation.getAlliance().get() == Alliance.Red ?
+                FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
+                FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
 
+            
+            s_Swerve.drive(
+                new Translation2d(translationVal, strafeVal)
+                    .times(Constants.Swerve.MAX_SPEED), 
+                m_drivetrainPID.calculate(
+                    s_Swerve.getHeading().getDegrees(), 
+                        Math.atan(
+                            (speakerPose.getY() - robotPose.getX()) /
+                            (speakerPose.getX() - robotPose.getX()))
+                    ), 
+                false,
+                false);
+        }
         if (s_FlyWheel.isReady()) {
             s_Hopper.setMotorsSpeed(0.5, 0.5);
         }
