@@ -1,7 +1,11 @@
 package frc.robot.commands;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -14,6 +18,7 @@ import frc.robot.Constants;
 import frc.robot.FieldLayout;
 import frc.robot.FieldLayout.FieldPiece.POI;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.shooter.FlyWheel;
 import frc.robot.subsystems.shooter.Hopper;
 import frc.robot.subsystems.shooter.Pivot;
@@ -27,15 +32,18 @@ public class ProtectedShoot extends Command {
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
 
-    private PIDController m_drivetrainPID = new PIDController(0, 0, 0);
+    private Supplier<Camera[]> CameraSupplier;
+
+    private PIDController m_CameraTargetPID = new PIDController(0, 0, 0);
 
 
-    public ProtectedShoot(Hopper s_Hopper, FlyWheel s_Flywheel, Pivot s_Pivot, Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup)  {
+    public ProtectedShoot(Hopper s_Hopper, FlyWheel s_Flywheel, Pivot s_Pivot, Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, Supplier<Camera[]> CameraSupplier)  {
         this.s_Hopper = s_Hopper;
         this.s_Flywheel = s_Flywheel;
         this.s_Pivot = s_Pivot;
         this.s_Swerve = s_Swerve;
 
+        this.CameraSupplier = CameraSupplier;
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         
@@ -55,25 +63,48 @@ public class ProtectedShoot extends Command {
 
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.STICK_DEADBAND);
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.STICK_DEADBAND);
-        Pose2d robotPose = s_Swerve.getPose();
 
-        Pose2d speakerPose =
-            DriverStation.getAlliance().get() == Alliance.Red ?
-            FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
-            FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
+        Optional<PhotonTrackedTarget> target = null;
 
-        s_Swerve.drive(
-            new Translation2d(translationVal, strafeVal)
-                .times(Constants.Swerve.MAX_SPEED), 
-            m_drivetrainPID.calculate(
-                s_Swerve.getHeading().getDegrees(), 
-                    Math.atan(
-                        (speakerPose.getY() - robotPose.getX()) /
-                        (speakerPose.getX() - robotPose.getX()))
-                ), 
-            false,
-            false
-        );
+        int speakerId = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
+
+        for (Camera cam : CameraSupplier.get()) {
+            for (PhotonTrackedTarget trgt : cam.targets) {
+                if (trgt.getFiducialId() == speakerId) {
+                    target = Optional.of(trgt);
+                    break;
+                }
+            }
+        }
+
+        if (target.isPresent()) {
+            s_Swerve.drive(
+                new Translation2d(translationVal, strafeVal)
+                    .times(Constants.Swerve.MAX_SPEED), 
+                m_CameraTargetPID.calculate(target.get().getYaw(), 0),
+                false,
+                false);
+        } else {
+            /*Pose2d robotPose = s_Swerve.getPose();
+
+            Pose2d speakerPose =
+                DriverStation.getAlliance().get() == Alliance.Red ?
+                FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
+                FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
+
+            
+            s_Swerve.drive(
+                new Translation2d(translationVal, strafeVal)
+                    .times(Constants.Swerve.MAX_SPEED), 
+                m_drivetrainPID.calculate(
+                    s_Swerve.getHeading().getDegrees(), 
+                        Math.atan(
+                            (speakerPose.getY() - robotPose.getX()) /
+                            (speakerPose.getX() - robotPose.getX()))
+                    ), 
+                false,
+                false);*/
+        }
         if (s_Flywheel.isReady()) {
             s_Hopper.setMotorsSpeed(-0.5, 0.5);
         }
