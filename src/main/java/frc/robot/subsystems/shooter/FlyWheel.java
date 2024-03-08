@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -90,11 +91,19 @@ public class FlyWheel extends SubsystemBase {
         
         m_RightFlywheelMotor.setControl(
             m_rightRequest.withOutput(
-                rightVoltage + m_RightFeedforwardController.calculate(1000)
+                MathUtil.clamp(
+                    rightVoltage + m_RightFeedforwardController.calculate(1000),
+                    0,
+                    12
+                )
             )
         );
         m_LeftFlywheelMotor.setVoltage(
-            leftVoltage + m_LeftFeedforwardController.calculate(500)
+            MathUtil.clamp(
+            leftVoltage + m_LeftFeedforwardController.calculate(500),
+            0,
+            12
+            )
         );
     }
 
