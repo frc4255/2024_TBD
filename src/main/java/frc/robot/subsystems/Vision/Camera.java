@@ -53,7 +53,6 @@ public class Camera {
     }
     public void updateTargets() {
         targets.clear();
-        System.out.println("Update");
         PhotonPipelineResult result = cam.getLatestResult();
         
         if (result.hasTargets()) {

@@ -60,7 +60,7 @@ public class Swerve extends SubsystemBase {
                 getModulePositions(),
                 new Pose2d(),
                 VecBuilder.fill(0.1, 0.1, 0.1),
-                VecBuilder.fill(0.5, 0.5, 0.5)
+                VecBuilder.fill(1, 1, 1)
             );
     }
 

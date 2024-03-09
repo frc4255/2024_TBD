@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.text.RuleBasedCollator;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -35,7 +36,10 @@ public class ProtectedShoot extends Command {
 
     private Supplier<Camera[]> CameraSupplier;
 
-    private PIDController m_CameraTargetPID = new PIDController(0, 0, 0);
+    private PIDController m_CameraTargetPID = new PIDController(0.1, 0, 0.001);
+    private PIDController m_DrivetrainPID = new PIDController(0.001, 0, 0);
+
+    private Pose2d robotPose = new Pose2d();
 
 
     public ProtectedShoot(Hopper s_Hopper, FlyWheel s_Flywheel, Pivot s_Pivot, Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, Supplier<Camera[]> CameraSupplier)  {
@@ -48,11 +52,14 @@ public class ProtectedShoot extends Command {
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         
+        m_DrivetrainPID.enableContinuousInput(0, 360);
+
         addRequirements(s_Hopper, s_Flywheel, s_Pivot, s_Swerve);
     }
 
     @Override
     public void initialize() {
+        robotPose = s_Swerve.getPose();
     /*    s_Pivot.enable();
 
         s_Flywheel.run();
@@ -82,35 +89,47 @@ public class ProtectedShoot extends Command {
             }
         }
 
-        if (!target.isEmpty()) {
+        if (/*!target.isEmpty()*/ false) {
             SmartDashboard.putNumber("Vision Yaw", target.get().getYaw());
-            System.out.println("hi");
-            /*s_Swerve.drive(
+            s_Swerve.drive(
                 new Translation2d(translationVal, strafeVal)
                     .times(Constants.Swerve.MAX_SPEED), 
-                m_CameraTargetPID.calculate(target.get().getYaw(), 0),
+                -m_CameraTargetPID.calculate(target.get().getYaw(), 0),
                 false,
-                false);*/
+                false);
         } else {
-            /*Pose2d robotPose = s_Swerve.getPose();
+            //Pose2d robotPose = s_Swerve.getPose();
 
             Pose2d speakerPose =
                 DriverStation.getAlliance().get() == Alliance.Red ?
                 FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
                 FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
 
-            
+
+            SmartDashboard.putNumber("Drive PID Setpoint", (Math.atan(
+                            (speakerPose.getY() - robotPose.getX()) /
+                            (speakerPose.getX() - robotPose.getX())) * (180/Math.PI))
+                    );
+            SmartDashboard.putNumber("Drive PID Out",  m_DrivetrainPID.calculate(
+                    s_Swerve.getHeading().getDegrees(), 
+                        (Math.atan(
+                            (speakerPose.getY() - robotPose.getX()) /
+                            (speakerPose.getX() - robotPose.getX()))) * (180/Math.PI)
+                    ));
+            SmartDashboard.putNumber("Drive PID In", s_Swerve.getHeading().getDegrees());
+                
+            SmartDashboard.putNumber("Drive Error", m_DrivetrainPID.getPositionError());
             s_Swerve.drive(
                 new Translation2d(translationVal, strafeVal)
                     .times(Constants.Swerve.MAX_SPEED), 
-                m_drivetrainPID.calculate(
+                m_DrivetrainPID.calculate(
                     s_Swerve.getHeading().getDegrees(), 
-                        Math.atan(
+                        (Math.atan(
                             (speakerPose.getY() - robotPose.getX()) /
-                            (speakerPose.getX() - robotPose.getX()))
-                    ), 
+                            (speakerPose.getX() - robotPose.getX()))* (180/Math.PI))
+                    ),
                 false,
-                false);*/
+                false);
         }
         if (s_Flywheel.isReady()) {
             s_Hopper.setMotorsSpeed(-0.5, 0.5);
