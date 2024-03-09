@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Vision;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +20,7 @@ public class Camera {
     private PhotonCamera cam;
     private Transform3d robotToCam;
     private PhotonPoseEstimator poseEstimator;
-    public List<PhotonTrackedTarget> targets;
+    public List<PhotonTrackedTarget> targets = new ArrayList<>();
     private Optional<PoseAndTimestamp> estimate;
 
     public Camera(PhotonCamera cam, Transform3d robotToCam) {
@@ -51,6 +52,8 @@ public class Camera {
         return estimate;
     }
     public void updateTargets() {
+        targets.clear();
+        System.out.println("Update");
         PhotonPipelineResult result = cam.getLatestResult();
         
         if (result.hasTargets()) {

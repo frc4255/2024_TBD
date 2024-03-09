@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
@@ -52,10 +53,10 @@ public class ProtectedShoot extends Command {
 
     @Override
     public void initialize() {
-        s_Pivot.enable();
+    /*    s_Pivot.enable();
 
         s_Flywheel.run();
-        s_Pivot.set(0.42);
+        s_Pivot.set(0.42);*/
     }
 
     @Override
@@ -64,11 +65,15 @@ public class ProtectedShoot extends Command {
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.STICK_DEADBAND);
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.STICK_DEADBAND);
 
-        Optional<PhotonTrackedTarget> target = null;
+        Optional<PhotonTrackedTarget> target = Optional.ofNullable(null);
 
         int speakerId = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
-
+        
         for (Camera cam : CameraSupplier.get()) {
+            cam.updateTargets();
+            if (cam.targets == null) {
+                continue;
+            }
             for (PhotonTrackedTarget trgt : cam.targets) {
                 if (trgt.getFiducialId() == speakerId) {
                     target = Optional.of(trgt);
@@ -77,13 +82,15 @@ public class ProtectedShoot extends Command {
             }
         }
 
-        if (target.isPresent()) {
-            s_Swerve.drive(
+        if (!target.isEmpty()) {
+            SmartDashboard.putNumber("Vision Yaw", target.get().getYaw());
+            System.out.println("hi");
+            /*s_Swerve.drive(
                 new Translation2d(translationVal, strafeVal)
                     .times(Constants.Swerve.MAX_SPEED), 
                 m_CameraTargetPID.calculate(target.get().getYaw(), 0),
                 false,
-                false);
+                false);*/
         } else {
             /*Pose2d robotPose = s_Swerve.getPose();
 
@@ -112,8 +119,8 @@ public class ProtectedShoot extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        s_Flywheel.idle();
+      /*  s_Flywheel.idle();
         s_Hopper.stop();
-        s_Pivot.set(0.01);
+        s_Pivot.set(0.01);*/
     }
 }
