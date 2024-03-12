@@ -10,14 +10,20 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.math.MathUtil;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
 import frc.robot.Constants;
@@ -25,7 +31,12 @@ import frc.robot.FieldLayout;
 import frc.robot.FieldLayout.FieldPiece.POI;
 
 public class Pivot extends ProfiledPIDSubsystem {
-
+    private ShuffleboardTab tab = Shuffleboard.getTab("Pivot");
+    private GenericEntry PivotAdjuster = tab.add("Pivot setpoint adjuster", 0)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", 0, "max", 1)).getEntry();
+    private GenericEntry pivotAngle = tab.add("Angle", -1).getEntry();
+    private GenericEntry readFromPivotAdjuster = tab.add("Read angle", -1).getEntry();
     private Supplier<Pose2d> m_PoseSupplier;
     
     private final TalonFX m_pivotMotor = new TalonFX(ShooterConstants.PIVOT_MOTOR_ID);
@@ -43,6 +54,8 @@ public class Pivot extends ProfiledPIDSubsystem {
         ); //TODO: Tune
 
         this.m_PoseSupplier = m_PoseSupplier;
+
+        m_pivotMotor.setNeutralMode(NeutralModeValue.Brake);
     }
     
     @Override
@@ -53,6 +66,16 @@ public class Pivot extends ProfiledPIDSubsystem {
     @Override
     protected void useOutput(double output, TrapezoidProfile.State setpoint) {
         m_pivotMotor.setControl(m_pivotRequest.withOutput(output));
+        SmartDashboard.putNumber("Pivot Controller Out", output);
+    }
+
+    public void set(double goal) {
+        setGoal(goal);
+    }
+    public void setPivotSetpoint() {
+        double pivotAdjuster = PivotAdjuster.getDouble(0);
+        SmartDashboard.putNumber("adjuster", pivotAdjuster);
+        setGoal(pivotAdjuster);
     }
 
     public double getDistance() {
@@ -76,16 +99,15 @@ public class Pivot extends ProfiledPIDSubsystem {
     private List<Map.Entry<Double, Double>> getClosestValues(double dist) {
         Map.Entry<Double, Double> minValue = null;
         Map.Entry<Double, Double> maxValue = null;
-
-        List<Map.Entry<Double, Double>> entries =
-            new ArrayList<>(ShooterConstants.LOOKUP_TABLE.entrySet());
-
-        for (Map.Entry<Double, Double> entry : entries) {
-            if (entry.getKey() >= dist) {
-                maxValue = entry;
-                break;
+    
+        for (Map.Entry<Double, Double> entry : ShooterConstants.LOOKUP_TABLE.entrySet()) {
+            double key = entry.getKey();
+            if (key <= dist && (minValue == null || key > minValue.getKey())) {
+                minValue = entry;
             }
-            minValue = entry;
+            if (key >= dist && (maxValue == null || key < maxValue.getKey())) {
+                maxValue = entry;
+            }
         }
 
         return Arrays.asList(minValue, maxValue);
@@ -114,9 +136,32 @@ public class Pivot extends ProfiledPIDSubsystem {
             * Once we have all the information we need, we can perform linear interpolation between
             * the two values 
         */
-        setGoal(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t));
+        setGoal(MathUtil.clamp(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t), 0.0, 0.7));
     }
 
+    public void alignPivotToGivenDistance(double distance) {
+        /* Make sure we are within the max range */
+        if (!inRange(distance)) {
+            return;
+        }
+
+        /* 
+            * Get two Hashmaps containing the two maps that surround our current distance
+            * from speaker
+        */
+        List<Map.Entry<Double, Double>> startAndEndDist = getClosestValues(distance);
+        Map.Entry<Double, Double> startDist = startAndEndDist.get(0);
+        Map.Entry<Double, Double> endDist = startAndEndDist.get(1);
+
+        /* Get how far between the two values we are */
+        double t = ((distance - startDist.getKey())) / (endDist.getKey() - startDist.getKey());
+
+        /* 
+            * Once we have all the information we need, we can perform linear interpolation between
+            * the two values 
+        */
+        setGoal(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t));
+    }
     public void movePivotToHome() {
         setGoal(0.01);
     }
@@ -149,9 +194,19 @@ public class Pivot extends ProfiledPIDSubsystem {
     }
 
     public boolean shouldMoveIntake() {
-        return (super.getController().getGoal().position) >= 0.481;
+        return (super.getController().getGoal().position) >= 0.2;
     }
     @Override
     public void periodic() {
+        super.periodic();
+
+        SmartDashboard.putNumber("Distance from Target", getDistance());
+        SmartDashboard.putNumber("Pivot Angle", getMeasurement());
+        SmartDashboard.putNumber("Read desired angle", PivotAdjuster.get().getDouble());
+        SmartDashboard.putNumber("Pivot Current", m_pivotMotor.getStatorCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("PID Error Pivot", super.getController().getPositionError());
+        SmartDashboard.putNumber("Pivot goal", getController().getGoal().position);
+       // tab.add("Read Angle", PivotAdjuster.get().getDouble());
+       // tab.add("Pivot angle", getMeasurement());
     }
 }

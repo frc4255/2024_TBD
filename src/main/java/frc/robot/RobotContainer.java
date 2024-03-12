@@ -1,15 +1,17 @@
 package frc.robot;
 
-import org.photonvision.PhotonCamera;
+//import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
+
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.shooter.*;
@@ -38,27 +40,23 @@ public class RobotContainer {
     /* Driver Buttons */
 
     /* TODO: Change to driver preference */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value); 
-    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kBack.value); 
+    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kStart.value);
 
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
 
     private final JoystickButton shootNote = new JoystickButton(driver, XboxController.Button.kA.value);
-    private final JoystickButton RunFlyWheelBind = new JoystickButton(driver, XboxController.Button.kB.value);
-
-    private final POVButton RunHopper = new POVButton(driver, 180);
-    private final POVButton RunPivot = new POVButton(driver, 0);
-    private final POVButton Climb = new POVButton(driver, 90);
+    private final JoystickButton RunFlyWheel = new JoystickButton(driver, XboxController.Button.kB.value);
     /* Subsystems */
 
-    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
+    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
+
     private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
     private final Hopper s_Hopper = new Hopper();
     private final FlyWheel s_FlyWheel = new FlyWheel();
-    private final Climber s_Climber = new Climber();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -75,10 +73,22 @@ public class RobotContainer {
 
         // Configure the button bindings
         configureButtonBindings();
+        configureAutoChooser();
+    }
+
+    private void configureAutoChooser() {
+        autoChooser = new SendableChooser<>();
+        autoChooser.addOption("5 Piece Auto", new FivePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper));
+        autoChooser.addOption("Test", new TestAuton(s_Swerve, s_Hopper, s_FlyWheel, s_Pivot));
+        autoChooser.addOption("Do nothing", null);
+
+        SmartDashboard.putData(autoChooser);
     }
 
     public void disableAllPIDs() {
         s_Intake.disable();
+        s_Pivot.disable();
+        s_FlyWheel.stop();
     }
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
@@ -89,18 +99,13 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        runIntake.whileTrue(new ToggleIntake(s_Intake));
-        homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()));
+        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper));
+        homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
         shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
             () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
             
-        RunFlyWheelBind.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
-
-        RunHopper.whileTrue(new RunHopper(s_Hopper));
-        RunPivot.whileTrue(new RunPivot(s_Pivot));
-
-        Climb.toggleOnTrue(new Climb(s_Climber));
+        RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
     }
 
     /**
@@ -109,7 +114,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // An ExampleCommand will run in autonomous
-        return null;
+        return autoChooser.getSelected();
     }
 }

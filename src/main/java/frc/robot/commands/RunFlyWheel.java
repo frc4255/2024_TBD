@@ -16,7 +16,7 @@ public class RunFlyWheel extends Command {
     public void initialize() {
         s_FlyWheel.run();
     }
-
+    
     @Override
     public void end(boolean interrupted) {
         s_FlyWheel.stop();

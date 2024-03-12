@@ -33,7 +33,7 @@ public class Intake extends ProfiledPIDSubsystem {
             Constants.Intake.P, 
             0,
             0,
-            new TrapezoidProfile.Constraints(8, 6.5)) //TODO: Tune
+            new TrapezoidProfile.Constraints(9, 10)) //TODO: Tune
         );
 
         this.m_CollisionAvoidanceSupplier = m_ShouldMoveIntake;
@@ -78,10 +78,12 @@ public class Intake extends ProfiledPIDSubsystem {
     }
 
     public void runIntake() {
-        /* TODO: Find optimal speed. Start low so that we don't kill our single note lmao. */
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.2));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.7));
     }
 
+    public void InverserunIntake() {
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.7));
+    }
     public void stopIntake() {
         m_IntakeMotor.stopMotor();
     }
@@ -96,7 +98,6 @@ public class Intake extends ProfiledPIDSubsystem {
 
     public void startHomeSequence() {
         m_isHomed = false;
-        /* TODO: Find optimal voltage. */
         m_IntakeArmMotor.setControl(m_armJointRequest.withOutput(1.5));
     }
 
@@ -115,20 +116,25 @@ public class Intake extends ProfiledPIDSubsystem {
         /*SmartDashboard.putNumber("Arm joint position", getArmPosition());
         SmartDashboard.putNumber("PID Error", super.getController().getPositionError());
         SmartDashboard.putNumber("Intake motor out", m_IntakeMotor.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Intake stator current", m_IntakeMotor.getStatorCurrent().getValueAsDouble());*/
+        SmartDashboard.putNumber("Intake stator current", m_IntakeMotor.getStatorCurrent().getValueAsDouble());
 
         SmartDashboard.putNumber("Motor voltage", m_IntakeArmMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Error", super.getController().getPositionError());
         SmartDashboard.putNumber("Motor supply voltage", m_IntakeArmMotor.getSupplyVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Arm joint position", getArmPosition());
+        SmartDashboard.putNumber("Arm joint position", getArmPosition());*/
 
 
+        SmartDashboard.putBoolean("Collision Avoidance", m_CollisionAvoidanceSupplier.get());
         if (m_CollisionAvoidanceSupplier.get()) {
-            setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
+            m_enabled = true;
+            setGoal(2.0);
+            //setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
         } else if (m_isRunning) {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
         } else {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
         }
+
+        SmartDashboard.putNumber("Intake motor current", m_IntakeMotor.getTorqueCurrent().getValueAsDouble());
     }
 }

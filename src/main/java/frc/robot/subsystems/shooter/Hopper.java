@@ -16,7 +16,7 @@ public class Hopper extends SubsystemBase{
 
     private final I2C.Port i2cPort = I2C.Port.kOnboard; // Change the I2C port below to match the connection of your color sensor -docs
 
-    private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+  //  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
     private final ColorMatch m_colorMatcher = new ColorMatch();
     private final Color kOrangeTarget = new Color(238, 121, 7);
 
@@ -34,7 +34,7 @@ public class Hopper extends SubsystemBase{
     private boolean m_hasGamePiece = false;
 
     public Hopper() {
-        m_colorSensor.configureProximitySensor(PSResolution, PSMRate); // default rate is 100ms and res is default 8 bit (i think)
+        //m_colorSensor.configureProximitySensor(PSResolution, PSMRate); // default rate is 100ms and res is default 8 bit (i think)
     }
 
     /**
@@ -61,6 +61,7 @@ public class Hopper extends SubsystemBase{
     }
 
     private void checkForGamePiece() {
+        /*
         m_colorMatcher.addColorMatch(kOrangeTarget);
         Color detectedColor = m_colorSensor.getColor();
         ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
@@ -71,6 +72,7 @@ public class Hopper extends SubsystemBase{
         } else {
             m_hasGamePiece = false;
         }
+        */
     }
 
     public boolean hasGamePiece() {

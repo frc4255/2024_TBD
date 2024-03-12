@@ -42,22 +42,19 @@ public final class Constants {
     }
 
     public final class FlyWheel {
-        public static final int MOTOR_ID_0 = 0; //TODO get motor ID
-        public static final int MOTOR_ID_1 = 0; //TODO get motor ID
+        public static final int MOTOR_ID_0 = 40;
+        public static final int MOTOR_ID_1 = 41;
 
     }
 
     public final class Intake {
-        public static final int MOTOR_ID_0 = 11; //TODO: Needs the ID of the Motor
-        public static final int MOTOR_ID_1 = 10; //TODO: Needs the ID of the Motor
+        public static final int MOTOR_ID_0 = 11;
+        public static final int MOTOR_ID_1 = 10;
 
         public static final double P = 20; //TODO
         public static final double MOTOR_VOTAGE_1 = 1.2; //TODO get a voltage
 
         public static final double CURRENT_THRESHOLD = 0.0; //TODO get a threshold.
-
-        public static final double INTAKE_DEPLOY_SETPOINT = 0.1; // TODO: Tune INTAKE_DEPLOY setpoint.
-        public static final double INTAKE_STOW_SETPOINT = 2.3; // TODO: Tune INTAKE_STOW setpoint.
 
         public enum Setpoints {
             DEPLOY,
@@ -67,9 +64,9 @@ public final class Constants {
 
         public static final Map<Setpoints, Double> intakeSetpoints = Map.of(
             Setpoints.DEPLOY,
-            0.1,
+            0.15,
             Setpoints.STOW,
-            2.3,
+            2.4,
             Setpoints.OUT_OF_WAY,
             2.0
         );
@@ -81,12 +78,12 @@ public final class Constants {
     public static final class Swerve {
         public static final int pigeonID = 1;
 
-        public static final COTSTalonFXSwerveConstants CHOSEN_MODULE =  //TODO: This must be tuned to specific robot
+        public static final COTSTalonFXSwerveConstants CHOSEN_MODULE = 
         COTSTalonFXSwerveConstants.SDS.MK4i.Falcon500(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L2);
 
         /* Drivetrain Constants */
-        public static final double TRACK_WIDTH = Units.inchesToMeters(21.73); //TODO: This must be tuned to specific robot
-        public static final double WHEEL_BASE = Units.inchesToMeters(21.73); //TODO: This must be tuned to specific robot
+        public static final double TRACK_WIDTH = Units.inchesToMeters(22.75);
+        public static final double WHEEL_BASE = Units.inchesToMeters(22.75);
         public static final double WHEEL_CIRCUMFERENCE = CHOSEN_MODULE.wheelCircumference;
 
         /* Swerve Kinematics 
@@ -130,13 +127,13 @@ public final class Constants {
         public static final double ANGLE_KD = CHOSEN_MODULE.angleKD;
 
         /* Drive Motor PID Values */
-        public static final double DRIVE_KP = 0.12; //TODO: This must be tuned to specific robot
+        public static final double DRIVE_KP = 0.12;
         public static final double DRIVE_KI = 0.0;
         public static final double DRIVE_KD = 0.0;
         public static final double DRIVE_KF = 0.0;
 
         /* Drive Motor Characterization Values From SYSID */
-        public static final double DRIVE_KS = 0.32; //TODO: This must be tuned to specific robot
+        public static final double DRIVE_KS = 0.32;
         public static final double DRIVE_KV = 1.51;
         public static final double DRIVE_KA = 0.27;
 
