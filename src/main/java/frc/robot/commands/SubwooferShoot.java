@@ -23,7 +23,7 @@ public class SubwooferShoot extends Command {
         s_Pivot.enable();
 
         s_Flywheel.run();
-        s_Pivot.set(0.2);
+        s_Pivot.set(0.37);
     }
 
     @Override

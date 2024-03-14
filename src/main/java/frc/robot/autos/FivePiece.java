@@ -1,5 +1,7 @@
 package frc.robot.autos;
 
+import org.xml.sax.SAXException;
+
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 
@@ -11,7 +13,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
+import frc.robot.autos.AutoCommands.PresetPivot;
 import frc.robot.autos.AutoCommands.ShootFromGivenDistance;
+import frc.robot.commands.RunFlyWheel;
+import frc.robot.commands.RunHopperForShot;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.subsystems.*;
@@ -32,28 +37,36 @@ public class FivePiece extends SequentialCommandGroup {
             path0.flipPath().getPreviewStartingHolonomicPose() :
             path0.getPreviewStartingHolonomicPose()
             )),
+            new PresetPivot(s_Pivot, 0.7),
+            new RunFlyWheel(s_Flywheel).withTimeout(1),
+            new RunHopperForShot(s_Hopper).withTimeout(0.2),
+            new PresetPivot(s_Pivot, 0.01),
             new ParallelCommandGroup(
+                new RunFlyWheel(s_Flywheel).withTimeout(1),
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(
-                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(1), //TODO
-                    new ShootFromGivenDistance(1, 10, s_Pivot, s_Hopper, s_Flywheel),
-                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(1),
-                    new ShootFromGivenDistance(3, 0, s_Pivot, s_Hopper, s_Flywheel)
+                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(2) //TODO
+                    //new ShootFromGivenDistance(1, 10, s_Pivot, s_Hopper, s_Flywheel),
+                    //new PresetPivot(s_Pivot, 0.23),
+                   // new RunFlyWheel(s_Flywheel).withTimeout(1),
+                   // new RunHopperForShot(s_Hopper).withTimeout(0.2),
+                   // new ToggleIntake(s_Intake, s_Hopper).withTimeout(1)
+                    //new ShootFromGivenDistance(3, 0, s_Pivot, s_Hopper, s_Flywheel)
                 )
             ),
             new ParallelCommandGroup(
-                s_Swerve.followPathCommand(path1),
-                new SequentialCommandGroup(
+                s_Swerve.followPathCommand(path1)
+                /*new SequentialCommandGroup(
                     new ToggleIntake(s_Intake, s_Hopper).withTimeout(1)
                     //new Shoot(s_Pivot, s_Flywheel, s_Hopper, s_Intake, s_Hopper)
-                )
+                )*/
             ),
             new ParallelCommandGroup(
-                s_Swerve.followPathCommand(path2),
-                new SequentialCommandGroup(
+                s_Swerve.followPathCommand(path2)
+                /*new SequentialCommandGroup(
                     new ToggleIntake(s_Intake, s_Hopper).withTimeout(1)
                     //new Shoot(s_Pivot, s_Flywheel, s_Hopper, s_Intake)
-                )
+                )*/
             )
         );
     }

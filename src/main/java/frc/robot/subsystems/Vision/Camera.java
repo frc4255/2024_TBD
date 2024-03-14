@@ -44,6 +44,14 @@ public class Camera {
         EstimatedRobotPose res = opt.isPresent() ? opt.get() : null;
 
         if (res != null) {
+
+            boolean shouldRejectPose = false;
+
+            for (PhotonTrackedTarget target : res.targetsUsed) {
+                if (target.getPoseAmbiguity() > 0.2) {
+                    shouldRejectPose = true;
+                }
+            }
             estimate = Optional.of(new PoseAndTimestamp(res.estimatedPose.toPose2d(), res.timestampSeconds));
         }
     }
@@ -58,7 +66,7 @@ public class Camera {
         if (result.hasTargets()) {
             List<PhotonTrackedTarget> trgts = result.getTargets();
             for (PhotonTrackedTarget trgt : trgts) {
-                if (trgt.getPoseAmbiguity() < 0.5) {
+                if (trgt.getPoseAmbiguity() < 0.2) {
                     targets.add(trgt);
                 }
             }

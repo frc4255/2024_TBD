@@ -37,7 +37,7 @@ public class ProtectedShoot extends Command {
     private Supplier<Camera[]> CameraSupplier;
 
     private PIDController m_CameraTargetPID = new PIDController(0.1, 0, 0.001);
-    private PIDController m_DrivetrainPID = new PIDController(0.001, 0, 0);
+    private PIDController m_DrivetrainPID = new PIDController(0.07, 0, 0);
 
     private Pose2d robotPose = new Pose2d();
 
@@ -52,7 +52,8 @@ public class ProtectedShoot extends Command {
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         
-        m_DrivetrainPID.enableContinuousInput(0, 360);
+        m_DrivetrainPID.enableContinuousInput(-180, 180);
+
 
         addRequirements(s_Hopper, s_Flywheel, s_Pivot, s_Swerve);
     }
@@ -107,13 +108,13 @@ public class ProtectedShoot extends Command {
 
 
             SmartDashboard.putNumber("Drive PID Setpoint", (Math.atan(
-                            (speakerPose.getY() - robotPose.getX()) /
+                            (speakerPose.getY() - robotPose.getY()) /
                             (speakerPose.getX() - robotPose.getX())) * (180/Math.PI))
                     );
             SmartDashboard.putNumber("Drive PID Out",  m_DrivetrainPID.calculate(
                     s_Swerve.getHeading().getDegrees(), 
                         (Math.atan(
-                            (speakerPose.getY() - robotPose.getX()) /
+                            (speakerPose.getY() - robotPose.getY()) /
                             (speakerPose.getX() - robotPose.getX()))) * (180/Math.PI)
                     ));
             SmartDashboard.putNumber("Drive PID In", s_Swerve.getHeading().getDegrees());
@@ -122,10 +123,10 @@ public class ProtectedShoot extends Command {
             s_Swerve.drive(
                 new Translation2d(translationVal, strafeVal)
                     .times(Constants.Swerve.MAX_SPEED), 
-                m_DrivetrainPID.calculate(
+                -m_DrivetrainPID.calculate(
                     s_Swerve.getHeading().getDegrees(), 
                         (Math.atan(
-                            (speakerPose.getY() - robotPose.getX()) /
+                            (speakerPose.getY() - robotPose.getY()) /
                             (speakerPose.getX() - robotPose.getX()))* (180/Math.PI))
                     ),
                 false,
