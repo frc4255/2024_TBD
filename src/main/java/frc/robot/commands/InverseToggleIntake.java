@@ -19,12 +19,17 @@ public class InverseToggleIntake extends Command {
     @Override
     public void initialize() {
         s_Intake.enable();
-        s_Intake.requestGoal(Setpoints.OUT_OF_WAY);
-        s_Intake.InverserunIntake();
+        s_Intake.requestGoal(Setpoints.AMP);
 
         s_Hopper.setMotorsSpeed(0.75, 0);
     }
 
+    @Override
+    public void execute() {
+        if (s_Intake.getController().atGoal()) {
+            s_Intake.InverserunIntake();
+        }
+    }
     @Override
     public void end(boolean interrupted) {
         s_Intake.requestGoal(Setpoints.STOW);

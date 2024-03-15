@@ -22,6 +22,7 @@ public class Intake extends ProfiledPIDSubsystem {
 
     private boolean m_isHomed = false;
     private boolean m_isRunning = false;
+    private boolean ampMode = false;
 
     private VoltageOut m_armJointRequest = new VoltageOut(0.0);
     private DutyCycleOut m_intakeRequest = new DutyCycleOut(0.0);
@@ -35,7 +36,7 @@ public class Intake extends ProfiledPIDSubsystem {
             0,
             new TrapezoidProfile.Constraints(9, 10)) //TODO: Tune
         );
-
+        getController().setTolerance(0.03);
         this.m_CollisionAvoidanceSupplier = m_ShouldMoveIntake;
     }
 
@@ -53,12 +54,19 @@ public class Intake extends ProfiledPIDSubsystem {
         switch (DesiredPosition) {
             case DEPLOY:
                 m_isRunning = true;
+                ampMode = false;
                 break;
             case STOW:
+                m_isRunning = false;
+                ampMode = false;
+                break;
+            case AMP:
+                ampMode = true;
                 m_isRunning = false;
                 break;
             default:
                 m_isRunning = false;
+                ampMode = false;
         }
     }
 
@@ -82,7 +90,7 @@ public class Intake extends ProfiledPIDSubsystem {
     }
 
     public void InverserunIntake() {
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.7));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.6));
     }
     public void stopIntake() {
         m_IntakeMotor.stopMotor();
@@ -131,7 +139,11 @@ public class Intake extends ProfiledPIDSubsystem {
             //setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.OUT_OF_WAY));
         } else if (m_isRunning) {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
+        } else if (ampMode) {
+            System.out.println("should be working");
+            setGoal(2);
         } else {
+            System.out.println("I should not be here");
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
         }
 

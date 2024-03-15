@@ -37,7 +37,8 @@ public final class Constants {
         public enum Setpoints {
             DEPLOY,
             STOW,
-            OUT_OF_WAY
+            OUT_OF_WAY,
+            AMP
         }
 
         public static final Map<Setpoints, Double> intakeSetpoints = Map.of(

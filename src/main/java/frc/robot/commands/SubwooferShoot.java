@@ -29,7 +29,7 @@ public class SubwooferShoot extends Command {
     @Override
     public void execute() {
         if (s_Flywheel.isReady()) {
-            s_Hopper.setMotorsSpeed(-0.5, 0.5);
+            s_Hopper.setMotorsSpeed(0, 0.5);
         }
     }
 
