@@ -27,7 +27,7 @@ public class InverseToggleIntake extends Command {
     @Override
     public void execute() {
         if (s_Intake.getController().atGoal()) {
-            s_Intake.InverserunIntake();
+            s_Intake.runIntakeForAmp();
         }
     }
     @Override
