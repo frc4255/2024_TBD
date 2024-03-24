@@ -5,6 +5,7 @@ import org.photonvision.PhotonCamera;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -12,8 +13,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.FivePiece;
 import frc.robot.autos.TestAuton;
 import frc.robot.commands.*;
@@ -39,10 +42,13 @@ public class RobotContainer {
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
 
-    private final Camera leftCam = new Camera(new PhotonCamera("Leftcam"), new Transform3d(new Translation3d(0.29, 0.259, 0.165), new Rotation3d(0, 61.9, 30)));
-    private final Camera rightCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.29, -0.259, 0.165), new Rotation3d(0, 61.9, -30)));
+    private final Camera leftCam = new Camera(new PhotonCamera("Leftcam"), new Transform3d(new Translation3d(0.29, 0.259, 0.2), new Rotation3d(0, 61.9, 30)));
+    private final Camera rightCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.29, -0.259, 0.2), new Rotation3d(0, 61.9, -30)));
     //private final Camera leftCam = new Camera(new PhotonCamera("leftCam"), new Transform3d()); //TODO: Get left camera transform
     /* Driver Buttons */
+
+    private final DigitalInput robotHomeButton = new DigitalInput(0);
+    private final Trigger robotHomeTrigger = new Trigger(() -> robotHomeButton.get());
 
     /* TODO: Change to driver preference */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kBack.value); 
@@ -111,6 +117,14 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+
+        robotHomeTrigger.onTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> s_Intake.setIntakeAsHomed()),
+                new InstantCommand(() -> s_Pivot.setPivotAsHomed())
+            )
+        );
+
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper));
