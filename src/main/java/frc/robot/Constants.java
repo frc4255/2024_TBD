@@ -1,7 +1,5 @@
 package frc.robot;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import java.util.Map;
 
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -126,7 +124,7 @@ public final class Constants {
         public static final NeutralModeValue DRIVE_NEUTRAL_MODE = NeutralModeValue.Brake;
 
         /* Module Specific Constants */
-        /* Front Left Module - Module 0 */
+        /* Front Left Module - Module 2 */
         public static final class Mod0 { //TODO: This must be tuned to specific robot
             public static final int DRIVE_MOTOR_ID = 1;
             public static final int ANGLE_MOTOR_ID = 2;
@@ -136,7 +134,7 @@ public final class Constants {
                 new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CANCODER_ID, ANGLE_OFFSET);
         }
 
-        /* Front Right Module - Module 1 */
+        /* Front Right Module - Module 3 */
         public static final class Mod1 { //TODO: This must be tuned to specific robot
             public static final int DRIVE_MOTOR_ID = 5;
             public static final int ANGLE_MOTOR_ID = 3;
@@ -146,7 +144,7 @@ public final class Constants {
                 new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CANCODER_ID, ANGLE_OFFSET);
         }
         
-        /* Back Left Module - Module 2 */
+        /* Back Left Module - Module 1 */
         public static final class Mod2 { //TODO: This must be tuned to specific robot
             public static final int DRIVE_MOTOR_ID = 6;
             public static final int ANGLE_MOTOR_ID = 4;
@@ -156,7 +154,7 @@ public final class Constants {
                 new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CANCODER_ID, ANGLE_OFFSET);
         }
 
-        /* Back Right Module - Module 3 */
+        /* Back Right Module - Module 4 */
         public static final class Mod3 { //TODO: This must be tuned to specific robot
             public static final int DRIVE_MOTOR_ID = 7;
             public static final int ANGLE_MOTOR_ID = 8;
