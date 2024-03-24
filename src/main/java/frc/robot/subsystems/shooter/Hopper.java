@@ -39,7 +39,7 @@ public class Hopper extends SubsystemBase{
 
     /**
      *  TODO: Javadoc
-     * @param speed0 Duty Cycle speed of Hopper motors
+     * @param speed0 Duty Cycle speed of Star motors
      * @param speed1 Duty Cycle speed of hopper motors
      */
     public void setMotorsSpeed(double speed0, double speed1) {

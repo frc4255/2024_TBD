@@ -17,6 +17,12 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
 
+    public final class PoseFilter {
+        public static final double POSE_HEIGHT_TOLERANCE = 0.01;
+
+        public static final double MAX_DIST_BETWEEN_POSE = 0.2;
+    }
+
     public final class FlyWheel {
         public static final int MOTOR_ID_0 = 40;
         public static final int MOTOR_ID_1 = 41;
@@ -35,7 +41,8 @@ public final class Constants {
         public enum Setpoints {
             DEPLOY,
             STOW,
-            OUT_OF_WAY
+            OUT_OF_WAY,
+            AMP
         }
 
         public static final Map<Setpoints, Double> intakeSetpoints = Map.of(
