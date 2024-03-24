@@ -39,7 +39,8 @@ public class RobotContainer {
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
 
-    private final Camera leftCam = new Camera(new PhotonCamera("cam"), new Transform3d(new Translation3d(0.3, 0.23, 0.18), new Rotation3d(0, 61.9, 0))); //TODO: Get right camera transform
+    private final Camera leftCam = new Camera(new PhotonCamera("Leftcam"), new Transform3d(new Translation3d(0.29, 0.259, 0.165), new Rotation3d(0, 61.9, 30)));
+    private final Camera rightCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.29, -0.259, 0.165), new Rotation3d(0, 61.9, -30)));
     //private final Camera leftCam = new Camera(new PhotonCamera("leftCam"), new Transform3d()); //TODO: Get left camera transform
     /* Driver Buttons */
 
@@ -61,7 +62,7 @@ public class RobotContainer {
     private final POVButton protectedShot = new POVButton(driver, 270);
     /* Subsystems */
 
-    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{leftCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
+    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{leftCam, rightCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
 
