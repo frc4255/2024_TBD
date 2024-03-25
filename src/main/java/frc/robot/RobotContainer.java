@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -42,7 +43,7 @@ public class RobotContainer {
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
 
-    private final Camera leftCam = new Camera(new PhotonCamera("Leftcam"), new Transform3d(new Translation3d(0.29, 0.259, 0.2), new Rotation3d(0, 61.9, 30)));
+    private final Camera leftCam = new Camera(new PhotonCamera("LeftCam"), new Transform3d(new Translation3d(0.29, 0.259, 0.2), new Rotation3d(0, 61.9, 30)));
     private final Camera rightCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.29, -0.259, 0.2), new Rotation3d(0, 61.9, -30)));
     //private final Camera leftCam = new Camera(new PhotonCamera("leftCam"), new Transform3d()); //TODO: Get left camera transform
     /* Driver Buttons */
@@ -85,7 +86,7 @@ public class RobotContainer {
                 s_Swerve, 
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
-                () -> driver.getRawAxis(rotationAxis), 
+                () -> -driver.getRawAxis(rotationAxis), 
                 () -> false
             )
         );
@@ -121,8 +122,9 @@ public class RobotContainer {
         robotHomeTrigger.onTrue(
             new ParallelCommandGroup(
                 new InstantCommand(() -> s_Intake.setIntakeAsHomed()),
-                new InstantCommand(() -> s_Pivot.setPivotAsHomed())
-            )
+                new InstantCommand(() -> s_Pivot.setPivotAsHomed()),
+                new PrintCommand("Homed")
+            ).ignoringDisable(true)
         );
 
         /* Driver Buttons */

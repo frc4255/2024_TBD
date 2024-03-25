@@ -62,8 +62,10 @@ public class Camera {
                 shouldRejectPose = true;
             }
             
-            if (!isPosePhysicallyPossible(robotPoseSupplier.get(), pose.toPose2d())) {
-                shouldRejectPose = true;
+            if (robotPoseSupplier != null) {
+                if (!isPosePhysicallyPossible(robotPoseSupplier.get(), pose.toPose2d())) {
+                    shouldRejectPose = true;
+                }
             }
 
             for (PhotonTrackedTarget target : result.targetsUsed) {

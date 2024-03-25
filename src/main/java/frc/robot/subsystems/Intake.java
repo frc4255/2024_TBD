@@ -18,8 +18,8 @@ import java.util.function.Supplier;
 public class Intake extends ProfiledPIDSubsystem {
 
     /* Motors */
-    private final TalonFX m_IntakePivotMotor = new TalonFX(Constants.Intake.MOTOR_ID_0);
-    private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.MOTOR_ID_1);
+    private final TalonFX m_IntakePivotMotor = new TalonFX(Constants.Intake.PIVOT_MOTOR_ID);
+    private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.INDEXER_ID);
 
     /* Intake Modes */
     private boolean isHomed = false;
@@ -39,7 +39,7 @@ public class Intake extends ProfiledPIDSubsystem {
             Constants.Intake.P, 
             0,
             0,
-            new TrapezoidProfile.Constraints(9, 10))
+            new TrapezoidProfile.Constraints(15, 23))
         );
 
         getController().setTolerance(0.03);

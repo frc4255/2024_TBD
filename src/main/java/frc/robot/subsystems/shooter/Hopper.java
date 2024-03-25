@@ -25,8 +25,8 @@ public class Hopper extends SubsystemBase{
 
 
     /* TODO: Rename motors to star and compliant wheels */
-    private TalonFX m_HopperMotor0 = new TalonFX(ShooterConstants.Hopper.MOTOR_ID_0); // controls star shaped wheels
-    private TalonFX m_HopperMotor1 = new TalonFX(ShooterConstants.Hopper.MOTOR_ID_1); // controls compliant wheels
+    private TalonFX m_HopperMotor0 = new TalonFX(ShooterConstants.Hopper.HOPPER_STAR_ID); // controls star shaped wheels
+    private TalonFX m_HopperMotor1 = new TalonFX(ShooterConstants.Hopper.HOPPER_COMPLIANT_ID); // controls compliant wheels
 
     private DutyCycleOut m_HopperMotor0Request = new DutyCycleOut(0);
     private DutyCycleOut m_HopperMotor1Request = new DutyCycleOut(0);

@@ -31,10 +31,11 @@ public class FlyWheel extends SubsystemBase {
     boolean stopped = true;
 
     public FlyWheel() {;
-        m_RightFlywheelMotor = new TalonFX(Constants.FlyWheel.MOTOR_ID_0);
-        m_LeftFlywheelMotor = new TalonFX(Constants.FlyWheel.MOTOR_ID_1);
+        m_RightFlywheelMotor = new TalonFX(Constants.FlyWheel.SHOOTER_RIGHT_ID);
+        m_LeftFlywheelMotor = new TalonFX(Constants.FlyWheel.SHOOTER_LEFT_ID);
 
-        m_RightFlywheelMotor.setInverted(true);
+        m_RightFlywheelMotor.setInverted(false);
+        m_LeftFlywheelMotor.setInverted(true);
         m_RightPIDController.setTolerance(75);
         m_LeftPIDController.setTolerance(75);
     }
@@ -62,22 +63,22 @@ public class FlyWheel extends SubsystemBase {
 
         double rightVoltage = m_RightPIDController.calculate(
                     getRightFlywheelRPM(),
-                    1000
+                    6000
                 );
 
         double leftVoltage =  m_LeftPIDController.calculate(
                 getLeftFlywheelRPM(), 
-                1000
+                2750
             );
         
         m_RightFlywheelMotor.setControl(
             m_rightRequest.withOutput(
-                rightVoltage + m_RightFeedforwardController.calculate(1000)
+                rightVoltage + m_RightFeedforwardController.calculate(6000)
             )
         );
 
         m_LeftFlywheelMotor.setVoltage(
-            leftVoltage + m_LeftFeedforwardController.calculate(1000)
+            leftVoltage + m_LeftFeedforwardController.calculate(2750)
         );
 
         SmartDashboard.putNumber("Right PID Output", rightVoltage);

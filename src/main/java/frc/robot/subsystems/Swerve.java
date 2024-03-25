@@ -39,16 +39,16 @@ public class Swerve extends SubsystemBase {
     public Swerve(VisionSubystem vision) {
         this.vision = vision;
         
-        gyro = new Pigeon2(Constants.Swerve.pigeonID, "Drivetrain");
+        gyro = new Pigeon2(Constants.Swerve.pigeonID);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
         
 
         mSwerveMods = new SwerveModule[] {
-            new SwerveModule(0, Constants.Swerve.Mod0.CONSTANTS),
-            new SwerveModule(1, Constants.Swerve.Mod1.CONSTANTS),
-            new SwerveModule(2, Constants.Swerve.Mod2.CONSTANTS),
-            new SwerveModule(3, Constants.Swerve.Mod3.CONSTANTS)
+            new SwerveModule(0, Constants.Swerve.Mod0.constants),
+            new SwerveModule(1, Constants.Swerve.Mod1.constants),
+            new SwerveModule(2, Constants.Swerve.Mod2.constants),
+            new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
         m_SwervePoseEstimator =
@@ -176,7 +176,7 @@ public class Swerve extends SubsystemBase {
     /* 
      * Gets the the gyro yaw and converts it to the robot coordinate plane (-180 to 180)
      */
-    public Rotation2d getGyroYaw() {
+    /*public Rotation2d getGyroYaw() {
         double yaw = gyro.getAngle() % 360;
 
         if (yaw > 180) {
@@ -184,6 +184,10 @@ public class Swerve extends SubsystemBase {
         }
 
         return Rotation2d.fromDegrees(yaw);
+    }*/
+
+    public Rotation2d getGyroYaw() {
+        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
     }
 
     public void resetModulesToAbsolute(){
@@ -206,12 +210,12 @@ public class Swerve extends SubsystemBase {
         }
         
         SmartDashboard.putNumberArray("Robot Pose", new Double[]{getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees()});
-        /*
+        
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
-        */
+        
     }
 }
