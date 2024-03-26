@@ -96,8 +96,8 @@ public class Pivot extends ProfiledPIDSubsystem {
     }
 
     private List<Map.Entry<Double, Double>> getClosestValues(double dist) {
-        Map.Entry<Double, Double> minValue = null;
-        Map.Entry<Double, Double> maxValue = null;
+        Map.Entry<Double, Double> minValue = Map.entry(1.5, 0.66);
+        Map.Entry<Double, Double> maxValue = Map.entry(7.0, 0.16);
     
         for (Map.Entry<Double, Double> entry : ShooterConstants.LOOKUP_TABLE.entrySet()) {
             double key = entry.getKey();
