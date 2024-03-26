@@ -32,17 +32,18 @@ public class Shoot extends Command {
     private Swerve s_Swerve;
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
-    private Supplier<Camera[]> CameraSupplier;
+
 
     private PIDController m_drivetrainPID = new PIDController(Constants.DrivetrainPID.DRIVETRAIN_P, 0, 0);
-    
-    public Shoot(Pivot s_Pivot, FlyWheel s_FlyWheel, Hopper s_Hopper, 
-            Intake s_Intake, Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, Supplier<Camera[]> CameraSupplier) {
+
+    public Shoot(Pivot s_Pivot, FlyWheel s_FlyWheel, Hopper s_Hopper,
+            Intake s_Intake, Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,
+            Supplier<Camera[]> CameraSupplier) {
         this.s_Pivot = s_Pivot;
         this.s_FlyWheel = s_FlyWheel;
         this.s_Hopper = s_Hopper;
         this.s_Intake = s_Intake;
-        this.CameraSupplier = CameraSupplier;
+
 
         addRequirements(s_Pivot, s_Hopper, s_FlyWheel, s_Intake, s_Swerve);
 
@@ -61,59 +62,35 @@ public class Shoot extends Command {
     @Override
     public void execute() {
 
-        Optional<PhotonTrackedTarget> target = null;
-
-        int speakerId = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
-
-        for (Camera cam : CameraSupplier.get()) {
-            for (PhotonTrackedTarget trgt : cam.targets) {
-                if (trgt.getFiducialId() == speakerId) {
-                    target = Optional.of(trgt);
-                    break;
-                }
-            }
-        }
-        
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.STICK_DEADBAND);
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.STICK_DEADBAND);
 
-        if (target.isPresent()) {
-            s_Swerve.drive(
+        Pose2d robotPose = s_Swerve.getPose();
+
+        Pose2d speakerPose = DriverStation.getAlliance().get() == Alliance.Red
+                ? FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d()
+                : FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
+
+        s_Swerve.drive(
                 new Translation2d(translationVal, strafeVal)
-                    .times(Constants.Swerve.MAX_SPEED), 
-                m_drivetrainPID.calculate(target.get().getYaw(), 0),
+                        .times(Constants.Swerve.MAX_SPEED),
+                -m_drivetrainPID.calculate(
+                        s_Swerve.getHeading().getDegrees(),
+                        Math.atan2(
+                                (speakerPose.getY() - robotPose.getX()),
+                                        (speakerPose.getX() - robotPose.getX()))),
                 false,
                 false);
-        } else {
-            Pose2d robotPose = s_Swerve.getPose();
 
-            Pose2d speakerPose =
-                DriverStation.getAlliance().get() == Alliance.Red ?
-                FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
-                FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
-
-            
-            s_Swerve.drive(
-                new Translation2d(translationVal, strafeVal)
-                    .times(Constants.Swerve.MAX_SPEED), 
-                m_drivetrainPID.calculate(
-                    s_Swerve.getHeading().getDegrees(), 
-                        Math.atan(
-                            (speakerPose.getY() - robotPose.getX()) /
-                            (speakerPose.getX() - robotPose.getX()))
-                    ), 
-                false,
-                false);
-        }
-        if (s_FlyWheel.isReady()) {
+        if (s_FlyWheel.isReady() && s_Pivot.getController().atGoal()) {
             s_Hopper.setMotorsSpeed(0.5, 0.5);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-      s_FlyWheel.idle();
-      s_Hopper.stop();
-      s_Pivot.movePivotToHome();
+        s_FlyWheel.idle();
+        s_Hopper.stop();
+        s_Pivot.movePivotToHome();
     }
 }
