@@ -21,11 +21,11 @@ public class ShooterConstants {
         Map.entry(3.5, 0.3),
         Map.entry(4.0, 0.27),
         Map.entry(4.5, 0.24),
-        Map.entry(5.0, 0.22),
-        Map.entry(5.5, 0.2),
-        Map.entry(6.0, 0.18),
-        Map.entry(6.5, 0.165),
-        Map.entry(7.0, 0.16)
+        Map.entry(5.0, 0.21),
+        Map.entry(5.5, 0.19),
+        Map.entry(6.0, 0.165),
+        Map.entry(6.5, 0.16),
+        Map.entry(7.0, 0.155)
     );
 
     public static final double RIGHT_FLYWHEEL_P = 0.002;
