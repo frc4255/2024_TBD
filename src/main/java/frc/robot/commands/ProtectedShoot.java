@@ -37,7 +37,7 @@ public class ProtectedShoot extends Command {
     private Supplier<Camera[]> CameraSupplier;
 
     private PIDController m_CameraTargetPID = new PIDController(0.1, 0, 0.001);
-    private PIDController m_DrivetrainPID = new PIDController(0.07, 0, 0);
+    private PIDController m_DrivetrainPID = new PIDController(0.003, 0, 0);
 
     private Pose2d robotPose = new Pose2d();
 

@@ -23,12 +23,12 @@ public class SubwooferShoot extends Command {
         s_Pivot.enable();
 
         s_Flywheel.run();
-        s_Pivot.set(0.37);
+        s_Pivot.set(0.36);
     }
 
     @Override
     public void execute() {
-        if (s_Flywheel.isReady()) {
+        if (s_Flywheel.isReady() && s_Pivot.getController().atGoal()) {
             s_Hopper.setMotorsSpeed(0, 0.5);
         }
     }

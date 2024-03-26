@@ -54,7 +54,7 @@ public class Pivot extends ProfiledPIDSubsystem {
         ); //TODO: Tune
 
         this.m_PoseSupplier = m_PoseSupplier;
-        super.getController().setTolerance(0.05);
+        super.getController().setTolerance(0.02);
         m_pivotMotor.setNeutralMode(NeutralModeValue.Brake);
     }
     

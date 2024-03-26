@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class ShooterConstants {
 
-    public static final double PIVOT_P = 12;
+    public static final double PIVOT_P = 14;
 
     public static final int PIVOT_MOTOR_ID = 20;
     public static final double MAX_DISTANCE = 0;

@@ -86,7 +86,7 @@ public class Swerve extends SubsystemBase {
     private void follow(ChassisSpeeds speeds) {
         drive(
             new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond),
-            speeds.omegaRadiansPerSecond,
+            -speeds.omegaRadiansPerSecond,
             false,
             false
         );
@@ -176,19 +176,19 @@ public class Swerve extends SubsystemBase {
     /* 
      * Gets the the gyro yaw and converts it to the robot coordinate plane (-180 to 180)
      */
-   /* public Rotation2d getGyroYaw() {
+    public Rotation2d getGyroYaw() {
         double yaw = gyro.getAngle() % 360;
 
         if (yaw > 180) {
             yaw-=360;
         }
 
-        return Rotation2d.fromDegrees(yaw);
-    }*/
-
-    public Rotation2d getGyroYaw() {
-        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
+        return Rotation2d.fromDegrees(yaw*-1);
     }
+
+    /*public Rotation2d getGyroYaw() {
+        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
+    }*/
 
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
@@ -199,14 +199,15 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic(){
         m_SwervePoseEstimator.update(getGyroYaw(), getModulePositions());
-
+        int count = 0;
         for (PoseAndTimestamp poseAndTimestamp : vision.getResults()) {
+            count++;
             m_SwervePoseEstimator.addVisionMeasurement(
                 poseAndTimestamp.getPose(),
                 poseAndTimestamp.getTimestamp()
             );
 
-            SmartDashboard.putNumberArray("Vision Robot Pose", new Double[]{poseAndTimestamp.getPose().getX(), poseAndTimestamp.getPose().getY(), poseAndTimestamp.getPose().getRotation().getDegrees()});
+            SmartDashboard.putNumberArray("Vision Robot Pose" + count, new Double[]{poseAndTimestamp.getPose().getX(), poseAndTimestamp.getPose().getY(), poseAndTimestamp.getPose().getRotation().getDegrees()});
         }
         
         SmartDashboard.putNumberArray("Robot Pose", new Double[]{getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees()});
@@ -217,5 +218,6 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
         
+        SmartDashboard.putNumber("Gyro angle", getGyroYaw().getDegrees());
     }
 }
