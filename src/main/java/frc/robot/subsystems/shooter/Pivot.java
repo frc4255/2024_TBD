@@ -31,12 +31,6 @@ import frc.robot.FieldLayout;
 import frc.robot.FieldLayout.FieldPiece.POI;
 
 public class Pivot extends ProfiledPIDSubsystem {
-    private ShuffleboardTab tab = Shuffleboard.getTab("Pivot");
-    private GenericEntry PivotAdjuster = tab.add("Pivot setpoint adjuster", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max", 1)).getEntry();
-    private GenericEntry pivotAngle = tab.add("Angle", -1).getEntry();
-    private GenericEntry readFromPivotAdjuster = tab.add("Read angle", -1).getEntry();
     private Supplier<Pose2d> m_PoseSupplier;
     
     private final TalonFX m_pivotMotor = new TalonFX(ShooterConstants.PIVOT_MOTOR_ID);
@@ -92,7 +86,7 @@ public class Pivot extends ProfiledPIDSubsystem {
     }
 
     public boolean inRange(double dist) {
-        return dist <= ShooterConstants.MAX_DISTANCE;
+        return dist <= ShooterConstants.MAX_DISTANCE && dist >= ShooterConstants.MIN_DISTANCE;
     }
 
     private List<Map.Entry<Double, Double>> getClosestValues(double dist) {
@@ -115,11 +109,6 @@ public class Pivot extends ProfiledPIDSubsystem {
     public void alignPivotToSpeaker() {
         double dist = getDistance();
 
-        /* Make sure we are within the max range */
-        if (!inRange(dist)) {
-            return;
-        }
-
         /* 
             * Get two Hashmaps containing the two maps that surround our current distance
             * from speaker
@@ -139,11 +128,6 @@ public class Pivot extends ProfiledPIDSubsystem {
     }
 
     public void alignPivotToGivenDistance(double distance) {
-        /* Make sure we are within the max range */
-        if (!inRange(distance)) {
-            return;
-        }
-
         /* 
             * Get two Hashmaps containing the two maps that surround our current distance
             * from speaker
@@ -199,10 +183,8 @@ public class Pivot extends ProfiledPIDSubsystem {
     public void periodic() {
         super.periodic();
 
-        SmartDashboard.putNumber("adjuster", PivotAdjuster.getDouble(0));
         SmartDashboard.putNumber("Distance from Target", getDistance());
         SmartDashboard.putNumber("Pivot Angle", getMeasurement());
-        SmartDashboard.putNumber("Read desired angle", PivotAdjuster.get().getDouble());
         SmartDashboard.putNumber("Pivot Current", m_pivotMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("PID Error Pivot", super.getController().getPositionError());
         SmartDashboard.putNumber("Pivot goal", getController().getGoal().position);

@@ -7,7 +7,8 @@ public class ShooterConstants {
     public static final double PIVOT_P = 14;
 
     public static final int PIVOT_MOTOR_ID = 20;
-    public static final double MAX_DISTANCE = 0;
+    public static final double MAX_DISTANCE = 7;
+    public static final double MIN_DISTANCE = 1.5;
     /*
      * Lookup table for pivot interpolation table. Key is distance (m), value is angle (radians)
      */
