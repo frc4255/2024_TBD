@@ -69,6 +69,7 @@ public class RobotContainer {
     private final POVButton protectedShot = new POVButton(driver, 270);
     /* Subsystems */
 
+    private final LEDHandler s_LedHandler = new LEDHandler();
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{rightCam, leftCam, LLCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
@@ -146,6 +147,9 @@ public class RobotContainer {
         shooterIntake.toggleOnTrue(new ShooterIntake(s_Pivot, s_FlyWheel, s_Hopper));
     }
 
+    public LEDHandler getLedHandlerInstance() {
+        return s_LedHandler;
+    }
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
