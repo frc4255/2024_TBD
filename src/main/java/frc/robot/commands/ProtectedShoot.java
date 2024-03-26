@@ -10,8 +10,10 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,8 +39,8 @@ public class ProtectedShoot extends Command {
     private Supplier<Camera[]> CameraSupplier;
 
     private PIDController m_CameraTargetPID = new PIDController(0.1, 0, 0.001);
-    private PIDController m_DrivetrainPID = new PIDController(0.003, 0, 0);
-
+    private PIDController m_DrivetrainPID = new PIDController(0.1, 0, 0);
+    //private ProfiledPIDController m_PidController = new ProfiledPIDController(0.001, 0, 50, new Constraints(4, 4));
     private Pose2d robotPose = new Pose2d();
 
 
@@ -61,10 +63,10 @@ public class ProtectedShoot extends Command {
     @Override
     public void initialize() {
         robotPose = s_Swerve.getPose();
-    /*    s_Pivot.enable();
+        s_Pivot.enable();
 
         s_Flywheel.run();
-        s_Pivot.set(0.42);*/
+        s_Pivot.alignPivotToSpeaker();
     }
 
     @Override
@@ -120,18 +122,24 @@ public class ProtectedShoot extends Command {
             SmartDashboard.putNumber("Drive PID In", s_Swerve.getHeading().getDegrees());
                 
             SmartDashboard.putNumber("Drive Error", m_DrivetrainPID.getPositionError());
-            s_Swerve.drive(
-                new Translation2d(translationVal, strafeVal)
-                    .times(Constants.Swerve.MAX_SPEED), 
-                -m_DrivetrainPID.calculate(
-                    s_Swerve.getHeading().getDegrees(), 
-                        (Math.atan(
-                            (speakerPose.getY() - robotPose.getY()) /
-                            (speakerPose.getX() - robotPose.getX()))* (180/Math.PI))
-                    ),
-                false,
-                false);
-        }
+
+            if (Math.abs(m_DrivetrainPID.getPositionError()) < 2) {
+                s_Swerve.drive(new Translation2d(translationVal, strafeVal)
+                    .times(Constants.Swerve.MAX_SPEED), 0, false, false);
+            } else {
+                s_Swerve.drive(
+                    new Translation2d(translationVal, strafeVal)
+                        .times(Constants.Swerve.MAX_SPEED), 
+                    m_DrivetrainPID.calculate(
+                        s_Swerve.getHeading().getDegrees(), 
+                            (Math.atan2(
+                                (speakerPose.getY() - robotPose.getY()),
+                                (speakerPose.getX() - robotPose.getX()))* (180/Math.PI))
+                        ),
+                    false,
+                    false);
+            }
+        }   
         if (s_Flywheel.isReady()) {
             s_Hopper.setMotorsSpeed(-0.5, 0.5);
         }
@@ -139,8 +147,8 @@ public class ProtectedShoot extends Command {
 
     @Override
     public void end(boolean interrupted) {
-      /*  s_Flywheel.idle();
+        s_Flywheel.idle();
         s_Hopper.stop();
-        s_Pivot.set(0.01);*/
+        s_Pivot.set(0.01);
     }
 }

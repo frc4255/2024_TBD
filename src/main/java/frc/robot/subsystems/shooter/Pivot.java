@@ -158,6 +158,9 @@ public class Pivot extends ProfiledPIDSubsystem {
         m_isHomed = true;
     }
 
+    public boolean isHomed() {
+        return m_isHomed;
+    }
     public void startPivotHomeSequence() {
         m_isHomed = false;
         /* TODO: Find optimal voltage. */

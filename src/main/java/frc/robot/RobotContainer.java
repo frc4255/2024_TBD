@@ -69,7 +69,6 @@ public class RobotContainer {
     private final POVButton protectedShot = new POVButton(driver, 270);
     /* Subsystems */
 
-    private final LEDHandler s_LedHandler = new LEDHandler();
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{rightCam, leftCam, LLCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
@@ -77,6 +76,8 @@ public class RobotContainer {
     private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
     private final Hopper s_Hopper = new Hopper();
     private final FlyWheel s_FlyWheel = new FlyWheel();
+    private final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
+
 
     public SendableChooser<Command> autoChooser;
 
@@ -133,9 +134,9 @@ public class RobotContainer {
         runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
-        shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
-       // shootNote.whileTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
-         //   () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), () -> s_VisionSubystem.getCameraArray()));
+        //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
+        shootNote.toggleOnTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
+           () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), () -> s_VisionSubystem.getCameraArray()));
             
         RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
         InverseToggleIntake.whileTrue( new InverseToggleIntake(s_Intake, s_Hopper));
