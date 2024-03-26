@@ -8,16 +8,13 @@ import frc.robot.subsystems.shooter.Pivot;
 public class ShootFromGivenDistance extends Command {
 
     private double distance;
-    private double velocity;
 
     private Pivot s_Pivot;
     private Hopper s_Hopper;
     private FlyWheel s_Flywheel;
 
-    public ShootFromGivenDistance(double distance, double velocity, Pivot s_Pivot, Hopper s_Hopper, FlyWheel s_Flywheel) {
+    public ShootFromGivenDistance(double distance, Pivot s_Pivot, Hopper s_Hopper, FlyWheel s_Flywheel) {
         this.distance = distance;
-        this.velocity = velocity;
-
 
         this.s_Pivot = s_Pivot;
         this.s_Hopper = s_Hopper;
@@ -36,8 +33,8 @@ public class ShootFromGivenDistance extends Command {
 
     @Override
     public void execute() {
-        if (s_Flywheel.isReady()) {
-            s_Hopper.setMotorsSpeed(0.5, 0.5);
+        if (s_Flywheel.isReady() && s_Pivot.getController().atGoal()) {
+            s_Hopper.setMotorsSpeed(-0.5, 0.5);
         }
     }
 

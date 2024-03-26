@@ -1,6 +1,7 @@
 package frc.robot;
 
 import org.photonvision.PhotonCamera;
+import org.w3c.dom.xpath.XPathNSResolver;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -58,7 +59,6 @@ public class RobotContainer {
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
 
-    private final JoystickButton shootNote = new JoystickButton(driver, XboxController.Button.kA.value);
     private final JoystickButton RunFlyWheel = new JoystickButton(driver, XboxController.Button.kB.value);
 
     private final JoystickButton InverseToggleIntake = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
@@ -66,7 +66,7 @@ public class RobotContainer {
     private final JoystickButton adjustPivotManually = new JoystickButton(driver, XboxController.Button.kY.value);
     
     private final POVButton subwooferShot = new POVButton(driver, 90);
-    private final POVButton protectedShot = new POVButton(driver, 270);
+    private final JoystickButton aimbot = new JoystickButton(driver, XboxController.Button.kA.value);
     /* Subsystems */
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{rightCam, leftCam, LLCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
@@ -135,8 +135,6 @@ public class RobotContainer {
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
-        shootNote.toggleOnTrue(new Shoot(s_Pivot, s_FlyWheel, s_Hopper, s_Intake, s_Swerve, 
-           () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), () -> s_VisionSubystem.getCameraArray()));
             
         RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
         InverseToggleIntake.whileTrue( new InverseToggleIntake(s_Intake, s_Hopper));
@@ -144,7 +142,7 @@ public class RobotContainer {
         adjustPivotManually.onTrue(new InstantCommand(() -> s_Pivot.enable()).andThen(new AdjustPivotSetpointManually(s_Pivot)));
 
         subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot));
-        protectedShot.toggleOnTrue(new ProtectedShoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), () -> s_VisionSubystem.getCameraArray()));
+        aimbot.toggleOnTrue(new Shoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
         shooterIntake.toggleOnTrue(new ShooterIntake(s_Pivot, s_FlyWheel, s_Hopper));
     }
 
