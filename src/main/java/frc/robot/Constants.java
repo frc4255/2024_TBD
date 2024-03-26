@@ -2,6 +2,7 @@ package frc.robot;
 
 import java.util.Map;
 
+import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -19,27 +20,21 @@ public final class Constants {
     public static final double STICK_DEADBAND = 0.1;
 
     public static class LEDs {
-        public static final int LEFT_CANDLE_ID = 0;
-        public static final int RIGHT_CANDLE_ID = 1;
-
-        public static final int CODE_LOOP_THRESHOLD = 2;
+        public static final int CANDLE_ID = 1;
         
-        public static enum States {
-            SHOOTING(1, new Color(255,0,0)),
-            TARGET_IN_RANGE(2, new Color(0,255,0)),
-            NOTE_STORED(3, new Color(255, 128, 0)),
-            NOTHING(0, new Color(0,0,0));
+        public static enum LEDStates {
+            SHOOTING(new Color(0, 255, 0, true, 0.7)), // Green Flash
+            PASS(new Color(21, 90, 163)), //Blue
+            AMP_MODE(new Color(111, 0, 255)), //Purple 
+            AMP(new Color(111, 0, 255, true, 0.7)), //Purple Flash
+            TRAP(new Color(255, 89, 0)), //Orange
+            TARGET_IN_RANGE(new Color(0,255,0)), //Green
+            NOTHING(new Color(255,0,0));
     
-            private final int priority;
             private final Color color;
     
-            States(int priority, Color color) {
-                this.priority = priority;
+            LEDStates(Color color) {
                 this.color = color;
-            }
-            
-            public int getPriority() {
-                return priority;
             }
     
             public Color getColor() {
