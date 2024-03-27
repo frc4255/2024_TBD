@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
+import frc.robot.Constants.LEDs;
 import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.FieldLayout.FieldPiece.POI;
 import frc.robot.subsystems.LEDHandler;
@@ -68,9 +69,7 @@ public class Shoot extends Command {
 
         s_Pivot.enable();
         s_Pivot.alignPivotToSpeaker();
-        if (s_LedHandler.getCurrentPriority() < LEDStates.SHOOTING.getPriority()) {
-            s_LedHandler.request(LEDStates.SHOOTING);
-        }
+        s_LedHandler.request(LEDStates.SHOOTING);
     }
 
     @Override
@@ -104,11 +103,15 @@ public class Shoot extends Command {
         if (s_Flywheel.isReady() && s_Pivot.getController().atGoal() && m_DrivetrainPID.atSetpoint()) {
             s_Hopper.setMotorsSpeed(-0.5, 0.5);
             s_Hopper.setHasGamePiece(false);
+            s_LedHandler.request(LEDStates.SHOOTING);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
+        if (s_LedHandler.getPreviousPriority() < 5) {
+            s_LedHandler.hardRequest(LEDStates.NOTHING);
+        }
         s_LedHandler.requestPrev();
         s_Flywheel.idle();
         s_Hopper.stop();

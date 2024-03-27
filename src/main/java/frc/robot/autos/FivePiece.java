@@ -45,14 +45,14 @@ public class FivePiece extends SequentialCommandGroup {
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(2),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path),
-                new ToggleIntake(s_Intake, s_Hopper).withTimeout(2)
+                new ToggleIntake(s_Intake, s_Hopper, null).withTimeout(2)
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5),
-                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(2)
+                    new ToggleIntake(s_Intake, s_Hopper, null).withTimeout(2)
                 )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(2),
@@ -60,7 +60,7 @@ public class FivePiece extends SequentialCommandGroup {
                 s_Swerve.followPathCommand(path1),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5),
-                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(2)
+                    new ToggleIntake(s_Intake, s_Hopper, null).withTimeout(2)
                 )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5),
@@ -68,7 +68,7 @@ public class FivePiece extends SequentialCommandGroup {
                 s_Swerve.followPathCommand(path2),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5),
-                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(2)
+                    new ToggleIntake(s_Intake, s_Hopper, null).withTimeout(2)
                 )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5)
