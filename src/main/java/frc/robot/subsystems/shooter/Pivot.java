@@ -48,7 +48,7 @@ public class Pivot extends ProfiledPIDSubsystem {
         ); //TODO: Tune
 
         this.m_PoseSupplier = m_PoseSupplier;
-        super.getController().setTolerance(0.02);
+        super.getController().setTolerance(0.03);
         m_pivotMotor.setNeutralMode(NeutralModeValue.Brake);
     }
     
@@ -124,7 +124,7 @@ public class Pivot extends ProfiledPIDSubsystem {
             * Once we have all the information we need, we can perform linear interpolation between
             * the two values 
         */
-        setGoal(MathUtil.clamp(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t), 0.0, 0.7));
+        setGoal(MathUtil.clamp(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t), 0.0, 0.66));
     }
 
     public void alignPivotToGivenDistance(double distance) {

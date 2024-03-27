@@ -66,7 +66,7 @@ public class FlyWheel extends SubsystemBase {
                     6000
                 );
 
-        double leftVoltage =  m_LeftPIDController.calculate(
+        double leftVoltage = m_LeftPIDController.calculate(
                 getLeftFlywheelRPM(), 
                 2750
             );

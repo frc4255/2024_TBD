@@ -14,16 +14,16 @@ public class ShooterConstants {
      */
     public static final Map<Double, Double> LOOKUP_TABLE = Map.ofEntries(
         Map.entry(1.5, 0.66),
-        Map.entry(2.0, 0.6),
+        Map.entry(2.0, 0.59),
         Map.entry(2.3, 0.48),
         Map.entry(2.5, 0.42),
-        Map.entry(3.0, 0.36),
-        Map.entry(3.5, 0.3),
-        Map.entry(4.0, 0.27),
-        Map.entry(4.5, 0.24),
-        Map.entry(5.0, 0.21),
-        Map.entry(5.5, 0.19),
-        Map.entry(6.0, 0.165),
+        Map.entry(3.0, 0.35),
+        Map.entry(3.5, 0.29),
+        Map.entry(4.0, 0.253),
+        Map.entry(4.5, 0.225),
+        Map.entry(5.0, 0.205),
+        Map.entry(5.5, 0.185),
+        Map.entry(6.0, 0.163),
         Map.entry(6.5, 0.16),
         Map.entry(7.0, 0.155)
     );

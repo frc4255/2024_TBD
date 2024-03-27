@@ -51,7 +51,7 @@ public class Shoot extends Command {
         this.strafeSup = strafeSup;
 
         m_DrivetrainPID.enableContinuousInput(-180, 180);
-        m_DrivetrainPID.setTolerance(2);
+        m_DrivetrainPID.setTolerance(3);
 
         addRequirements(s_Hopper, s_Flywheel, s_Pivot, s_Swerve);
     }
@@ -76,6 +76,12 @@ public class Shoot extends Command {
                 ? FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d()
                 : FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
 
+        double PIDOutput = m_DrivetrainPID.calculate(
+                            s_Swerve.getHeading().getDegrees(),
+                            (Math.atan2(
+                                    (speakerPose.getY() - robotPose.getY()),
+                                    (speakerPose.getX() - robotPose.getX())) * (180 / Math.PI)));
+
         if (Math.abs(m_DrivetrainPID.getPositionError()) < 2) {
             s_Swerve.drive(new Translation2d(translationVal, strafeVal)
                     .times(Constants.Swerve.MAX_SPEED), 0, false, false);
@@ -83,11 +89,7 @@ public class Shoot extends Command {
             s_Swerve.drive(
                     new Translation2d(translationVal, strafeVal)
                             .times(Constants.Swerve.MAX_SPEED),
-                    m_DrivetrainPID.calculate(
-                            s_Swerve.getHeading().getDegrees(),
-                            (Math.atan2(
-                                    (speakerPose.getY() - robotPose.getY()),
-                                    (speakerPose.getX() - robotPose.getX())) * (180 / Math.PI))),
+                    PIDOutput,
                     false,
                     false);
         }
