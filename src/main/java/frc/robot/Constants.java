@@ -48,6 +48,23 @@ public final class Constants {
 
         public static final double MAX_DIST_BETWEEN_POSE = 0.2;
     }
+    
+    public final class Climber {
+        public static final int CLIMBER_MOTOR_ID_0 = 50; //TODO get motor ID
+
+        public enum Setpoints {
+            EXTENDED,
+            RETRACTED
+        }
+
+        public static final Map<Setpoints, Double> climberSetpoints = Map.of(
+            Setpoints.EXTENDED,
+            0.0, //TODO get setpoint
+            Setpoints.RETRACTED,
+            0.0 //TODO get setpoint
+        );
+
+    }
 
     public final class FlyWheel {
         public static final int SHOOTER_RIGHT_ID = 40;
