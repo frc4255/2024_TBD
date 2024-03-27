@@ -20,7 +20,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
+import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.FieldLayout.FieldPiece.POI;
+import frc.robot.subsystems.LEDHandler;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.shooter.FlyWheel;
@@ -32,6 +34,7 @@ public class Shoot extends Command {
     private FlyWheel s_Flywheel;
     private Pivot s_Pivot;
     private Swerve s_Swerve;
+    private LEDHandler s_LedHandler;
 
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
@@ -41,11 +44,12 @@ public class Shoot extends Command {
     private Pose2d robotPose = new Pose2d();
 
     public Shoot(Hopper s_Hopper, FlyWheel s_Flywheel, Pivot s_Pivot, Swerve s_Swerve, DoubleSupplier translationSup,
-            DoubleSupplier strafeSup) {
+            DoubleSupplier strafeSup, LEDHandler s_LedHandler) {
         this.s_Hopper = s_Hopper;
         this.s_Flywheel = s_Flywheel;
         this.s_Pivot = s_Pivot;
         this.s_Swerve = s_Swerve;
+        this.s_LedHandler = s_LedHandler;
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
@@ -64,6 +68,9 @@ public class Shoot extends Command {
 
         s_Pivot.enable();
         s_Pivot.alignPivotToSpeaker();
+        if (s_LedHandler.getCurrentPriority() < LEDStates.SHOOTING.getPriority()) {
+            s_LedHandler.request(LEDStates.SHOOTING);
+        }
     }
 
     @Override
@@ -96,11 +103,13 @@ public class Shoot extends Command {
 
         if (s_Flywheel.isReady() && s_Pivot.getController().atGoal() && m_DrivetrainPID.atSetpoint()) {
             s_Hopper.setMotorsSpeed(-0.5, 0.5);
+            s_Hopper.setHasGamePiece(false);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
+        s_LedHandler.requestPrev();
         s_Flywheel.idle();
         s_Hopper.stop();
         s_Pivot.set(0.01);

@@ -4,9 +4,11 @@ import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.LarsonAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
+import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,6 +25,7 @@ public class LEDHandler extends SubsystemBase {
     private BooleanSupplier trapHomedSupplier;
 
     private LEDStates currentLEDState;
+    private LEDStates previousLEDState;
 
     public LEDHandler(BooleanSupplier intakeHomedSupplier, BooleanSupplier pivotHomedSupplier, BooleanSupplier trapHomedSupplier) {
         this.trapHomedSupplier = trapHomedSupplier;
@@ -40,6 +43,8 @@ public class LEDHandler extends SubsystemBase {
             return;
         }
 
+        previousLEDState = currentLEDState;
+        currentLEDState = requestedLEDState;
         Color LEDColors = requestedLEDState.getColor();
 
         if (LEDColors.strobe) {
@@ -49,9 +54,24 @@ public class LEDHandler extends SubsystemBase {
         }
     }
 
+    public void requestPrev() {
+        currentLEDState = previousLEDState;
+
+        Color LEDColors = currentLEDState.getColor();
+
+        if (LEDColors.strobe) {
+            LEDs.animate(new StrobeAnimation(LEDColors.r, LEDColors.g, LEDColors.g, 0, LEDColors.animationSpeed, 40));
+        } else {
+            LEDs.setLEDs(LEDColors.r, LEDColors.g, LEDColors.b);
+        }
+    }
+
+    public int getCurrentPriority() {
+        return currentLEDState.getPriority();
+    }
     public void runDisabledStripAnimation() {
         //LEDs.setLEDs(255, 0, 0, 0, 8, 10);
-        LEDs.animate(new SingleFadeAnimation(0, 255, 0, 0, 0.1, 40, 8));
+        LEDs.animate(new LarsonAnimation(0, 255, 0, 0, 0.5, 40, BounceMode.Back, 5, 8));
     }
 
     public void updateFieldSetupLEDs() {
