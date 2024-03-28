@@ -42,20 +42,20 @@ public class FivePiece extends SequentialCommandGroup {
                 path.flipPath().getPreviewStartingHolonomicPose() :
                 path.getPreviewStartingHolonomicPose()
             )),
-            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(2),
+            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.75),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path),
-                new ToggleIntake(s_Intake, s_Hopper).withTimeout(2)
+                new ToggleIntake(s_Intake, s_Hopper).withTimeout(1.75)
             ),
-            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5),
+            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.25),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(
-                    new WaitCommand(0.5),
-                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(2)
+                    new WaitCommand(1),
+                    new ToggleIntake(s_Intake, s_Hopper).withTimeout(1.5)
                 )
             ),
-            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(2),
+            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path1),
                 new SequentialCommandGroup(
@@ -71,7 +71,7 @@ public class FivePiece extends SequentialCommandGroup {
                     new ToggleIntake(s_Intake, s_Hopper).withTimeout(2)
                 )
             ),
-            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5)
+            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(2)
         );
     }
 }

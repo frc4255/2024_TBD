@@ -57,16 +57,16 @@ public class Camera {
             Pose3d pose = result.estimatedPose;
             boolean shouldRejectPose = false;
             
-            /* Filtering; Reject unlikely
+            /* Filtering; Reject unlikely*/
             if (isPoseOutOfBounds(pose)) {
                 shouldRejectPose = true;
             }
             
-            /*if (robotPoseSupplier != null) {
+            if (robotPoseSupplier != null) {
                 if (!isPosePhysicallyPossible(robotPoseSupplier.get(), pose.toPose2d())) {
                     shouldRejectPose = true;
                 }
-            }*/
+            }
 
             for (PhotonTrackedTarget target : result.targetsUsed) {
                 if (target.getPoseAmbiguity() > 0.2) {

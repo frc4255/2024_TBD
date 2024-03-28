@@ -30,7 +30,7 @@ public class AutonShoot extends Command {
 
     @Override
     public void execute() {
-        if (s_Flywheel.isReady()) {
+        if (s_Flywheel.isReady() && s_Pivot.getController().atGoal()) {
             s_Hopper.setMotorsSpeed(-0.5, 0.5);
         }
     }

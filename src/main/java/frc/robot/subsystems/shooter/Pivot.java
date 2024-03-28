@@ -73,12 +73,16 @@ public class Pivot extends ProfiledPIDSubsystem {
 
     public double getDistance() {
         Pose2d robotPose = m_PoseSupplier.get();
+        Pose2d speakerPose;
 
-        Pose2d speakerPose =
+        if (DriverStation.getAlliance().isEmpty()) {
+            speakerPose = new Pose2d();
+        } else {
+        speakerPose =
             DriverStation.getAlliance().get() == Alliance.Red ?
             FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
             FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
-
+        }
         return Math.sqrt(
             Math.pow((speakerPose.getX() - robotPose.getX()), 2) +
             Math.pow((speakerPose.getY() - robotPose.getY()), 2)
