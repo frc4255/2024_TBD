@@ -26,12 +26,10 @@ import frc.robot.subsystems.*;
 import frc.robot.subsystems.shooter.*;
 
 /* TODO: Tune timings and angles */
-public class FivePiece extends SequentialCommandGroup {
-    public FivePiece(Swerve s_Swerve, Pivot s_Pivot, FlyWheel s_Flywheel, Intake s_Intake, Hopper s_Hopper, LEDHandler s_LedHandler) {
-        PathPlannerPath path = PathPlannerPath.fromPathFile("5 Piece Auton 0");
-        PathPlannerPath path0 = PathPlannerPath.fromPathFile("5 Piece Auton 1");
-        PathPlannerPath path1 = PathPlannerPath.fromPathFile("5 Piece Auton 2");
-        PathPlannerPath path2 = PathPlannerPath.fromPathFile("5 Piece Auton 3");
+public class ThreePiece extends SequentialCommandGroup {
+    public ThreePiece(Swerve s_Swerve, Pivot s_Pivot, FlyWheel s_Flywheel, Intake s_Intake, Hopper s_Hopper, LEDHandler s_LedHandler) {
+        PathPlannerPath path = PathPlannerPath.fromPathFile("3 Piece 1");
+        PathPlannerPath path0 = PathPlannerPath.fromPathFile("3 Piece 2");
 
         addCommands(
             new InstantCommand(() -> s_Swerve.setHeading(DriverStation.getAlliance().get() == Alliance.Red ?
@@ -45,33 +43,17 @@ public class FivePiece extends SequentialCommandGroup {
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.75),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path),
-                new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(1.75)
+                new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2)
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.25),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(
-                    new WaitCommand(1),
+                    new WaitCommand(3),
                     new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(1.5)
                 )
             ),
-            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5),
-            new ParallelCommandGroup(
-                s_Swerve.followPathCommand(path1),
-                new SequentialCommandGroup(
-                    new WaitCommand(0.5),
-                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2)
-                )
-            ),
-            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5),
-            new ParallelCommandGroup(
-                s_Swerve.followPathCommand(path2),
-                new SequentialCommandGroup(
-                    new WaitCommand(0.5),
-                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2)
-                )
-            ),
-            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(2)
+            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5)
         );
     }
 }

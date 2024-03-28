@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.FivePiece;
 import frc.robot.autos.TestAuton;
+import frc.robot.autos.ThreePiece;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.shooter.*;
@@ -74,9 +75,10 @@ public class RobotContainer {
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
 
     private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
-    private final Hopper s_Hopper = new Hopper();
     private final FlyWheel s_FlyWheel = new FlyWheel();
     private final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
+    private final Hopper s_Hopper = new Hopper(s_LedHandler);
+
 
 
     public SendableChooser<Command> autoChooser;
@@ -101,7 +103,8 @@ public class RobotContainer {
 
     private void configureAutoChooser() {
         autoChooser = new SendableChooser<>();
-        autoChooser.addOption("5 Piece Auto", new FivePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper));
+        autoChooser.addOption("5 Piece Auto", new FivePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper, s_LedHandler));
+        autoChooser.addOption("3 Piece Auto", new ThreePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper, s_LedHandler));
         autoChooser.addOption("Test", new TestAuton(s_Swerve, s_Hopper, s_FlyWheel, s_Pivot));
         autoChooser.addOption("Do nothing", null);
 
@@ -131,7 +134,7 @@ public class RobotContainer {
 
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper));
+        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
@@ -142,7 +145,7 @@ public class RobotContainer {
         adjustPivotManually.onTrue(new InstantCommand(() -> s_Pivot.enable()).andThen(new AdjustPivotSetpointManually(s_Pivot)));
 
         subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot));
-        aimbot.whileTrue(new Shoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis)));
+        aimbot.whileTrue(new Shoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));
         shooterIntake.toggleOnTrue(new ShooterIntake(s_Pivot, s_FlyWheel, s_Hopper));
     }
 
