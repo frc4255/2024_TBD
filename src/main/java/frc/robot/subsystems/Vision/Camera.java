@@ -18,9 +18,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
 import frc.robot.subsystems.Vision.VisionSubystem.PoseAndTimestamp;
+import frc.robot.subsystems.Vision.VisionSubystem.*;
 
 public class Camera {
     private PhotonCamera cam;
@@ -30,6 +35,8 @@ public class Camera {
     private Optional<Double> poseStdDevs;
     private double trust;
     private Supplier<Pose2d> robotPoseSupplier;
+
+    public DoubleArrayLogEntry cameraPoseEntry;
 
     public Camera(PhotonCamera cam, Transform3d robotToCam) {
         this.cam = cam;
@@ -44,7 +51,31 @@ public class Camera {
             cam,
             robotToCam
         );
+
+
+        DataLog log = DataLogManager.getLog();
+
+        cameraPoseEntry = new DoubleArrayLogEntry(log, "/vision/" + cam.getName() + "PoseEstimate");            
+
     }
+  
+    public void updateCameraPoseEntry() {
+        // Check if there is an estimate available
+        if (estimate.isPresent()) {
+            Pose2d pose = estimate.get().getPose();
+            
+            // Flatten the Pose2d data into individual components
+            double[] poseData = { pose.getTranslation().getX(), 
+                                  pose.getTranslation().getY(),
+                                  pose.getRotation().getRadians()};
+    
+            // Append the pose data to the DoubleArrayLogEntry
+            cameraPoseEntry.append(poseData);
+        }
+    }
+    
+    
+      
 
     public void updateEstimate() {
         /* Clear last estimate */

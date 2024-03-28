@@ -16,8 +16,10 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.math.MathUtil;
-
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -38,6 +40,9 @@ public class Pivot extends ProfiledPIDSubsystem {
     private VoltageOut m_pivotRequest = new VoltageOut(0.0);
 
     private boolean m_isHomed = false; //TODO
+
+    private DoubleLogEntry m_Pivot;  
+    private DoubleLogEntry m_PivotDistance;       
    
     public Pivot(Supplier<Pose2d> m_PoseSupplier) {
         super(new ProfiledPIDController(
@@ -50,6 +55,12 @@ public class Pivot extends ProfiledPIDSubsystem {
         this.m_PoseSupplier = m_PoseSupplier;
         super.getController().setTolerance(0.03);
         m_pivotMotor.setNeutralMode(NeutralModeValue.Brake);
+
+        DataLog log = DataLogManager.getLog();
+
+        m_Pivot = new DoubleLogEntry(log, "/Pivot/Angle");
+        m_PivotDistance = new DoubleLogEntry(log, "/General/DistanceFromSpeaker");
+        
     }
     
     @Override
@@ -189,6 +200,9 @@ public class Pivot extends ProfiledPIDSubsystem {
     @Override
     public void periodic() {
         super.periodic();
+
+        m_Pivot.append(getMeasurement());
+        m_PivotDistance.append(getDistance());
 
         SmartDashboard.putNumber("Distance from Target", getDistance());
         SmartDashboard.putNumber("Pivot Angle", getMeasurement());
