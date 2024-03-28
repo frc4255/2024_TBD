@@ -24,8 +24,9 @@ public class LEDHandler extends SubsystemBase {
     private BooleanSupplier pivotHomedSupplier;
     private BooleanSupplier trapHomedSupplier;
 
-    private LEDStates currentLEDState;
-    private LEDStates previousLEDState;
+    private LEDStates currentLEDState = LEDStates.NOTHING;
+    private LEDStates previousLEDState = LEDStates.NOTHING;
+    private LEDStates tempoLEDState = LEDStates.NOTHING;
 
     public LEDHandler(BooleanSupplier intakeHomedSupplier, BooleanSupplier pivotHomedSupplier, BooleanSupplier trapHomedSupplier) {
         this.trapHomedSupplier = trapHomedSupplier;
@@ -58,7 +59,14 @@ public class LEDHandler extends SubsystemBase {
     }
 
     public void requestPrev() {
+        tempoLEDState = currentLEDState;
+        if (currentLEDState.getPriority() == LEDStates.SHOOTING.getPriority()) {
+            currentLEDState = LEDStates.NOTHING;
+            LEDs.setLEDs(currentLEDState.getColor().r, currentLEDState.getColor().g, currentLEDState.getColor().b); // sets the color of current ledstate
+            return;
+        }
         currentLEDState = previousLEDState;
+        previousLEDState = tempoLEDState;
 
         Color LEDColors = currentLEDState.getColor();
 

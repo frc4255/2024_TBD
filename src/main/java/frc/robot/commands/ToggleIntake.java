@@ -39,7 +39,6 @@ public class ToggleIntake extends Command {
     }
     @Override
     public void end(boolean interrupted) {
-        s_LedHandler.request(LEDStates.HAS_NOTE);
         s_Intake.requestGoal(Setpoints.STOW);
         s_Intake.stopIntake();
         s_Hopper.stop();
