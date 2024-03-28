@@ -25,12 +25,12 @@ public final class Constants {
         public static enum LEDStates {
             SHOOTING(1, new Color(0, 255, 0, true, 0.7)), // Green Flash
             PASS(2, new Color(21, 90, 163)), //Blue
-            AMP_MODE(2, new Color(111, 0, 255)), //Purple 
             AMP(3, new Color(111, 0, 255, true, 0.7)), //Purple Flash
             TRAP(4, new Color(255, 89, 0)), //Orange
-            TARGET_IN_RANGE(4, new Color(0,255,0)), //Green
+            TARGET_IN_RANGE(5, new Color(0,255,0)), //Green
             HAS_NOTE(6, new Color(252, 123, 3, true, 0.7)), //Orange Flash
-            NOTHING(10, new Color(255,0,0));
+            NOTHING(10, new Color(255,0,0)), //this one is just red nick
+            INTAKE(7, new Color(0,0,0));
     
             private final Color color;
             private final int priority;
@@ -48,6 +48,7 @@ public final class Constants {
             }
         }
     }
+    
     
     public final class PoseFilter {
         public static final double POSE_HEIGHT_TOLERANCE = 0.05;

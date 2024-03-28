@@ -26,6 +26,8 @@ public class LEDHandler extends SubsystemBase {
 
     private LEDStates currentLEDState = LEDStates.NOTHING;
     private LEDStates previousLEDState = LEDStates.NOTHING;
+    private LEDStates tempoLEDState = LEDStates.NOTHING;
+
 
     public LEDHandler(BooleanSupplier intakeHomedSupplier, BooleanSupplier pivotHomedSupplier, BooleanSupplier trapHomedSupplier) {
         this.trapHomedSupplier = trapHomedSupplier;
@@ -42,25 +44,55 @@ public class LEDHandler extends SubsystemBase {
         if (currentLEDState == requestedLEDState) {
             return;
         }
+        if (currentLEDState.getPriority() > requestedLEDState.getPriority()) {
+            return;
+        }
 
         previousLEDState = currentLEDState;
         currentLEDState = requestedLEDState;
         Color LEDColors = requestedLEDState.getColor();
 
         if (LEDColors.strobe) {
-            LEDs.animate(new StrobeAnimation(LEDColors.r, LEDColors.g, LEDColors.g, 0, LEDColors.animationSpeed, 40));
+            LEDs.animate(new StrobeAnimation(LEDColors.r, LEDColors.g, LEDColors.b, 0, LEDColors.animationSpeed, 40));
         } else {
             LEDs.setLEDs(LEDColors.r, LEDColors.g, LEDColors.b);
         }
     }
 
     public void requestPrev() {
+        tempoLEDState = currentLEDState;
+        if (currentLEDState.getPriority() == LEDStates.SHOOTING.getPriority()) {
+            currentLEDState = LEDStates.NOTHING;
+            LEDs.setLEDs(currentLEDState.getColor().r, currentLEDState.getColor().g, currentLEDState.getColor().b); // sets the color of current ledstate
+            return;
+        }
         currentLEDState = previousLEDState;
+        previousLEDState = tempoLEDState;
 
         Color LEDColors = currentLEDState.getColor();
 
         if (LEDColors.strobe) {
-            LEDs.animate(new StrobeAnimation(LEDColors.r, LEDColors.g, LEDColors.g, 0, LEDColors.animationSpeed, 40));
+            LEDs.animate(new StrobeAnimation(LEDColors.r, LEDColors.g, LEDColors.b, 0, LEDColors.animationSpeed, 40));
+        } else {
+            LEDs.setLEDs(LEDColors.r, LEDColors.g, LEDColors.b);
+        }
+    }
+
+    public void hardSetLEDs(int r, int g, int b) {
+        LEDs.setLEDs(r, g, b);
+    }
+
+    public void hardRequest(LEDStates requestedLEDState) {
+        if (currentLEDState == requestedLEDState) {
+            return;
+        }
+
+        previousLEDState = currentLEDState;
+        currentLEDState = requestedLEDState;
+        Color LEDColors = requestedLEDState.getColor();
+
+        if (LEDColors.strobe) {
+            LEDs.animate(new StrobeAnimation(LEDColors.r, LEDColors.g, LEDColors.b, 0, LEDColors.animationSpeed, 40));
         } else {
             LEDs.setLEDs(LEDColors.r, LEDColors.g, LEDColors.b);
         }
@@ -69,6 +101,10 @@ public class LEDHandler extends SubsystemBase {
     public int getCurrentPriority() {
         return currentLEDState.getPriority();
     }
+    public int getPreviousPriority() {
+        return previousLEDState.getPriority();
+    }
+
     public void runDisabledStripAnimation() {
         //LEDs.setLEDs(255, 0, 0, 0, 8, 10);
         LEDs.animate(new LarsonAnimation(0, 255, 0, 0, 0.4, 22, BounceMode.Back, 5, 8));
@@ -96,3 +132,9 @@ public class LEDHandler extends SubsystemBase {
         LEDs.setLEDs(DriverStation.isFMSAttached() ? 0 : 255, DriverStation.isFMSAttached() ? 255 : 0, 0, 0, 2, 1);
     }
 }
+//goal: make a method to change the LEDs on action but how do we listen to actions
+//step 1: copy other peoples code :thumbsup:
+
+//I have to account for the fact that there are modes that will pop up and i need to show that after its done (i dont know how i will know its done)
+//I will need to change it back to the color with the highest priority after the mode or the opposite, while the mode is active,
+// make it so that it will go up to an action that has a higher priority and then go back to the mode with lower priority

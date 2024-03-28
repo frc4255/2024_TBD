@@ -31,8 +31,10 @@ public class ToggleIntake extends Command {
 
     @Override
     public void execute() {
+        s_LedHandler.request(LEDStates.INTAKE);
         if (s_Hopper.getStarMotorCurrent() > 20) {
             s_Hopper.setHasGamePiece(true);
+            s_LedHandler.request(LEDStates.HAS_NOTE);
         }
     }
     @Override
