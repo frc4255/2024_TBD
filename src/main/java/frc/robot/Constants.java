@@ -50,7 +50,7 @@ public final class Constants {
     }
     
     public final class PoseFilter {
-        public static final double POSE_HEIGHT_TOLERANCE = 0.01;
+        public static final double POSE_HEIGHT_TOLERANCE = 0.05;
 
         public static final double MAX_DIST_BETWEEN_POSE = 0.2;
     }

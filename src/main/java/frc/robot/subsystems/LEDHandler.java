@@ -24,8 +24,8 @@ public class LEDHandler extends SubsystemBase {
     private BooleanSupplier pivotHomedSupplier;
     private BooleanSupplier trapHomedSupplier;
 
-    private LEDStates currentLEDState;
-    private LEDStates previousLEDState;
+    private LEDStates currentLEDState = LEDStates.NOTHING;
+    private LEDStates previousLEDState = LEDStates.NOTHING;
 
     public LEDHandler(BooleanSupplier intakeHomedSupplier, BooleanSupplier pivotHomedSupplier, BooleanSupplier trapHomedSupplier) {
         this.trapHomedSupplier = trapHomedSupplier;
@@ -71,7 +71,7 @@ public class LEDHandler extends SubsystemBase {
     }
     public void runDisabledStripAnimation() {
         //LEDs.setLEDs(255, 0, 0, 0, 8, 10);
-        LEDs.animate(new LarsonAnimation(0, 255, 0, 0, 0.5, 40, BounceMode.Back, 5, 8));
+        LEDs.animate(new LarsonAnimation(0, 255, 0, 0, 0.4, 22, BounceMode.Back, 5, 8));
     }
 
     public void updateFieldSetupLEDs() {

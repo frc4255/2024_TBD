@@ -68,7 +68,7 @@ public class Shoot extends Command {
 
         s_Pivot.enable();
         s_Pivot.alignPivotToSpeaker();
-        if (s_LedHandler.getCurrentPriority() < LEDStates.SHOOTING.getPriority()) {
+        if (s_LedHandler.getCurrentPriority() > LEDStates.SHOOTING.getPriority()) {
             s_LedHandler.request(LEDStates.SHOOTING);
         }
     }

@@ -40,17 +40,20 @@ public class ThreePiece extends SequentialCommandGroup {
                 path.flipPath().getPreviewStartingHolonomicPose() :
                 path.getPreviewStartingHolonomicPose()
             )),
-            new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.75),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path),
-                new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2)
+                new SequentialCommandGroup(
+                    new WaitCommand(0.3),
+                    new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.75),
+                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2)
+                )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.25),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(
-                    new WaitCommand(3),
-                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(1.5)
+                    new WaitCommand(1.25),
+                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2.5)
                 )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5)
