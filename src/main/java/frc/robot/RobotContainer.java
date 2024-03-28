@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.FivePiece;
 import frc.robot.autos.TestAuton;
+import frc.robot.autos.ThreePiece;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.shooter.*;
@@ -74,9 +75,9 @@ public class RobotContainer {
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
 
     private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
+    private final FlyWheel s_FlyWheel = new FlyWheel();
     private final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
     private final Hopper s_Hopper = new Hopper(s_LedHandler);
-    private final FlyWheel s_FlyWheel = new FlyWheel();
 
 
     public SendableChooser<Command> autoChooser;
@@ -101,7 +102,8 @@ public class RobotContainer {
 
     private void configureAutoChooser() {
         autoChooser = new SendableChooser<>();
-        autoChooser.addOption("5 Piece Auto", new FivePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper));
+        autoChooser.addOption("5 Piece Auto", new FivePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper, s_LedHandler));
+        autoChooser.addOption("3 Piece Auto", new ThreePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper, s_LedHandler));
         autoChooser.addOption("Test", new TestAuton(s_Swerve, s_Hopper, s_FlyWheel, s_Pivot));
         autoChooser.addOption("Do nothing", null);
 

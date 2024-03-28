@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class ShooterConstants {
 
-    public static final double PIVOT_P = 14;
+    public static final double PIVOT_P = 17;
 
     public static final int PIVOT_MOTOR_ID = 20;
     public static final double MAX_DISTANCE = 7;
@@ -14,18 +14,19 @@ public class ShooterConstants {
      */
     public static final Map<Double, Double> LOOKUP_TABLE = Map.ofEntries(
         Map.entry(1.5, 0.66),
-        Map.entry(2.0, 0.59),
+        Map.entry(2.0, 0.6),
         Map.entry(2.3, 0.48),
         Map.entry(2.5, 0.42),
         Map.entry(3.0, 0.35),
         Map.entry(3.5, 0.29),
-        Map.entry(4.0, 0.253),
-        Map.entry(4.5, 0.225),
-        Map.entry(5.0, 0.205),
-        Map.entry(5.5, 0.185),
-        Map.entry(6.0, 0.163),
-        Map.entry(6.5, 0.16),
-        Map.entry(7.0, 0.155)
+        Map.entry(4.0, 0.26),
+        Map.entry(4.5, 0.23),
+        Map.entry(5.0, 0.195),
+        Map.entry(5.3, 0.175),
+        Map.entry(5.5, 0.17),
+        Map.entry(6.0, 0.16),
+        Map.entry(6.5, 0.155),
+        Map.entry(7.0, 0.15)
     );
 
     public static final double RIGHT_FLYWHEEL_P = 0.002;

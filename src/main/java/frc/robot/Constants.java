@@ -51,7 +51,7 @@ public final class Constants {
     
     
     public final class PoseFilter {
-        public static final double POSE_HEIGHT_TOLERANCE = 0.01;
+        public static final double POSE_HEIGHT_TOLERANCE = 0.05;
 
         public static final double MAX_DIST_BETWEEN_POSE = 0.2;
     }
@@ -80,7 +80,7 @@ public final class Constants {
 
         public static final Map<Setpoints, Double> intakeSetpoints = Map.of(
             Setpoints.DEPLOY,
-            0.15,
+            0.17,
             Setpoints.STOW,
             2.4,
             Setpoints.OUT_OF_WAY,
