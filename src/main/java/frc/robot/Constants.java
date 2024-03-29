@@ -140,7 +140,7 @@ public final class Constants {
 
         /* Swerve Current Limiting */
         public static final int ANGLE_CURRENT_LIMIT = 25;
-        public static final int ANGLE_CURRENT_THRESHOLD = 35;
+        public static final int ANGLE_CURRENT_THRESHOLD = 30;
         public static final double ANGLE_CURRENT_THRESHOLD_TIME = 0.1;
         public static final boolean ANGLE_ENABLE_CURRENT_LIMIT = true;
 
