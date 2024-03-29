@@ -54,6 +54,23 @@ public final class Constants {
 
         public static final double MAX_DIST_BETWEEN_POSE = 0.2;
     }
+    
+    public final class Climber {
+        public static final int CLIMBER_MOTOR_ID_0 = 50; //TODO get motor ID
+
+        public enum Setpoints {
+            EXTENDED,
+            RETRACTED
+        }
+
+        public static final Map<Setpoints, Double> climberSetpoints = Map.of(
+            Setpoints.EXTENDED,
+            0.0, //TODO get setpoint
+            Setpoints.RETRACTED,
+            0.0 //TODO get setpoint
+        );
+
+    }
 
     public final class FlyWheel {
         public static final int SHOOTER_RIGHT_ID = 40;
@@ -79,7 +96,7 @@ public final class Constants {
 
         public static final Map<Setpoints, Double> intakeSetpoints = Map.of(
             Setpoints.DEPLOY,
-            0.17,
+            0.175,
             Setpoints.STOW,
             2.4,
             Setpoints.OUT_OF_WAY,
@@ -122,12 +139,12 @@ public final class Constants {
 
         /* Swerve Current Limiting */
         public static final int ANGLE_CURRENT_LIMIT = 25;
-        public static final int ANGLE_CURRENT_THRESHOLD = 40;
+        public static final int ANGLE_CURRENT_THRESHOLD = 35;
         public static final double ANGLE_CURRENT_THRESHOLD_TIME = 0.1;
         public static final boolean ANGLE_ENABLE_CURRENT_LIMIT = true;
 
         public static final int DRIVE_CURRENT_LIMIT = 35;
-        public static final int DRIVE_CURRENT_THRESHOLD = 60;
+        public static final int DRIVE_CURRENT_THRESHOLD = 45;
         public static final double DRIVE_CURRENT_THRESHOLD_TIME = 0.1;
         public static final boolean DRIVE_ENABLE_CURRENT_LIMIT = true;
 

@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.FivePiece;
 import frc.robot.autos.TestAuton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.ThreePiece;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -38,12 +39,15 @@ import frc.robot.subsystems.Vision.VisionSubystem;
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
+    private final Joystick operator = new Joystick(1);
+
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
+    private final int climberSpeedAxis = XboxController.Axis.kLeftY.value;
 
     private final Camera leftCam = new Camera(new PhotonCamera("LeftCam"), new Transform3d(new Translation3d(0.258, 0.291, 0.2), new Rotation3d(0, -1.08, 0.523)));
     private final Camera rightCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.258, -0.291, 0.2), new Rotation3d(0, -1.08, -0.523)));
@@ -82,6 +86,7 @@ public class RobotContainer {
 
 
     public SendableChooser<Command> autoChooser;
+    private final Climber s_Climber = new Climber();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -92,6 +97,13 @@ public class RobotContainer {
                 () -> -driver.getRawAxis(strafeAxis), 
                 () -> -driver.getRawAxis(rotationAxis), 
                 () -> false
+            )
+        );
+
+        s_Climber.setDefaultCommand(
+            new Climb(
+                s_Climber,
+                () -> operator.getRawAxis(climberSpeedAxis)
             )
         );
 

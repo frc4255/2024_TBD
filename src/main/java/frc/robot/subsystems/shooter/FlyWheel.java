@@ -88,18 +88,18 @@ public class FlyWheel extends SubsystemBase {
     private void updateIdle() {
         double rightVoltage = m_RightPIDController.calculate(
                     getRightFlywheelRPM(),
-                    1000
+                    0
                 );
 
         double leftVoltage =  m_LeftPIDController.calculate(
                 getLeftFlywheelRPM(), 
-                1000
+                0
             );
         
         m_RightFlywheelMotor.setControl(
             m_rightRequest.withOutput(
                 MathUtil.clamp(
-                    rightVoltage + m_RightFeedforwardController.calculate(1000),
+                    rightVoltage + m_RightFeedforwardController.calculate(0),
                     0,
                     12
                 )
@@ -107,7 +107,7 @@ public class FlyWheel extends SubsystemBase {
         );
         m_LeftFlywheelMotor.setVoltage(
             MathUtil.clamp(
-            leftVoltage + m_LeftFeedforwardController.calculate(500),
+            leftVoltage + m_LeftFeedforwardController.calculate(0),
             0,
             12
             )

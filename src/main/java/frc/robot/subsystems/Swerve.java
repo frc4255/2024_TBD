@@ -5,6 +5,7 @@ import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -19,11 +20,14 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import frc.robot.subsystems.Vision.VisionSubystem;
-import frc.robot.subsystems.Vision.VisionSubystem.PoseAndTimestamp;
+import frc.robot.subsystems.Vision.VisionSubystem.PoseAndTimestampAndDev;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,12 +63,11 @@ public class Swerve extends SubsystemBase {
                 getGyroYaw(),
                 getModulePositions(),
                 new Pose2d(),
-                VecBuilder.fill(0.5, 0.5, 0.5),
-                VecBuilder.fill(2.5, 2.5, 2.5)
+                VecBuilder.fill(1, 1, 1),
+                VecBuilder.fill(2, 2, 2)
             );
 
         resetModulesToAbsolute();
-        
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -205,8 +208,9 @@ public class Swerve extends SubsystemBase {
     public void periodic(){
         m_SwervePoseEstimator.update(getGyroYaw(), getModulePositions());
         int count = 0;
-        for (PoseAndTimestamp poseAndTimestamp : vision.getResults()) {
+        for (PoseAndTimestampAndDev poseAndTimestamp : vision.getResults()) {
             count++;
+            double stdDev = poseAndTimestamp.getStdDev();
             m_SwervePoseEstimator.addVisionMeasurement(
                 poseAndTimestamp.getPose(),
                 poseAndTimestamp.getTimestamp()

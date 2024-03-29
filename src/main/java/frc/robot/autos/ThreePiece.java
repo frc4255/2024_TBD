@@ -40,6 +40,7 @@ public class ThreePiece extends SequentialCommandGroup {
                 path.flipPath().getPreviewStartingHolonomicPose() :
                 path.getPreviewStartingHolonomicPose()
             )),
+            new WaitCommand(0.1),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path),
                 new SequentialCommandGroup(

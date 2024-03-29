@@ -35,7 +35,7 @@ public class FieldLayout {
                 POI.RED_SPEAKER,
                 new Pose3d(
                     Units.inchesToMeters(652.73),
-                    Units.inchesToMeters(218.42),
+                    Units.inchesToMeters(220.42),
                     Units.inchesToMeters(2.04216),
                     new Rotation3d(0, 0, Math.PI)
                 )

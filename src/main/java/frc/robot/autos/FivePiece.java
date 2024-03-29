@@ -42,6 +42,7 @@ public class FivePiece extends SequentialCommandGroup {
                 path.flipPath().getPreviewStartingHolonomicPose() :
                 path.getPreviewStartingHolonomicPose()
             )),
+            new WaitCommand(0.1),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.75),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path),

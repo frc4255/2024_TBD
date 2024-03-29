@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.opencv.objdetect.QRCodeDetectorAruco;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -14,24 +15,26 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
-import frc.robot.subsystems.Vision.VisionSubystem.PoseAndTimestamp;
+import frc.robot.subsystems.Vision.VisionSubystem.PoseAndTimestampAndDev;
 import frc.robot.subsystems.Vision.VisionSubystem.*;
 
 public class Camera {
     private PhotonCamera cam;
     private PhotonPoseEstimator poseEstimator;
     public List<PhotonTrackedTarget> targets = new ArrayList<>();
-    private Optional<PoseAndTimestamp> estimate;
+    private Optional<PoseAndTimestampAndDev> estimate = null;
     private Optional<Double> poseStdDevs;
     private double trust;
     private Supplier<Pose2d> robotPoseSupplier;
@@ -61,7 +64,7 @@ public class Camera {
   
     public void updateCameraPoseEntry() {
         // Check if there is an estimate available
-        if (estimate.isPresent()) {
+        if (estimate != null) {
             Pose2d pose = estimate.get().getPose();
             
             // Flatten the Pose2d data into individual components
@@ -87,6 +90,8 @@ public class Camera {
         if (result != null) {
             Pose3d pose = result.estimatedPose;
             boolean shouldRejectPose = false;
+
+            List<Double> tagDistances = new ArrayList<>();
             
             /* Filtering; Reject unlikely*/
             if (isPoseOutOfBounds(pose)) {
@@ -103,10 +108,30 @@ public class Camera {
                 if (target.getPoseAmbiguity() > 0.2) {
                     shouldRejectPose = true;
                 }
+
+                if (robotPoseSupplier != null) {
+                    Translation3d translation = target.getBestCameraToTarget().getTranslation();
+                    tagDistances.add(Math.hypot(translation.getX(), translation.getY()));
+                }
             }
 
+            double sum = 0.0;
+
+            for (double distance : tagDistances) {
+                sum += distance;
+            }
+
+            double meanDist = sum/tagDistances.size();
+
+            double sumOfSquares = 0.0;
+            
+            for (double dist : tagDistances) {
+                sumOfSquares+= Math.pow(dist - meanDist, 2);
+            }
+            
             if (!shouldRejectPose) {
-                estimate = Optional.of(new PoseAndTimestamp(result.estimatedPose.toPose2d(), result.timestampSeconds));
+                poseStdDevs = Optional.ofNullable(Math.sqrt(sumOfSquares/tagDistances.size()));
+                estimate = Optional.ofNullable(new PoseAndTimestampAndDev(result.estimatedPose.toPose2d(), result.timestampSeconds, poseStdDevs.get()));
             }
         }
     }
@@ -125,7 +150,7 @@ public class Camera {
         }
     }
 
-    public Optional<PoseAndTimestamp> getEstimate() {
+    public Optional<PoseAndTimestampAndDev> getEstimate() {
         return estimate;
     }
 
@@ -145,6 +170,9 @@ public class Camera {
         return Math.abs(prevPoseTranslation.getDistance(newPoseTranslation)) < maxDist;
     }
 
+    public void calculateStandardDeviation() {
+
+    }
     /*
      * Checks if a given pose is outside of the field.
      * Also checks for robot height off ground within a tolerance.

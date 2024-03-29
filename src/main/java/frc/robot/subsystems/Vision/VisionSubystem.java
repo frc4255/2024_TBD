@@ -24,7 +24,7 @@ public class VisionSubystem extends SubsystemBase {
     private Camera[] cameras;
 
     /* Possibly a list of poses generated from each individual camera */
-    public List<PoseAndTimestamp> results = new ArrayList<>();
+    public List<PoseAndTimestampAndDev> results = new ArrayList<>();
 
     public DoubleArrayLogEntry cameraPoseEntry;
 
@@ -40,24 +40,26 @@ public class VisionSubystem extends SubsystemBase {
         for (Camera cam : cameras) {
             cam.updateEstimate();
             cam.updateCameraPoseEntry();
-            Optional<PoseAndTimestamp> camEst = cam.getEstimate();
+            Optional<PoseAndTimestampAndDev> camEst = cam.getEstimate();
             if (camEst != null) {
                 results.add(camEst.get());
             }
         }
     }  
 
-    public List<PoseAndTimestamp> getResults() {
+    public List<PoseAndTimestampAndDev> getResults() {
         return results;
     }
 
-    public static class PoseAndTimestamp {
+    public static class PoseAndTimestampAndDev {
         Pose2d pose;
         double timestamp;
+        double stdDev;
 
-        public PoseAndTimestamp(Pose2d pose, double timestamp) {
+        public PoseAndTimestampAndDev(Pose2d pose, double timestamp, double stdDev) {
             this.pose = pose;
             this.timestamp = timestamp;
+            this.stdDev = stdDev;
         }
 
         public Pose2d getPose() {
@@ -66,6 +68,10 @@ public class VisionSubystem extends SubsystemBase {
 
         public double getTimestamp() {
             return timestamp;
+        }
+
+        public double getStdDev() {
+            return stdDev;
         }
     }
 
