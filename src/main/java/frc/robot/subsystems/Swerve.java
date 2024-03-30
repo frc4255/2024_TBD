@@ -64,7 +64,7 @@ public class Swerve extends SubsystemBase {
                 getModulePositions(),
                 new Pose2d(),
                 VecBuilder.fill(0.1, 0.1, 0.1),
-                VecBuilder.fill(0.5, 0.5, 0.5)
+                VecBuilder.fill(1.5, 1.5, 2.5)
             );
 
         resetModulesToAbsolute();
@@ -213,12 +213,12 @@ public class Swerve extends SubsystemBase {
             double stdDev = poseAndTimestamp.getStdDev();
             m_SwervePoseEstimator.addVisionMeasurement(
                 poseAndTimestamp.getPose(),
-                poseAndTimestamp.getTimestamp(),
-                VecBuilder.fill(
+                poseAndTimestamp.getTimestamp()
+                /*VecBuilder.fill(
                     stdDev,
                     stdDev,
                     5.0
-                )
+                )*/
             );
 
             SmartDashboard.putNumberArray("Vision Robot Pose" + count, new Double[]{poseAndTimestamp.getPose().getX(), poseAndTimestamp.getPose().getY(), poseAndTimestamp.getPose().getRotation().getDegrees()});

@@ -70,7 +70,7 @@ public class Camera {
             // Flatten the Pose2d data into individual components
             double[] poseData = { pose.getTranslation().getX(), 
                                   pose.getTranslation().getY(),
-                                  pose.getRotation().getRadians()};
+                                  pose.getRotation().getDegrees()};
     
             // Append the pose data to the DoubleArrayLogEntry
             cameraPoseEntry.append(poseData);
@@ -101,7 +101,7 @@ public class Camera {
             }
             
             if (robotPoseSupplier != null) {
-                if (!isPosePhysicallyPossible(robotPoseSupplier.get(), pose.toPose2d())) {
+                if (!isPosePhysicallyPossible(robotPoseSupplier.get(), pose.toPose2d()) && !isPoseOutOfBounds(robotPoseSupplier.get())) {
                     shouldRejectPose = true;
                 }
             }
@@ -185,6 +185,16 @@ public class Camera {
         } else if (pose.getY() < 0 || pose.getY() > FieldLayout.FIELD_WIDTH) {
             return true;
         } else if (Math.abs(pose.getZ()) > Constants.PoseFilter.POSE_HEIGHT_TOLERANCE) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isPoseOutOfBounds(Pose2d pose) {
+        if (pose.getX() < 0 || pose.getX() > FieldLayout.FIELD_LENGTH) {
+            return true;
+        } else if (pose.getY() < 0 || pose.getY() > FieldLayout.FIELD_WIDTH) {
             return true;
         } else {
             return false;

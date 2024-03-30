@@ -28,6 +28,7 @@ public class SubwooferShoot extends Command {
 
         s_Flywheel.run();
         s_Pivot.set(0.36);
+        System.out.println(s_Pivot.getController().getGoal());
     }
 
     @Override

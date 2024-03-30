@@ -39,7 +39,7 @@ import frc.robot.subsystems.Vision.VisionSubystem;
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
-    private final Joystick operator = new Joystick(1);
+    //private final Joystick operator = new Joystick(1);
 
 
     /* Drive Controls */
@@ -49,9 +49,10 @@ public class RobotContainer {
 
     private final int climberSpeedAxis = XboxController.Axis.kLeftY.value;
 
-    private final Camera leftCam = new Camera(new PhotonCamera("LeftCam"), new Transform3d(new Translation3d(0.258, 0.291, 0.2), new Rotation3d(0, -1.08, 0.523)));
-    private final Camera rightCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.258, -0.291, 0.2), new Rotation3d(0, -1.08, -0.523)));
-    private final Camera LLCam = new Camera(new PhotonCamera("LLCam"), new Transform3d(new Translation3d(0.135, 0, 0.204), new Rotation3d(0, -1.04, 0))); //TODO: Get left camera transform
+    /* When viewed from behind the bot */
+    private final Camera LeftCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.258, -0.291, 0.2), new Rotation3d(0, -1.08, 0.523)));
+    private final Camera RightCam = new Camera(new PhotonCamera("LeftCam"), new Transform3d(new Translation3d(0.258, 0.291, 0.2), new Rotation3d(0, -1.08, -0.523)));
+    //private final Camera LLCam = new Camera(new PhotonCamera("LLCam"), new Transform3d(new Translation3d(0.135, 0, 0.204), new Rotation3d(0, -1.04, 0))); //TODO: Get left camera transform
     /* Driver Buttons */
 
     private final DigitalInput robotHomeButton = new DigitalInput(0);
@@ -74,7 +75,7 @@ public class RobotContainer {
     private final JoystickButton aimbot = new JoystickButton(driver, XboxController.Button.kA.value);
     /* Subsystems */
 
-    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{rightCam, leftCam, LLCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
+    private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{LeftCam, RightCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
 
@@ -99,12 +100,12 @@ public class RobotContainer {
             )
         );
 
-        s_Climber.setDefaultCommand(
+       /*  s_Climber.setDefaultCommand(
             new Climb(
                 s_Climber,
                 () -> operator.getRawAxis(climberSpeedAxis)
             )
-        );
+        );*/
 
 
         // Configure the button bindings

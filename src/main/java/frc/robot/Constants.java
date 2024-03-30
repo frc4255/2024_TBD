@@ -97,7 +97,7 @@ public final class Constants {
 
         public static final Map<Setpoints, Double> intakeSetpoints = Map.of(
             Setpoints.DEPLOY,
-            0.175,
+            0.165,
             Setpoints.STOW,
             2.4,
             Setpoints.OUT_OF_WAY,
