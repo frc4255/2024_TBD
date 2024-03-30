@@ -32,10 +32,7 @@ public class ThreePiece extends SequentialCommandGroup {
         PathPlannerPath path0 = PathPlannerPath.fromPathFile("3 Piece 2");
 
         addCommands(
-            new InstantCommand(() -> s_Swerve.setHeading(DriverStation.getAlliance().get() == Alliance.Red ?
-            path.flipPath().getPreviewStartingHolonomicPose().getRotation() :
-            path.getPreviewStartingHolonomicPose().getRotation()
-            )),
+
             new InstantCommand(() -> s_Swerve.setPose( DriverStation.getAlliance().get() == Alliance.Red ?
                 path.flipPath().getPreviewStartingHolonomicPose() :
                 path.getPreviewStartingHolonomicPose()

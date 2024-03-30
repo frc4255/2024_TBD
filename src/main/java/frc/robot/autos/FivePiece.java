@@ -34,11 +34,7 @@ public class FivePiece extends SequentialCommandGroup {
         PathPlannerPath path2 = PathPlannerPath.fromPathFile("5 Piece Auton 3");
 
         addCommands(
-            new InstantCommand(() -> s_Swerve.setHeading(DriverStation.getAlliance().get() == Alliance.Red ?
-            path.flipPath().getPreviewStartingHolonomicPose().getRotation() :
-            path.getPreviewStartingHolonomicPose().getRotation()
-            )),
-            new InstantCommand(() -> s_Swerve.setPose( DriverStation.getAlliance().get() == Alliance.Red ?
+            new InstantCommand(() -> s_Swerve.setPose(DriverStation.getAlliance().get() == Alliance.Red ?
                 path.flipPath().getPreviewStartingHolonomicPose() :
                 path.getPreviewStartingHolonomicPose()
             )),

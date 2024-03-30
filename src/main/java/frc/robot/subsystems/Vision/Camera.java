@@ -74,6 +74,8 @@ public class Camera {
     
             // Append the pose data to the DoubleArrayLogEntry
             cameraPoseEntry.append(poseData);
+        } else {
+            cameraPoseEntry.append(new double[]{0,0,0});
         }
     }
     
