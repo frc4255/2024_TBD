@@ -50,8 +50,8 @@ public class RobotContainer {
     private final int climberSpeedAxis = XboxController.Axis.kLeftY.value;
 
     /* When viewed from behind the bot */
-    private final Camera LeftCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.258, -0.291, 0.2), new Rotation3d(0, -1.08, 0.523)));
-    private final Camera RightCam = new Camera(new PhotonCamera("LeftCam"), new Transform3d(new Translation3d(0.258, 0.291, 0.2), new Rotation3d(0, -1.08, -0.523)));
+    private final Camera RightCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.258, -0.291, 0.2), new Rotation3d(0, -1.08, -0.523)));
+    private final Camera LeftCam = new Camera(new PhotonCamera("LeftCam"), new Transform3d(new Translation3d(0.258, 0.291, 0.2), new Rotation3d(0, -1.08, 0.523)));
     //private final Camera LLCam = new Camera(new PhotonCamera("LLCam"), new Transform3d(new Translation3d(0.135, 0, 0.204), new Rotation3d(0, -1.04, 0))); //TODO: Get left camera transform
     /* Driver Buttons */
 
