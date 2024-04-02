@@ -4,17 +4,22 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
+  public static final CTREConfigs ctreConfigs = new CTREConfigs();
+  
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
   @Override
   public void robotInit() {
+        PortForwarder.add(5800, "photonvision.local", 5800);
+
     m_robotContainer = new RobotContainer();
   }
 
@@ -24,10 +29,15 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.disableAllPIDs();
+    m_robotContainer.getLedHandlerInstance().runDisabledStripAnimation();
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.getLedHandlerInstance().updateFieldSetupLEDs();
+  }
 
   @Override
   public void disabledExit() {}
