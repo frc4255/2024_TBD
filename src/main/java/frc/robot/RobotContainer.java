@@ -1,7 +1,6 @@
 package frc.robot;
 
 import org.photonvision.PhotonCamera;
-import org.w3c.dom.xpath.XPathNSResolver;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -21,8 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.FivePiece;
 import frc.robot.autos.RunFivePiecePath;
-import frc.robot.autos.TestAuton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
+
 import frc.robot.autos.ThreePiece;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -48,29 +46,24 @@ public class RobotContainer {
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-    private final int climberSpeedAxis = XboxController.Axis.kLeftY.value;
-
     /* When viewed from behind the bot */
     private final Camera RightCam = new Camera(new PhotonCamera("RightCam"), new Transform3d(new Translation3d(0.258, -0.291, 0.2), new Rotation3d(0, -1.08, -0.523)));
     private final Camera LeftCam = new Camera(new PhotonCamera("LeftCam"), new Transform3d(new Translation3d(0.258, 0.291, 0.2), new Rotation3d(0, -1.08, 0.523)));
-    //private final Camera LLCam = new Camera(new PhotonCamera("LLCam"), new Transform3d(new Translation3d(0.135, 0, 0.204), new Rotation3d(0, -1.04, 0))); //TODO: Get left camera transform
+    //private final Camera LLCam = new Camera(new PhotonCamera("LLCam"), new Transform3d(new Translation3d(0.135, 0, 0.204), new Rotation3d(0, -1.04, 0)));
     /* Driver Buttons */
 
     private final DigitalInput robotHomeButton = new DigitalInput(0);
     private final Trigger robotHomeTrigger = new Trigger(() -> robotHomeButton.get());
 
-    /* TODO: Change to driver preference */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kBack.value); 
     private final JoystickButton shooterIntake = new JoystickButton(driver, XboxController.Button.kStart.value);
 
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
 
-    private final JoystickButton RunFlyWheel = new JoystickButton(driver, XboxController.Button.kB.value);
 
     private final JoystickButton InverseToggleIntake = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
-    private final JoystickButton adjustPivotManually = new JoystickButton(driver, XboxController.Button.kY.value);
     
     private final POVButton subwooferShot = new POVButton(driver, 90);
     private final JoystickButton aimbot = new JoystickButton(driver, XboxController.Button.kA.value);
@@ -87,7 +80,6 @@ public class RobotContainer {
 
 
     public SendableChooser<Command> autoChooser;
-    private final Climber s_Climber = new Climber();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -152,10 +144,7 @@ public class RobotContainer {
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
             
-        RunFlyWheel.toggleOnTrue(new RunFlyWheel(s_FlyWheel));
         InverseToggleIntake.whileTrue( new InverseToggleIntake(s_Intake, s_Hopper));
-
-        adjustPivotManually.onTrue(new InstantCommand(() -> s_Pivot.enable()).andThen(new AdjustPivotSetpointManually(s_Pivot)));
 
         subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
         aimbot.whileTrue(new Shoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));

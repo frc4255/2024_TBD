@@ -2,7 +2,6 @@ package frc.robot.subsystems.shooter;
 
 import java.lang.Math;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -15,20 +14,17 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.math.MathUtil;
+
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.math.MathUtil;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
-import frc.robot.Constants;
 import frc.robot.FieldLayout;
 import frc.robot.FieldLayout.FieldPiece.POI;
 
@@ -39,7 +35,7 @@ public class Pivot extends ProfiledPIDSubsystem {
 
     private VoltageOut m_pivotRequest = new VoltageOut(0.0);
 
-    private boolean m_isHomed = false; //TODO
+    private boolean m_isHomed = false;
 
     private DoubleLogEntry m_Pivot;  
     private DoubleLogEntry m_PivotDistance;       
@@ -50,7 +46,7 @@ public class Pivot extends ProfiledPIDSubsystem {
             0,
             0,
             new TrapezoidProfile.Constraints(5, 10))
-        ); //TODO: Tune
+        );
 
         this.m_PoseSupplier = m_PoseSupplier;
         super.getController().setTolerance(0.03);
@@ -175,11 +171,6 @@ public class Pivot extends ProfiledPIDSubsystem {
 
     public boolean isHomed() {
         return m_isHomed;
-    }
-    public void startPivotHomeSequence() {
-        m_isHomed = false;
-        /* TODO: Find optimal voltage. */
-        m_pivotMotor.setControl(m_pivotRequest.withOutput(1.5));
     }
 
     public double getPivotMotorCurrent() {

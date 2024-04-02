@@ -1,18 +1,14 @@
 package frc.robot.subsystems.shooter;
 
-import java.util.function.IntSupplier;
-
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.LEDs;
 import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.subsystems.LEDHandler;
 
 public class Hopper extends SubsystemBase{
 
-    /* TODO: Rename motors to star and compliant wheels */
     private TalonFX m_StarMotor = new TalonFX(ShooterConstants.Hopper.HOPPER_STAR_ID); // controls star shaped wheels
     private TalonFX m_CompliantMotor = new TalonFX(ShooterConstants.Hopper.HOPPER_COMPLIANT_ID); // controls compliant wheels
 
@@ -27,11 +23,6 @@ public class Hopper extends SubsystemBase{
         this.sHandler = sHandler;
     }
 
-    /**
-     *  TODO: Javadoc
-     * @param speed0 Duty Cycle speed of Star motors
-     * @param speed1 Duty Cycle speed of hopper motors
-     */
     public void setMotorsSpeed(double speed0, double speed1) {
         m_StarMotor.setControl(m_HopperMotor0Request.withOutput(speed0));
         m_CompliantMotor.setControl(m_HopperMotor1Request.withOutput(speed1));

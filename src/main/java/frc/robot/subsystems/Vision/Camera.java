@@ -1,12 +1,10 @@
 package frc.robot.subsystems.Vision;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import org.opencv.objdetect.QRCodeDetectorAruco;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -15,20 +13,21 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.MathUtil;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
+
 import edu.wpi.first.wpilibj.DataLogManager;
+
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
 import frc.robot.subsystems.Vision.VisionSubystem.PoseAndTimestampAndDev;
-import frc.robot.subsystems.Vision.VisionSubystem.*;
 
 public class Camera {
     private PhotonCamera cam;
@@ -36,7 +35,6 @@ public class Camera {
     public List<PhotonTrackedTarget> targets = new ArrayList<>();
     private Optional<PoseAndTimestampAndDev> estimate = null;
     private Optional<Double> poseStdDevs;
-    private double trust;
     private Supplier<Pose2d> robotPoseSupplier;
 
     public DoubleArrayLogEntry cameraPoseEntry;

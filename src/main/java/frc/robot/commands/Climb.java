@@ -1,12 +1,9 @@
 package frc.robot.commands;
 
-import frc.robot.Constants.Climber.*;
-import frc.robot.Constants.Climber.Setpoints;
 import frc.robot.subsystems.Climber;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Climb extends Command {

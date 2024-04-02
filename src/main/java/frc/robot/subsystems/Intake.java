@@ -34,7 +34,6 @@ public class Intake extends ProfiledPIDSubsystem {
 
     public Intake(Supplier<Boolean> m_ShouldMoveIntake) {
 
-        /* TODO: Tune for tensioned chain */
         super(new ProfiledPIDController(
             Constants.Intake.P, 
             0,
@@ -88,8 +87,6 @@ public class Intake extends ProfiledPIDSubsystem {
     public void runIntake() {
         m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.7));
     }
-
-    /* TODO: Tune AMP mode intake speed. */
     public void runIntakeForAmp() {
         m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.6));
     }
@@ -127,7 +124,7 @@ public class Intake extends ProfiledPIDSubsystem {
         } else if (isRunning) {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
         } else if (ampMode) {
-            setGoal(2); //TODO: Tune intake AMP mode setpoint
+            setGoal(2);
         } else {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
         }

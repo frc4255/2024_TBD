@@ -2,7 +2,6 @@ package frc.robot;
 
 import java.util.Map;
 
-import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -10,7 +9,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
@@ -57,20 +55,7 @@ public final class Constants {
     }
     
     public final class Climber {
-        public static final int CLIMBER_MOTOR_ID_0 = 50; //TODO get motor ID
-
-        public enum Setpoints {
-            EXTENDED,
-            RETRACTED
-        }
-
-        public static final Map<Setpoints, Double> climberSetpoints = Map.of(
-            Setpoints.EXTENDED,
-            0.0, //TODO get setpoint
-            Setpoints.RETRACTED,
-            0.0 //TODO get setpoint
-        );
-
+        public static final int CLIMBER_MOTOR_ID_0 = 50;
     }
 
     public final class FlyWheel {
@@ -83,10 +68,10 @@ public final class Constants {
         public static final int PIVOT_MOTOR_ID = 10;
         public static final int INDEXER_ID = 11;
 
-        public static final double P = 12; //TODO
-        public static final double MOTOR_VOTAGE_1 = 1.2; //TODO get a voltage
+        public static final double P = 12;
+        public static final double MOTOR_VOTAGE_1 = 1.2;
 
-        public static final double CURRENT_THRESHOLD = 0.0; //TODO get a threshold.
+        public static final double CURRENT_THRESHOLD = 0.0;
 
         public enum Setpoints {
             DEPLOY,
@@ -105,9 +90,6 @@ public final class Constants {
         );
     }
 
-    public static final class DrivetrainPID {
-        public static final double DRIVETRAIN_P = 0.0; //TODO test and find a good value for P
-    }
     public static final class Swerve {
         public static final int pigeonID = 1;
 
@@ -172,9 +154,9 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double MAX_SPEED = 4.5; //TODO: This must be tuned to specific robot
+        public static final double MAX_SPEED = 4.5;
         /** Radians per Second */
-        public static final double MAX_ANGULAR_VELOCITY = 10.0; //TODO: This must be tuned to specific robot
+        public static final double MAX_ANGULAR_VELOCITY = 10.0;
 
         /* Neutral Modes */
         public static final NeutralModeValue ANGLE_NEUTRAL_MODE = NeutralModeValue.Coast;
@@ -182,7 +164,7 @@ public final class Constants {
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
-        public static final class Mod0 { //TODO: This must be tuned to specific robot
+        public static final class Mod0 {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 2;
@@ -192,7 +174,7 @@ public final class Constants {
         }
 
         /* Front Right Module - Module 1 */
-        public static final class Mod1 { //TODO: This must be tuned to specific robot
+        public static final class Mod1 {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 3;
@@ -202,7 +184,7 @@ public final class Constants {
         }
         
         /* Back Left Module - Module 2 */
-        public static final class Mod2 { //TODO: This must be tuned to specific robot
+        public static final class Mod2 {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 1;
@@ -212,7 +194,7 @@ public final class Constants {
         }
 
         /* Back Right Module - Module 3 */
-        public static final class Mod3 { //TODO: This must be tuned to specific robot
+        public static final class Mod3 {
             public static final int driveMotorID = 8;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 4;
@@ -220,21 +202,5 @@ public final class Constants {
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
-    }
-
-    public static final class AutoConstants { //TODO: Tune
-        public static final double MAX_VEL = 3;
-        public static final double MAX_ACCELERATION = 3;
-        public static final double MAX_ANGULAR_VEL = Math.PI;
-        public static final double MAX_ANGULAR_ACCELERATION = Math.PI;
-    
-        public static final double KP = 1;
-        public static final double KI = 1;
-        public static final double KD = 1;
-    
-        /* Constraint for the motion profilied robot angle controller */
-        public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-            new TrapezoidProfile.Constraints(
-                MAX_ANGULAR_VEL, MAX_ANGULAR_ACCELERATION);
     }
 }

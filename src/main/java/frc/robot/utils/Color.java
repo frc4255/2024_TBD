@@ -1,7 +1,5 @@
 package frc.robot.utils;
 
-import com.ctre.phoenix.led.Animation;
-
 public class Color {
     public int r;
     public int g;

@@ -1,31 +1,22 @@
 package frc.robot.commands;
 
-import java.text.RuleBasedCollator;
-import java.util.Optional;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
-import frc.robot.Constants.LEDs;
 import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.FieldLayout.FieldPiece.POI;
 import frc.robot.subsystems.LEDHandler;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Vision.Camera;
 import frc.robot.subsystems.shooter.FlyWheel;
 import frc.robot.subsystems.shooter.Hopper;
 import frc.robot.subsystems.shooter.Pivot;

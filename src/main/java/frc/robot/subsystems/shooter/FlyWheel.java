@@ -3,18 +3,16 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.subsystems.shooter.*;
 
-import org.ejml.dense.row.mult.SubmatrixOps_FDRM;
+import frc.robot.Constants;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class FlyWheel extends SubsystemBase {
-    /* TODO: Might need D if it continues to oscillate  */
     PIDController m_RightPIDController = new PIDController(ShooterConstants.RIGHT_FLYWHEEL_P, 0, 0);
     PIDController m_LeftPIDController = new PIDController(ShooterConstants.LEFT_FLYWHEEL_P, 0, 0);
     
