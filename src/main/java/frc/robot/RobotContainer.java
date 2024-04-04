@@ -61,6 +61,7 @@ public class RobotContainer {
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
 
+    private final JoystickButton toggleIntakeAmpMode = new JoystickButton(driver, XboxController.Button.kB.value);
 
     private final JoystickButton InverseToggleIntake = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
@@ -78,6 +79,7 @@ public class RobotContainer {
     private final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
     private final Hopper s_Hopper = new Hopper(s_LedHandler);
 
+    private boolean intakeAmpMode = false;
 
     public SendableChooser<Command> autoChooser;
 
@@ -137,9 +139,11 @@ public class RobotContainer {
             ).ignoringDisable(true)
         );
 
+        toggleIntakeAmpMode.onTrue(new InstantCommand(() -> intakeAmpMode = !intakeAmpMode));
+
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler));
+        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, intakeAmpMode));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));

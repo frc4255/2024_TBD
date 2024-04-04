@@ -109,6 +109,10 @@ public class Intake extends ProfiledPIDSubsystem {
     public double getPivotPosition() {
         return ((m_IntakePivotMotor.getPosition().getValueAsDouble()) / 86.02)*(2*Math.PI);
     }
+
+    public TalonFX getIntakeMotor() {
+        return m_IntakeMotor;
+    }
     
     @Override
     public void periodic() {
