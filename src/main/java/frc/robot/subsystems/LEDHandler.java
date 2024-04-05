@@ -27,6 +27,8 @@ public class LEDHandler extends SubsystemBase {
     private LEDStates previousLEDState = LEDStates.NOTHING;
     private LEDStates tempoLEDState = LEDStates.NOTHING;
 
+    
+
 
     public LEDHandler(BooleanSupplier intakeHomedSupplier, BooleanSupplier pivotHomedSupplier, BooleanSupplier trapHomedSupplier) {
         this.trapHomedSupplier = trapHomedSupplier;
@@ -41,9 +43,6 @@ public class LEDHandler extends SubsystemBase {
     
     public void request(LEDStates requestedLEDState) {
         if (currentLEDState == requestedLEDState) {
-            return;
-        }
-        if (currentLEDState.getPriority() > requestedLEDState.getPriority()) {
             return;
         }
 

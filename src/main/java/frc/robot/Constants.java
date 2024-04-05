@@ -21,7 +21,7 @@ public final class Constants {
         public static final int CANDLE_ID = 1;
         
         public static enum LEDStates {
-            SHOOTING(1, new Color(0, 255, 0, true, 0.7)), // Green Flash
+            SHOOTING(1,  new Color(0, 255, 0, true, 0.7)), // Green Flash
             PASS(2, new Color(21, 90, 163)), //Blue
             AMP(3, new Color(111, 0, 255, true, 0.7)), //Purple Flash
             TRAP(4, new Color(255, 89, 0)), //Orange
