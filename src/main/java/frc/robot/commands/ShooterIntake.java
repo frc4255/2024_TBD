@@ -1,12 +1,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
 import frc.robot.subsystems.shooter.FlyWheel;
 import frc.robot.subsystems.shooter.Hopper;
 import frc.robot.subsystems.shooter.Pivot;
 
-public class ShooterIntake extends Command{
+public class ShooterIntake extends Command {
 
     private Pivot s_Pivot;
     private FlyWheel s_FlyWheel;
