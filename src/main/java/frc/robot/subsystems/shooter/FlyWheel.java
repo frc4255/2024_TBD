@@ -66,7 +66,7 @@ public class FlyWheel extends SubsystemBase {
 
         double leftVoltage = m_LeftPIDController.calculate(
                 getLeftFlywheelRPM(), 
-                2750
+                3500
             );
         
         m_RightFlywheelMotor.setControl(
@@ -76,7 +76,7 @@ public class FlyWheel extends SubsystemBase {
         );
 
         m_LeftFlywheelMotor.setVoltage(
-            leftVoltage + m_LeftFeedforwardController.calculate(2750)
+            leftVoltage + m_LeftFeedforwardController.calculate(3500)
         );
 
         SmartDashboard.putNumber("Right PID Output", rightVoltage);

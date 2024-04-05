@@ -10,6 +10,7 @@ import frc.robot.Constants.Intake.Setpoints;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
 import java.lang.Math;
@@ -114,6 +115,7 @@ public class Intake extends ProfiledPIDSubsystem {
     public void periodic() {
         super.periodic();
 
+        SmartDashboard.putNumber("Intake motor current", m_IntakeMotor.getTorqueCurrent().getValueAsDouble());
         if (!isHomed) {
             return;
         }

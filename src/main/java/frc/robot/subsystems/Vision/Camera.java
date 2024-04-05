@@ -24,7 +24,7 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 
 import edu.wpi.first.wpilibj.DataLogManager;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.FieldLayout;
 import frc.robot.subsystems.Vision.VisionSubystem.PoseAndTimestampAndDev;
@@ -71,6 +71,7 @@ public class Camera {
                                   pose.getRotation().getDegrees()};
     
             // Append the pose data to the DoubleArrayLogEntry
+            SmartDashboard.putNumberArray(cam.getName() + "Pose Estimate", poseData);
             cameraPoseEntry.append(poseData);
         } else {
             cameraPoseEntry.append(new double[]{0,0,0});
