@@ -1,16 +1,19 @@
 package frc.robot.commands;
 
+import frc.robot.RobotContainer;
 import frc.robot.Constants.Intake.Setpoints;
 import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDHandler;
 import frc.robot.subsystems.shooter.Hopper;
+
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ScoreAmp extends Command {
     private Intake s_Intake;
     private Hopper s_Hopper;
     private LEDHandler s_LedHandler;
+ 
     private boolean ampMode;
 
     public ScoreAmp(Intake s_Intake, Hopper s_Hopper, LEDHandler s_LedHandler, boolean ampMode) {
@@ -28,6 +31,8 @@ public class ScoreAmp extends Command {
         s_Intake.requestGoal(Setpoints.AMP);
         s_LedHandler.request(LEDStates.AMP);
 
+        s_LedHandler.ampModeState(ampMode);
+        
         s_Hopper.setMotorsSpeed(0.75, 0);
     }
 
@@ -43,7 +48,7 @@ public class ScoreAmp extends Command {
         s_Intake.stopIntake();
         s_Hopper.stop();
 
-        s_Intake.ampModeState(ampMode);
+        s_LedHandler.ampModeState(ampMode);
     }
 }
 

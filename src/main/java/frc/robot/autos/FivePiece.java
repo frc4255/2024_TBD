@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-
+import frc.robot.RobotContainer;
 import frc.robot.autos.AutoCommands.AutonShoot;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.subsystems.*;
@@ -31,7 +31,7 @@ public class FivePiece extends SequentialCommandGroup {
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.75),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path),
-                new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, false).withTimeout(1.75)
+                new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, false ).withTimeout(1.75)
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.25),
             new ParallelCommandGroup(

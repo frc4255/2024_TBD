@@ -5,8 +5,9 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.Intake.Setpoints;
-
+import frc.robot.Constants.LEDs.LEDStates;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,7 +34,7 @@ public class Intake extends ProfiledPIDSubsystem {
     /* Suppliers */
     private Supplier<Boolean> m_CollisionAvoidanceSupplier;
 
-    public Intake(Supplier<Boolean> m_ShouldMoveIntake) {
+    public Intake(Supplier<Boolean> m_ShouldMoveIntake, RobotContainer m_RobotContainer) {
 
         super(new ProfiledPIDController(
             Constants.Intake.P, 

@@ -29,22 +29,20 @@ public class SubwooferShoot extends Command {
         s_Flywheel.run();
         s_Pivot.set(0.36);
         System.out.println(s_Pivot.getController().getGoal());
+        s_LedHandler.request(LEDStates.SHOOTING);
+
     }
 
     @Override
     public void execute() {
         if (s_Flywheel.isReady() && s_Pivot.getController().atGoal()) {
-            s_LedHandler.request(LEDStates.SHOOTING);
             s_Hopper.setMotorsSpeed(0, 0.5);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (s_LedHandler.getPreviousPriority() <= 6) {
-            s_LedHandler.request(LEDStates.NOTHING);
-        }
-        s_LedHandler.requestPrev();
+        s_LedHandler.request(LEDStates.NOTHING);
         s_Flywheel.idle();
         s_Hopper.stop();
         s_Pivot.set(0.01);

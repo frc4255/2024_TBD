@@ -5,6 +5,10 @@ import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDHandler;
 import frc.robot.subsystems.shooter.Hopper;
+
+import java.util.function.BooleanSupplier;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ToggleIntake extends Command {
@@ -39,15 +43,22 @@ public class ToggleIntake extends Command {
     public void execute() {
 
         if (ampMode) {
-            if (s_Intake.getIntakeMotor().getTorqueCurrent().getValueAsDouble() > 12 && s_Intake.getIntakeMotor().getTorqueCurrent().getValueAsDouble() < 25 && !hasNote) {
+            if (Math.abs(s_Intake.getIntakeMotor().getTorqueCurrent().getValueAsDouble()) > 12 && Math.abs(s_Intake.getIntakeMotor().getTorqueCurrent().getValueAsDouble()) < 25) {
                 s_Intake.stopIntake();
                 hasNote = true;
                 s_LedHandler.request(LEDStates.AMP);
+                System.out.println("boo");
+
                 return;
             }
+            return;
         }
 
-        if (s_Hopper.getStarMotorCurrent() > 20) {
+
+
+
+
+        if (s_Hopper.getStarMotorCurrent() > 10 && s_Hopper.getStarMotorCurrent() < 35) {
             s_Hopper.setHasGamePiece(true);
             s_LedHandler.request(LEDStates.HAS_NOTE);
         }
@@ -58,6 +69,8 @@ public class ToggleIntake extends Command {
         s_Intake.requestGoal(Setpoints.STOW);
         s_Intake.stopIntake();
         s_Hopper.stop();
+
+        s_LedHandler.request(LEDStates.NOTHING); 
     }
 
     

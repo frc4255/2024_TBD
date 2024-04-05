@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -75,9 +77,9 @@ public class RobotContainer {
     private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
 
-    private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
+    private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake, this);
     private final FlyWheel s_FlyWheel = new FlyWheel();
-    private final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
+    public final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
     private final Hopper s_Hopper = new Hopper(s_LedHandler);
 
     private boolean intakeAmpMode = false;
@@ -143,7 +145,7 @@ public class RobotContainer {
         toggleIntakeAmpMode.onTrue(
             new ParallelCommandGroup(
                 new InstantCommand(() -> intakeAmpMode = !intakeAmpMode),
-                new InstantCommand(() -> s_LedHandler.request(LEDStates.AMP_MODE))
+                new InstantCommand(() -> s_LedHandler.ampModeState(intakeAmpMode))
             )
         );
 
@@ -154,11 +156,7 @@ public class RobotContainer {
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
             
-<<<<<<< HEAD
-        InverseToggleIntake.whileTrue(new ScoreAmp(s_Intake, s_Hopper));
-=======
-        InverseToggleIntake.whileTrue( new InverseToggleIntake(s_Intake, s_Hopper, s_LedHandler));
->>>>>>> 0cd8091c438c7a52f4ebf7f58b44fb58095279e7
+        InverseToggleIntake.whileTrue(new ScoreAmp(s_Intake, s_Hopper, s_LedHandler, intakeAmpMode));
 
         subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
         aimbot.whileTrue(new Shoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));
@@ -176,4 +174,5 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
+
 }

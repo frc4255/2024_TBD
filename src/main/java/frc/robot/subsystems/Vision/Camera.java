@@ -74,7 +74,6 @@ public class Camera {
             SmartDashboard.putNumberArray(cam.getName() + "Pose Estimate", poseData);
             cameraPoseEntry.append(poseData);
         } else {
-            cameraPoseEntry.append(new double[]{0,0,0});
         }
     }
     
