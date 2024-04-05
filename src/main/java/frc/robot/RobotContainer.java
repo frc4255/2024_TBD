@@ -154,7 +154,11 @@ public class RobotContainer {
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
             
+<<<<<<< HEAD
         InverseToggleIntake.whileTrue(new ScoreAmp(s_Intake, s_Hopper));
+=======
+        InverseToggleIntake.whileTrue( new InverseToggleIntake(s_Intake, s_Hopper, s_LedHandler));
+>>>>>>> 0cd8091c438c7a52f4ebf7f58b44fb58095279e7
 
         subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
         aimbot.whileTrue(new Shoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));

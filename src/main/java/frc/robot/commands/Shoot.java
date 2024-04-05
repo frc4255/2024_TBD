@@ -60,7 +60,9 @@ public class Shoot extends Command {
 
         s_Pivot.enable();
         s_Pivot.alignPivotToSpeaker();
+
         s_LedHandler.request(LEDStates.SHOOTING);
+
     }
 
     @Override
@@ -94,14 +96,13 @@ public class Shoot extends Command {
         if (s_Flywheel.isReady() && s_Pivot.getController().atGoal() && m_DrivetrainPID.atSetpoint()) {
             s_Hopper.setMotorsSpeed(-0.5, 0.5);
             s_Hopper.setHasGamePiece(false);
-            s_LedHandler.request(LEDStates.SHOOTING);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (s_LedHandler.getPreviousPriority() < 5) {
-            s_LedHandler.hardRequest(LEDStates.NOTHING);
+        if (s_LedHandler.getPreviousPriority() <= 6) {
+            s_LedHandler.request(LEDStates.NOTHING);
         }
         s_LedHandler.requestPrev();
         s_Flywheel.idle();

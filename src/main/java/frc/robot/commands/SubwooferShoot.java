@@ -19,7 +19,7 @@ public class SubwooferShoot extends Command {
         this.s_Pivot = s_Pivot;
         this.s_LedHandler = s_LedHandler;
 
-        addRequirements(s_Hopper, s_Flywheel, s_Pivot, s_LedHandler);
+        addRequirements(s_Hopper, s_Flywheel, s_Pivot);
     }
 
     @Override
@@ -41,6 +41,9 @@ public class SubwooferShoot extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        if (s_LedHandler.getPreviousPriority() <= 6) {
+            s_LedHandler.request(LEDStates.NOTHING);
+        }
         s_LedHandler.requestPrev();
         s_Flywheel.idle();
         s_Hopper.stop();
