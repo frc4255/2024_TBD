@@ -24,8 +24,7 @@ public final class Constants {
             SHOOTING(1, new Color(0, 255, 0, true, 0.7)), // Green Flash
             PASS(2, new Color(21, 90, 163)), //Blue
             AMP(3, new Color(111, 0, 255, true, 0.7)), //Purple Flash
-            AMP_MODE(4,new Color(111, 0, 255));
-            TRAP(4, new Color(255, 89, 0)), //Orange
+            AMP_MODE(4,new Color(111, 0, 255)), //Purple
             TARGET_IN_RANGE(5, new Color(0,255,0)), //Green
             HAS_NOTE(6, new Color(252, 123, 3, true, 0.7)), //Orange Flash
             NOTHING(10, new Color(255,0,0)), //this one is just red nick

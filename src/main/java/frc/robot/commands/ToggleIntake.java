@@ -39,7 +39,7 @@ public class ToggleIntake extends Command {
     public void execute() {
 
         if (ampMode) {
-            if (s_Intake.getIntakeMotor().getTorqueCurrent().getValueAsDouble() > 20 && !hasNote) {
+            if (s_Intake.getIntakeMotor().getTorqueCurrent().getValueAsDouble() > 12 && s_Intake.getIntakeMotor().getTorqueCurrent().getValueAsDouble() < 25 && !hasNote) {
                 s_Intake.stopIntake();
                 hasNote = true;
                 s_LedHandler.request(LEDStates.AMP);
