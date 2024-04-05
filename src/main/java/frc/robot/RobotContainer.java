@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.autos.FivePiece;
 import frc.robot.autos.RunFivePiecePath;
 
@@ -139,7 +140,12 @@ public class RobotContainer {
             ).ignoringDisable(true)
         );
 
-        toggleIntakeAmpMode.onTrue(new InstantCommand(() -> intakeAmpMode = !intakeAmpMode));
+        toggleIntakeAmpMode.onTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> intakeAmpMode = !intakeAmpMode),
+                new InstantCommand(() -> s_LedHandler.request(LEDStates.AMP_MODE))
+            )
+        );
 
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
