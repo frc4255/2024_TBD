@@ -27,7 +27,7 @@ public class SubwooferShoot extends Command {
         s_Pivot.enable();
 
         s_Flywheel.run();
-        s_Pivot.set(0.36);
+        s_Pivot.set(0.41);
         System.out.println(s_Pivot.getController().getGoal());
         s_LedHandler.request(LEDStates.SHOOTING);
 

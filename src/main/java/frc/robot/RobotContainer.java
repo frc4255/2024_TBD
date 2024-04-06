@@ -74,7 +74,7 @@ public class RobotContainer {
     /* Subsystems */
 
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{LeftCam, RightCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
-    private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
+    public final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
 
     private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake, this);

@@ -101,7 +101,7 @@ public class Pivot extends ProfiledPIDSubsystem {
     }
 
     private List<Map.Entry<Double, Double>> getClosestValues(double dist) {
-        Map.Entry<Double, Double> minValue = Map.entry(1.5, 0.66);
+        Map.Entry<Double, Double> minValue = Map.entry(1.5, 0.71);
         Map.Entry<Double, Double> maxValue = Map.entry(7.0, 0.16);
     
         for (Map.Entry<Double, Double> entry : ShooterConstants.LOOKUP_TABLE.entrySet()) {
@@ -135,7 +135,7 @@ public class Pivot extends ProfiledPIDSubsystem {
             * Once we have all the information we need, we can perform linear interpolation between
             * the two values 
         */
-        setGoal(MathUtil.clamp(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t), 0.0, 0.66));
+        setGoal(MathUtil.clamp(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t), 0.0, 0.71));
     }
 
     public void alignPivotToGivenDistance(double distance) {
