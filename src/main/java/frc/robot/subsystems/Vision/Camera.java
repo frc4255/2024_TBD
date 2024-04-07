@@ -98,11 +98,11 @@ public class Camera {
                 shouldRejectPose = true;
             }
             
-            if (robotPoseSupplier != null) {
+            /*if (robotPoseSupplier != null) {
                 if (!isPosePhysicallyPossible(robotPoseSupplier.get(), pose.toPose2d()) && !isPoseOutOfBounds(robotPoseSupplier.get())) {
                     shouldRejectPose = true;
                 }
-            }
+            }*/
 
             for (PhotonTrackedTarget target : result.targetsUsed) {
                 if (target.getPoseAmbiguity() > 0.2) {

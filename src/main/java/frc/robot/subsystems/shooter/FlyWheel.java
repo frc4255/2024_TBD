@@ -16,7 +16,7 @@ public class FlyWheel extends SubsystemBase {
     PIDController m_RightPIDController = new PIDController(ShooterConstants.RIGHT_FLYWHEEL_P, 0, 0);
     PIDController m_LeftPIDController = new PIDController(ShooterConstants.LEFT_FLYWHEEL_P, 0, 0);
     
-    SimpleMotorFeedforward m_RightFeedforwardController = new SimpleMotorFeedforward(0, 0.00165, 0);
+    SimpleMotorFeedforward m_RightFeedforwardController = new SimpleMotorFeedforward(0, 0.00174, 0);
     SimpleMotorFeedforward m_LeftFeedforwardController = new SimpleMotorFeedforward(0, 0.00173, 0);
     private final TalonFX m_RightFlywheelMotor;
     private final TalonFX m_LeftFlywheelMotor;
@@ -34,8 +34,8 @@ public class FlyWheel extends SubsystemBase {
 
         m_RightFlywheelMotor.setInverted(false);
         m_LeftFlywheelMotor.setInverted(true);
-        m_RightPIDController.setTolerance(75);
-        m_LeftPIDController.setTolerance(75);
+        m_RightPIDController.setTolerance(200);
+        m_LeftPIDController.setTolerance(200);
     }
     
     public double getRightFlywheelRPM() {
@@ -61,22 +61,22 @@ public class FlyWheel extends SubsystemBase {
 
         double rightVoltage = m_RightPIDController.calculate(
                     getRightFlywheelRPM(),
-                    6000
+                    6500
                 );
 
         double leftVoltage = m_LeftPIDController.calculate(
                 getLeftFlywheelRPM(), 
-                5000
+                6500
             );
         
         m_RightFlywheelMotor.setControl(
             m_rightRequest.withOutput(
-                rightVoltage + m_RightFeedforwardController.calculate(6000)
+                rightVoltage + m_RightFeedforwardController.calculate(6500)
             )
         );
 
         m_LeftFlywheelMotor.setVoltage(
-            leftVoltage + m_LeftFeedforwardController.calculate(5000)
+            leftVoltage + m_LeftFeedforwardController.calculate(6500)
         );
 
         SmartDashboard.putNumber("Right PID Output", rightVoltage);
@@ -115,12 +115,12 @@ public class FlyWheel extends SubsystemBase {
         private void updateIntake() {
         double rightVoltage = m_RightPIDController.calculate(
                     getRightFlywheelRPM(),
-                    -1000
+                    -2000
                 );
 
         double leftVoltage =  m_LeftPIDController.calculate(
                 getLeftFlywheelRPM(), 
-                -1000
+                -1500
             );
         
         m_RightFlywheelMotor.setControl(

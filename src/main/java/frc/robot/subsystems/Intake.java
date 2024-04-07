@@ -90,7 +90,7 @@ public class Intake extends ProfiledPIDSubsystem {
         m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.7));
     }
     public void runIntakeForAmp() {
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.4));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.575));
     }
 
     public void stopIntake() {
@@ -131,7 +131,7 @@ public class Intake extends ProfiledPIDSubsystem {
         } else if (isRunning) {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
         } else if (ampMode) {
-            setGoal(2.2);
+            setGoal(2.15);
         } else {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
         }

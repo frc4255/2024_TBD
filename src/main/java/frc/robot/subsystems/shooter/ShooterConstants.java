@@ -13,24 +13,24 @@ public class ShooterConstants {
      * Lookup table for pivot interpolation table. Key is distance (m), value is angle (radians)
      */
     public static final Map<Double, Double> LOOKUP_TABLE = Map.ofEntries(
-        Map.entry(1.5, 0.71),
-        Map.entry(2.0, 0.67),
+        Map.entry(1.5, 0.62),
+        Map.entry(2.0, 0.61),
         Map.entry(2.3, 0.56),
-        Map.entry(2.5, 0.5),
-        Map.entry(3.0, 0.44),
+        Map.entry(2.5, 0.48),
+        Map.entry(3.0, 0.4),
         Map.entry(3.5, 0.38),
-        Map.entry(4.0, 0.34),
-        Map.entry(4.5, 0.31),
-        Map.entry(5.0, 0.28),
-        Map.entry(5.3, 0.265),
-        Map.entry(5.5, 0.26),
-        Map.entry(6.0, 0.25),
-        Map.entry(6.5, 0.245),
-        Map.entry(7.0, 0.24)
+        Map.entry(4.0, 0.37),
+        Map.entry(4.5, 0.35),
+        Map.entry(5.0, 0.33),
+        Map.entry(5.3, 0.3),
+        Map.entry(5.5, 0.28),
+        Map.entry(6.0, 0.265),
+        Map.entry(6.5, 0.26),
+        Map.entry(7.0, 0.255)
     );
 
-    public static final double RIGHT_FLYWHEEL_P = 0.002;
-    public static final double LEFT_FLYWHEEL_P = 0.0018;
+    public static final double RIGHT_FLYWHEEL_P = 0.0022;
+    public static final double LEFT_FLYWHEEL_P = 0.0022;
 
     public static final class Hopper {
         public static final int HOPPER_COMPLIANT_ID = 30;
