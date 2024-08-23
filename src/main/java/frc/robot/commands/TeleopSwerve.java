@@ -35,12 +35,23 @@ public class TeleopSwerve extends Command {
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.STICK_DEADBAND);
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.STICK_DEADBAND);
 
-        /* Drive */
-        s_Swerve.drive(
-            new Translation2d(translationVal, strafeVal).times(Constants.Swerve.MAX_SPEED), 
-            rotationVal * Constants.Swerve.MAX_ANGULAR_VELOCITY, 
-            !robotCentricSup.getAsBoolean(), 
-            true
-        );
+        if (robotCentricSup.getAsBoolean()) {
+            // While TurnToAmp is controlling rotation, continue to move with joystick input
+            // Set translation to joystick input, but skip rotation input
+            s_Swerve.drive(
+                new Translation2d(translationVal, strafeVal).times(Constants.Swerve.MAX_SPEED),
+                0, // No joystick rotation control; TurnToAmp handles rotation
+                true, // You can switch this to `false` if you prefer robot-relative control
+                true
+            );
+        } else {
+            // Normal TeleopSwerve control
+            s_Swerve.drive(
+                new Translation2d(translationVal, strafeVal).times(Constants.Swerve.MAX_SPEED),
+                rotationVal * Constants.Swerve.MAX_ANGULAR_VELOCITY,
+                !robotCentricSup.getAsBoolean(),
+                true
+            );
+        }
     }
 }

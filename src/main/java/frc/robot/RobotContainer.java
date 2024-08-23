@@ -61,6 +61,8 @@ public class RobotContainer {
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
 
+    private final JoystickButton turnToAmp = new JoystickButton(driver, XboxController.Button.kY.value);
+
 
     private final JoystickButton InverseToggleIntake = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
@@ -137,10 +139,18 @@ public class RobotContainer {
             ).ignoringDisable(true)
         );
 
+
+
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
+        
+        turnToAmp.onTrue(new TurnToAmp(s_Swerve,                 
+                () -> -driver.getRawAxis(translationAxis), 
+                () -> -driver.getRawAxis(strafeAxis),  
+                () -> -driver.getRawAxis(rotationAxis),  
+                InverseToggleIntake));
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
             

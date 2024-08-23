@@ -20,7 +20,9 @@ public class FieldLayout {
         /* We only care about the speakers for autonomous controls. */
         public static enum POI {
             BLUE_SPEAKER,
-            RED_SPEAKER
+            RED_SPEAKER,
+            BLUE_AMP,
+            RED_AMP
         }
 
         public static final Map<POI, Pose3d> POI_POSE =
@@ -38,6 +40,20 @@ public class FieldLayout {
                     Units.inchesToMeters(220.42),
                     Units.inchesToMeters(2.04216),
                     new Rotation3d(0, 0, Math.PI)
+                ),
+                POI.BLUE_AMP,
+                new Pose3d(
+                    0.0,
+                    Units.inchesToMeters(0.0),
+                    Units.inchesToMeters(0.0),
+                    new Rotation3d(0, 0, 0) 
+                ), 
+                POI.RED_AMP,
+                new Pose3d(
+                  0.0,
+                    Units.inchesToMeters(0.0),
+                    Units.inchesToMeters(0.0),
+                    new Rotation3d(0, 0, 0) 
                 )
             );
     }
