@@ -14,6 +14,18 @@ public class ShooterConstants {
     public static final double HOPPER_MOTOR_RAMPING_TIME = 0.0; //TODO tune this (its in seconds)
     public static final double FLYWHEEL_MOTORS_RAMPING_TIME = 0.0; //TODO tune this (its in seconds) KEEP THIS LOW
 
+    public static final class CurrentLimits {
+        public static final int FLYWHEEL_LEFT_MOTOR_CURRENTLIMIT = 0; //TODO tune this 
+        public static final int FLYWHEEL_RIGHT_MOTOR_CURRENTLIMIT = 0; //TODO tune this 
+
+        public static final int HOPPER_STAR_MOTOR_CURRENTLIMIT = 0; //TODO tune this
+        public static final int HOPPER_COMPLIANT_MOTOR_CURRENTLIMIT = 0; //TODO tune this
+
+        public static final int INTAKE_MOTOR_CURRENTLIMIT = 0; //TODO tune this
+
+
+    }
+
     /*
      * Lookup table for pivot interpolation table. Key is distance (m), value is angle (radians)
      */

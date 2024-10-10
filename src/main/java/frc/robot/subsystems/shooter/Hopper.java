@@ -17,7 +17,8 @@ public class Hopper extends SubsystemBase{
     private DutyCycleOut m_HopperMotor0Request = new DutyCycleOut(0);
     private DutyCycleOut m_HopperMotor1Request = new DutyCycleOut(0);
 
-    CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
+    CurrentLimitsConfigs starMotorCurrentLimits = new CurrentLimitsConfigs();
+    CurrentLimitsConfigs compliantMotorCurrentLimits = new CurrentLimitsConfigs();
     OpenLoopRampsConfigs hopperMotorRamping = new OpenLoopRampsConfigs();
 
     private LEDHandler sHandler;
@@ -27,15 +28,18 @@ public class Hopper extends SubsystemBase{
     public Hopper(LEDHandler sHandler) {
         this.sHandler = sHandler;
 
-        currentLimits.SupplyCurrentLimitEnable = true;   
-        currentLimits.SupplyCurrentLimit = 20; //Current limit in AMPS
+        starMotorCurrentLimits.StatorCurrentLimitEnable = true;   
+        starMotorCurrentLimits.StatorCurrentLimit = ShooterConstants.CurrentLimits.HOPPER_STAR_MOTOR_CURRENTLIMIT; //Current limit in AMPS
+
+        compliantMotorCurrentLimits.StatorCurrentLimitEnable = true;   
+        compliantMotorCurrentLimits.StatorCurrentLimit = ShooterConstants.CurrentLimits.HOPPER_COMPLIANT_MOTOR_CURRENTLIMIT; //Current limit in AMPS        
         
         hopperMotorRamping.VoltageOpenLoopRampPeriod = ShooterConstants.HOPPER_MOTOR_RAMPING_TIME;
 
-        m_StarMotor.getConfigurator().apply(currentLimits);
+        m_StarMotor.getConfigurator().apply(starMotorCurrentLimits);
         m_StarMotor.getConfigurator().apply(hopperMotorRamping);
 
-        m_CompliantMotor.getConfigurator().apply(currentLimits);
+        m_CompliantMotor.getConfigurator().apply(compliantMotorCurrentLimits);
         m_CompliantMotor.getConfigurator().apply(hopperMotorRamping);
 
     }

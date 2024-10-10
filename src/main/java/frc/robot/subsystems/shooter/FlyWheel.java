@@ -26,8 +26,9 @@ public class FlyWheel extends SubsystemBase {
 
     private VoltageOut m_rightRequest = new VoltageOut(0.0);
 
-    CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
-    ClosedLoopRampsConfigs flyWheelMotorRamping = new ClosedLoopRampsConfigs();
+    CurrentLimitsConfigs rightMotorCurrentLimits = new CurrentLimitsConfigs();
+    CurrentLimitsConfigs leftMotorCurrentLimits = new CurrentLimitsConfigs();
+    OpenLoopRampsConfigs flyWheelMotorRamping = new OpenLoopRampsConfigs();
 
     boolean intaking = false;
     boolean readyToShoot = false;
@@ -43,16 +44,20 @@ public class FlyWheel extends SubsystemBase {
         m_RightPIDController.setTolerance(200);
         m_LeftPIDController.setTolerance(200);
 
+        /* Motors on Right side of FlyWheel */
+        rightMotorCurrentLimits.StatorCurrentLimitEnable = true;   
+        rightMotorCurrentLimits.StatorCurrentLimit = ShooterConstants.CurrentLimits.FLYWHEEL_RIGHT_MOTOR_CURRENTLIMIT; //Current limit in AMPS
 
-        currentLimits.SupplyCurrentLimitEnable = true;   
-        currentLimits.SupplyCurrentLimit = 40; //Current limit in AMPS
+        /* Motors on Left side of Flywheel */
+        leftMotorCurrentLimits.StatorCurrentLimitEnable = true;   
+        leftMotorCurrentLimits.StatorCurrentLimit = ShooterConstants.CurrentLimits.FLYWHEEL_RIGHT_MOTOR_CURRENTLIMIT; //Current limit in AMPS
         
-        flyWheelMotorRamping.VoltageClosedLoopRampPeriod = ShooterConstants.HOPPER_MOTOR_RAMPING_TIME;
+        flyWheelMotorRamping.VoltageOpenLoopRampPeriod = ShooterConstants.HOPPER_MOTOR_RAMPING_TIME;
 
-        m_RightFlywheelMotor.getConfigurator().apply(currentLimits);
+        m_RightFlywheelMotor.getConfigurator().apply(rightMotorCurrentLimits);
         m_RightFlywheelMotor.getConfigurator().apply(flyWheelMotorRamping);
 
-        m_LeftFlywheelMotor.getConfigurator().apply(currentLimits);
+        m_LeftFlywheelMotor.getConfigurator().apply(leftMotorCurrentLimits);
         m_LeftFlywheelMotor.getConfigurator().apply(flyWheelMotorRamping);
     }
     

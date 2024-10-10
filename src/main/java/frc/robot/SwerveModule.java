@@ -32,8 +32,8 @@ public class SwerveModule {
     /* angle motor control requests */
     private final PositionVoltage anglePosition = new PositionVoltage(0);
 
-    CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
-    ClosedLoopRampsConfigs flyWheelMotorRamping = new ClosedLoopRampsConfigs();
+    CurrentLimitsConfigs driveMotorCurrentLimits = new CurrentLimitsConfigs();
+    CurrentLimitsConfigs angleMotorCurrentLimits = new CurrentLimitsConfigs();
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
@@ -53,11 +53,16 @@ public class SwerveModule {
         mDriveMotor.getConfigurator().apply(Robot.ctreConfigs.swerveDriveFXConfig);
         mDriveMotor.getConfigurator().setPosition(0.0);
 
-        currentLimits.SupplyCurrentLimitEnable = true;   
-        currentLimits.SupplyCurrentLimit = 40; //Current limit in AMPS
 
-        mAngleMotor.getConfigurator().apply(currentLimits);
-        mDriveMotor.getConfigurator().apply(currentLimits);
+        angleMotorCurrentLimits.StatorCurrentLimitEnable = true;   
+        angleMotorCurrentLimits.StatorCurrentLimit = Constants.Swerve.ANGLE_CURRENT_LIMIT; //Current limit in AMPS
+
+        driveMotorCurrentLimits.StatorCurrentLimitEnable = true;   
+        driveMotorCurrentLimits.StatorCurrentLimit = Constants.Swerve.DRIVE_CURRENT_LIMIT; //Current limit in AMPS
+
+        mAngleMotor.getConfigurator().apply(angleMotorCurrentLimits);
+
+        mDriveMotor.getConfigurator().apply(driveMotorCurrentLimits);
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){

@@ -54,8 +54,8 @@ public class Intake extends ProfiledPIDSubsystem {
         getController().setTolerance(0.03);
         this.m_CollisionAvoidanceSupplier = m_ShouldMoveIntake;
 
-        currentLimits.SupplyCurrentLimitEnable = true;   
-        currentLimits.SupplyCurrentLimit = 20; //Current limit in AMPS
+        currentLimits.StatorCurrentLimitEnable = true;   
+        currentLimits.StatorCurrentLimit = ShooterConstants.CurrentLimits.INTAKE_MOTOR_CURRENTLIMIT; //Current limit in AMPS
         
         intakeMotorRamping.VoltageOpenLoopRampPeriod = ShooterConstants.INTAKE_MOTOR_RAMPING_TIME;
 
