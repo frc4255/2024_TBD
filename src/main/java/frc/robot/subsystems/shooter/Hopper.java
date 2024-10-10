@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -15,12 +17,27 @@ public class Hopper extends SubsystemBase{
     private DutyCycleOut m_HopperMotor0Request = new DutyCycleOut(0);
     private DutyCycleOut m_HopperMotor1Request = new DutyCycleOut(0);
 
+    CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
+    OpenLoopRampsConfigs hopperMotorRamping = new OpenLoopRampsConfigs();
+
     private LEDHandler sHandler;
 
     private boolean m_hasGamePiece = false;
 
     public Hopper(LEDHandler sHandler) {
         this.sHandler = sHandler;
+
+        currentLimits.SupplyCurrentLimitEnable = true;   
+        currentLimits.SupplyCurrentLimit = 20; //Current limit in AMPS
+        
+        hopperMotorRamping.VoltageOpenLoopRampPeriod = ShooterConstants.HOPPER_MOTOR_RAMPING_TIME;
+
+        m_StarMotor.getConfigurator().apply(currentLimits);
+        m_StarMotor.getConfigurator().apply(hopperMotorRamping);
+
+        m_CompliantMotor.getConfigurator().apply(currentLimits);
+        m_CompliantMotor.getConfigurator().apply(hopperMotorRamping);
+
     }
 
     public void setMotorsSpeed(double speed0, double speed1) {

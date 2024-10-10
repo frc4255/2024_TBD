@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
 
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -23,6 +26,9 @@ public class FlyWheel extends SubsystemBase {
 
     private VoltageOut m_rightRequest = new VoltageOut(0.0);
 
+    CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
+    ClosedLoopRampsConfigs flyWheelMotorRamping = new ClosedLoopRampsConfigs();
+
     boolean intaking = false;
     boolean readyToShoot = false;
     boolean isRunning = false;
@@ -36,6 +42,18 @@ public class FlyWheel extends SubsystemBase {
         m_LeftFlywheelMotor.setInverted(true);
         m_RightPIDController.setTolerance(200);
         m_LeftPIDController.setTolerance(200);
+
+
+        currentLimits.SupplyCurrentLimitEnable = true;   
+        currentLimits.SupplyCurrentLimit = 40; //Current limit in AMPS
+        
+        flyWheelMotorRamping.VoltageClosedLoopRampPeriod = ShooterConstants.HOPPER_MOTOR_RAMPING_TIME;
+
+        m_RightFlywheelMotor.getConfigurator().apply(currentLimits);
+        m_RightFlywheelMotor.getConfigurator().apply(flyWheelMotorRamping);
+
+        m_LeftFlywheelMotor.getConfigurator().apply(currentLimits);
+        m_LeftFlywheelMotor.getConfigurator().apply(flyWheelMotorRamping);
     }
     
     public double getRightFlywheelRPM() {

@@ -8,11 +8,16 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.Intake.Setpoints;
 import frc.robot.Constants.LEDs.LEDStates;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 
 import java.lang.Math;
 import java.util.function.Supplier;
@@ -22,6 +27,9 @@ public class Intake extends ProfiledPIDSubsystem {
     /* Motors */
     private final TalonFX m_IntakePivotMotor = new TalonFX(Constants.Intake.PIVOT_MOTOR_ID);
     private final TalonFX m_IntakeMotor = new TalonFX(Constants.Intake.INDEXER_ID);
+
+    CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
+    OpenLoopRampsConfigs intakeMotorRamping = new OpenLoopRampsConfigs();
 
     /* Intake Modes */
     private boolean isHomed = false;
@@ -45,6 +53,16 @@ public class Intake extends ProfiledPIDSubsystem {
 
         getController().setTolerance(0.03);
         this.m_CollisionAvoidanceSupplier = m_ShouldMoveIntake;
+
+        currentLimits.SupplyCurrentLimitEnable = true;   
+        currentLimits.SupplyCurrentLimit = 20; //Current limit in AMPS
+        
+        intakeMotorRamping.VoltageOpenLoopRampPeriod = ShooterConstants.INTAKE_MOTOR_RAMPING_TIME;
+
+        m_IntakeMotor.getConfigurator().apply(currentLimits);
+        m_IntakeMotor.getConfigurator().apply(intakeMotorRamping);
+
+
     }
 
     @Override

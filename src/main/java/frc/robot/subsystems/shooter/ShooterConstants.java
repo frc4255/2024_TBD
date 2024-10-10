@@ -9,6 +9,11 @@ public class ShooterConstants {
     public static final int PIVOT_MOTOR_ID = 20;
     public static final double MAX_DISTANCE = 7;
     public static final double MIN_DISTANCE = 1.5;
+
+    public static final double INTAKE_MOTOR_RAMPING_TIME = 0.0; //TODO tune this (its in seconds)
+    public static final double HOPPER_MOTOR_RAMPING_TIME = 0.0; //TODO tune this (its in seconds)
+    public static final double FLYWHEEL_MOTORS_RAMPING_TIME = 0.0; //TODO tune this (its in seconds) KEEP THIS LOW
+
     /*
      * Lookup table for pivot interpolation table. Key is distance (m), value is angle (radians)
      */

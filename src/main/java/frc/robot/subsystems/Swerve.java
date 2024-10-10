@@ -9,6 +9,12 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
@@ -40,6 +46,8 @@ public class Swerve extends SubsystemBase {
 
     private VisionSubystem vision;
 
+    CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
+
     public Swerve(VisionSubystem vision) {
         this.vision = vision;
         
@@ -67,6 +75,8 @@ public class Swerve extends SubsystemBase {
             );
 
         resetModulesToAbsolute();
+
+
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
