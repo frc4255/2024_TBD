@@ -13,7 +13,7 @@ public class ReverseIntake extends Command{
     }
     @Override
     public void initialize() {
-        s_Intake.runIntakeWithCustomSpeed(0.5);
+        s_Intake.runIntakeWithCustomSpeed(-0.5);
     }
 
     @Override
