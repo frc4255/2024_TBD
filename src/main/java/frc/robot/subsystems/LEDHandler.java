@@ -138,7 +138,10 @@ public class LEDHandler extends SubsystemBase {
             request(LEDStates.NOTHING);
         }
     }
-    
+
+    public LEDStates getLEDState() {
+        return currentLEDState;
+    }
 }
 //goal: make a method to change the LEDs on action but how do we listen to actions
 //step 1: copy other peoples code :thumbsup:

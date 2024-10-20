@@ -3,11 +3,19 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.LEDHandler;
 
 import frc.robot.Constants;
+import frc.robot.FieldLayout;
+import frc.robot.Constants.LEDs.LEDStates;
+import frc.robot.FieldLayout.FieldPiece.POI;
+
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -16,6 +24,9 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class FlyWheel extends SubsystemBase {
+    private Supplier<Pose2d> m_PoseSupplier;
+    private LEDHandler s_LedHandler;
+
     PIDController m_RightPIDController = new PIDController(ShooterConstants.RIGHT_FLYWHEEL_P, 0, 0);
     PIDController m_LeftPIDController = new PIDController(ShooterConstants.LEFT_FLYWHEEL_P, 0, 0);
     
@@ -180,6 +191,47 @@ public class FlyWheel extends SubsystemBase {
         return m_LeftPIDController.atSetpoint() && m_RightPIDController.atSetpoint();
     }
 
+    public double getDistance() {
+        Pose2d robotPose = m_PoseSupplier.get();
+        Pose2d speakerPose;
+
+        if (DriverStation.getAlliance().isEmpty()) {
+            speakerPose = new Pose2d();
+        } else {
+        speakerPose =
+            DriverStation.getAlliance().get() == Alliance.Red ?
+            FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
+            FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
+        }
+        return Math.sqrt(
+            Math.pow((speakerPose.getX() - robotPose.getX()), 2) +
+            Math.pow((speakerPose.getY() - robotPose.getY()), 2)
+        );
+    }
+
+    private void startUpFlyWheel() {
+
+        double rightVoltage = m_RightPIDController.calculate(
+                    getRightFlywheelRPM(),
+                    3000
+                );
+
+        double leftVoltage = m_LeftPIDController.calculate(
+                getLeftFlywheelRPM(), 
+                3000
+            );
+        
+        m_RightFlywheelMotor.setControl(
+            m_rightRequest.withOutput(
+                rightVoltage + m_RightFeedforwardController.calculate(3000)
+            )
+        );
+
+        m_LeftFlywheelMotor.setVoltage(
+            leftVoltage + m_LeftFeedforwardController.calculate(3000)
+        );
+    }
+
     @Override
     public void periodic() {
         
@@ -192,6 +244,10 @@ public class FlyWheel extends SubsystemBase {
             updateIntake();
         } else {
             updateIdle();
+        }
+
+        if (getDistance() <= 2.5 && s_LedHandler.getLEDState() == LEDStates.AMP_MODE) {
+            startUpFlyWheel();
         }
 
         SmartDashboard.putNumber("Right Flywheel rpm", getRightFlywheelRPM());
