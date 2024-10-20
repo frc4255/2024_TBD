@@ -1,6 +1,5 @@
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
 
 import org.photonvision.PhotonCamera;
 
@@ -20,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.autos.FivePiece;
 import frc.robot.autos.OnePieceSource;
 import frc.robot.autos.RunFivePiecePath;
@@ -63,6 +61,7 @@ public class RobotContainer {
     private final JoystickButton shooterIntake = new JoystickButton(driver, XboxController.Button.kStart.value);
 
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+    private final JoystickButton reverseIntake = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
 
     private final JoystickButton toggleIntakeAmpMode = new JoystickButton(driver, XboxController.Button.kB.value);
@@ -154,6 +153,7 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, intakeAmpMode));
+        reverseIntake.whileTrue(new ReverseIntake(s_Intake));
         homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));

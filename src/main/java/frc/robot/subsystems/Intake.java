@@ -107,6 +107,10 @@ public class Intake extends ProfiledPIDSubsystem {
     public void runIntake() {
         m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.7));
     }
+
+    public void runIntakeWithCustomSpeed(double speed) {
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(speed));
+    }
     public void runIntakeForAmp() {
         m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.575));
     }
