@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.LEDs.LEDStates;
+import frc.robot.StateManager.RobotStateMachine;
 import frc.robot.autos.FivePiece;
 import frc.robot.autos.OnePieceSource;
 import frc.robot.autos.RunFivePiecePath;
@@ -63,17 +64,20 @@ public class RobotContainer {
     private final JoystickButton shooterIntake = new JoystickButton(driver, XboxController.Button.kStart.value);
 
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
-    private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
-
-    private final JoystickButton toggleIntakeAmpMode = new JoystickButton(driver, XboxController.Button.kB.value);
 
     private final JoystickButton InverseToggleIntake = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
+    private final POVButton AmpState = new POVButton(driver, 180);
+    private final POVButton ShuttleState = new POVButton(driver, 0);
+    private final POVButton A10BRRRRRState = new POVButton(driver, 270);
+    private final POVButton NormalState = new POVButton(driver, 90);
     
-    private final POVButton subwooferShot = new POVButton(driver, 90);
+
+    //private final POVButton subwooferShot = new POVButton(driver, 90); TODO: Rebind
     private final JoystickButton aimbot = new JoystickButton(driver, XboxController.Button.kA.value);
     /* Subsystems */
 
+    private final StateManager s_StateManager = new StateManager();
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{LeftCam, RightCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
     public final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
@@ -144,23 +148,21 @@ public class RobotContainer {
             ).ignoringDisable(true)
         );
 
-        toggleIntakeAmpMode.onTrue(
-            new ParallelCommandGroup(
-                new InstantCommand(() -> intakeAmpMode = !intakeAmpMode),
-                new InstantCommand(() -> s_LedHandler.ampModeState(intakeAmpMode))
-            )
-        );
-
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, intakeAmpMode));
-        homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
             
         InverseToggleIntake.whileTrue(new ScoreAmp(s_Intake, s_Hopper, s_LedHandler, intakeAmpMode));
 
-        subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
+        AmpState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.AMP)));
+        ShuttleState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.SHUTTLE)));
+        A10BRRRRRState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.A10BRRRRR)));
+        NormalState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.NORMAL)));
+
+        //subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
+        
         aimbot.whileTrue(new Shoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));
         shooterIntake.toggleOnTrue(new ShooterIntake(s_Pivot, s_FlyWheel, s_Hopper));
     }
