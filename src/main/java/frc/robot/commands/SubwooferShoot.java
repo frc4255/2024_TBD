@@ -26,7 +26,7 @@ public class SubwooferShoot extends Command {
     public void initialize() {
         s_Pivot.enable();
 
-        s_Flywheel.run();
+        s_Flywheel.start();
         s_Pivot.set(0.425);
         System.out.println(s_Pivot.getController().getGoal());
         s_LedHandler.request(LEDStates.SHOOTING);
@@ -43,7 +43,7 @@ public class SubwooferShoot extends Command {
     @Override
     public void end(boolean interrupted) {
         s_LedHandler.request(LEDStates.NOTHING);
-        s_Flywheel.idle();
+        s_Flywheel.stop();
         s_Hopper.stop();
         s_Pivot.set(0.01);
     }

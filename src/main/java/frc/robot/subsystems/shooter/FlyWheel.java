@@ -16,7 +16,7 @@ import frc.robot.Constants;
 import frc.robot.StateManager.RobotStateMachine;
 import frc.robot.utils.Utils;
 
-public class FlyWheel2 extends SubsystemBase{
+public class FlyWheel extends SubsystemBase{
 
     PIDController m_RightPIDController =
         new PIDController(ShooterConstants.RIGHT_FLYWHEEL_P, 0, 0);
@@ -40,7 +40,7 @@ public class FlyWheel2 extends SubsystemBase{
     private Supplier<RobotStateMachine> stateMachineSupplier;
     private Supplier<Pose2d> poseSupplier;
 
-    public FlyWheel2(Supplier<RobotStateMachine> stateMachineSupplier, Supplier<Pose2d> poseSupplier) {
+    public FlyWheel(Supplier<RobotStateMachine> stateMachineSupplier, Supplier<Pose2d> poseSupplier) {
         this.stateMachineSupplier = stateMachineSupplier;
         this.poseSupplier = poseSupplier;
 
@@ -75,6 +75,9 @@ public class FlyWheel2 extends SubsystemBase{
         activated = false;
     }
 
+    public boolean isReady() {
+        return m_RightPIDController.atSetpoint() && m_LeftPIDController.atSetpoint();
+    }
     private void setFlywheelSpeeds(double leftSpeedRequest, double rightSpeedRequest) {
         m_RightFlywheelMotor.setControl(m_rightRequest.withOutput(
             m_RightPIDController.calculate(getRightFlywheelRPM(), rightSpeedRequest) +

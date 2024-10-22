@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.FlyWheel;
 import frc.robot.subsystems.shooter.Hopper;
 import frc.robot.subsystems.shooter.Pivot;
-
+//TODO
 public class ShooterIntake extends Command {
 
     private Pivot s_Pivot;
@@ -21,7 +21,7 @@ public class ShooterIntake extends Command {
 
     @Override
     public void initialize() {
-        s_FlyWheel.intake();
+        //s_FlyWheel.intake();
         s_Pivot.enable();
         s_Pivot.set(0.4);
         s_Hopper.setMotorsSpeed(0, -0.3);
@@ -29,7 +29,7 @@ public class ShooterIntake extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        s_FlyWheel.idle();
+        //s_FlyWheel.idle();
         s_Pivot.enable();
         s_Pivot.movePivotToHome();
         s_Hopper.stop();

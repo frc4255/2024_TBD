@@ -83,7 +83,7 @@ public class RobotContainer {
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
 
     private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake, this);
-    private final FlyWheel s_FlyWheel = new FlyWheel();
+    private final FlyWheel s_FlyWheel = new FlyWheel(s_StateManager::getCurrentState, s_Swerve::getPose);
     public final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
     private final Hopper s_Hopper = new Hopper(s_LedHandler);
 

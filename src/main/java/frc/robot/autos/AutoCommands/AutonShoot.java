@@ -22,7 +22,7 @@ public class AutonShoot extends Command {
     @Override
     public void initialize() {
 
-        s_Flywheel.run();
+        s_Flywheel.start(); //TODO:
 
         s_Pivot.enable();
         s_Pivot.alignPivotToSpeaker();
@@ -37,7 +37,7 @@ public class AutonShoot extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        s_Flywheel.idle();
+        s_Flywheel.stop(); //TODO
         s_Hopper.stop();
         s_Pivot.set(0.01);
     }
