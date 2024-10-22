@@ -56,7 +56,7 @@ public class Shoot extends Command {
     public void initialize() {
         robotPose = s_Swerve.getPose();
 
-        s_Flywheel.run();
+        s_Flywheel.start();
 
         s_Pivot.enable();
         s_Pivot.alignPivotToSpeaker();
@@ -105,7 +105,7 @@ public class Shoot extends Command {
             s_LedHandler.request(LEDStates.NOTHING);
         }
         s_LedHandler.requestPrev();
-        s_Flywheel.idle();
+        s_Flywheel.stop();
         s_Hopper.stop();
         s_Pivot.set(0.01);
     }
