@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
 import frc.robot.FieldLayout;
 import frc.robot.FieldLayout.FieldPiece.POI;
-import frc.robot.utils.Utils;
 
 public class Pivot extends ProfiledPIDSubsystem {
     private Supplier<Pose2d> m_PoseSupplier;
@@ -79,12 +78,30 @@ public class Pivot extends ProfiledPIDSubsystem {
         setGoal(0.2);
     }
 
+    public double getDistance() {
+        Pose2d robotPose = m_PoseSupplier.get();
+        Pose2d speakerPose;
+
+        if (DriverStation.getAlliance().isEmpty()) {
+            speakerPose = new Pose2d();
+        } else {
+        speakerPose =
+            DriverStation.getAlliance().get() == Alliance.Red ?
+            FieldLayout.FieldPiece.POI_POSE.get(POI.RED_SPEAKER).toPose2d() :
+            FieldLayout.FieldPiece.POI_POSE.get(POI.BLUE_SPEAKER).toPose2d();
+        }
+        return Math.sqrt(
+            Math.pow((speakerPose.getX() - robotPose.getX()), 2) +
+            Math.pow((speakerPose.getY() - robotPose.getY()), 2)
+        );
+    }
+
     public boolean inRange(double dist) {
         return dist <= ShooterConstants.MAX_DISTANCE && dist >= ShooterConstants.MIN_DISTANCE;
     }
 
     private List<Map.Entry<Double, Double>> getClosestValues(double dist) {
-        Map.Entry<Double, Double> minValue = Map.entry(1.5, 0.71);
+        Map.Entry<Double, Double> minValue = Map.entry(1.5, 0.66);
         Map.Entry<Double, Double> maxValue = Map.entry(7.0, 0.16);
     
         for (Map.Entry<Double, Double> entry : ShooterConstants.LOOKUP_TABLE.entrySet()) {
@@ -101,7 +118,7 @@ public class Pivot extends ProfiledPIDSubsystem {
     }
 
     public void alignPivotToSpeaker() {
-        double dist = Utils.getDistance(m_PoseSupplier);
+        double dist = getDistance();
 
         /* 
             * Get two Hashmaps containing the two maps that surround our current distance
@@ -118,7 +135,7 @@ public class Pivot extends ProfiledPIDSubsystem {
             * Once we have all the information we need, we can perform linear interpolation between
             * the two values 
         */
-        setGoal(MathUtil.clamp(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t), 0.0, 0.71));
+        setGoal(MathUtil.clamp(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t), 0.0, 0.66));
     }
 
     public void alignPivotToGivenDistance(double distance) {
@@ -176,7 +193,9 @@ public class Pivot extends ProfiledPIDSubsystem {
         super.periodic();
 
         m_Pivot.append(getMeasurement());
+        m_PivotDistance.append(getDistance());
 
+        SmartDashboard.putNumber("Distance from Target", getDistance());
         SmartDashboard.putNumber("Pivot Angle", getMeasurement());
         SmartDashboard.putNumber("Pivot Current", m_pivotMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("PID Error Pivot", super.getController().getPositionError());

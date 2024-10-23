@@ -1,9 +1,5 @@
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
-
-import javax.swing.text.AbstractDocument.BranchElement;
-
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -22,10 +18,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.LEDs.LEDStates;
-import frc.robot.StateManager.RobotStateMachine;
 import frc.robot.autos.FivePiece;
-import frc.robot.autos.OnePieceSource;
 import frc.robot.autos.RunFivePiecePath;
 
 import frc.robot.autos.ThreePiece;
@@ -66,31 +59,25 @@ public class RobotContainer {
     private final JoystickButton shooterIntake = new JoystickButton(driver, XboxController.Button.kStart.value);
 
     private final JoystickButton runIntake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+    private final JoystickButton homeIntake = new JoystickButton(driver, XboxController.Button.kX.value);
+
 
     private final JoystickButton InverseToggleIntake = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
-    private final POVButton AmpState = new POVButton(driver, 180);
-    private final POVButton ShuttleState = new POVButton(driver, 0);
-    private final POVButton A10BRRRRRState = new POVButton(driver, 270);
-    private final POVButton NormalState = new POVButton(driver, 90);
     
-    private final JoystickButton assist = new JoystickButton(driver, XboxController.Button.kB.value);
-
-    //private final POVButton subwooferShot = new POVButton(driver, 90); TODO: Rebind
-    private final JoystickButton shoot = new JoystickButton(driver, XboxController.Button.kA.value);
+    private final POVButton subwooferShot = new POVButton(driver, 90);
+    private final JoystickButton aimbot = new JoystickButton(driver, XboxController.Button.kA.value);
     /* Subsystems */
 
-    private final StateManager s_StateManager = new StateManager();
     private final VisionSubystem s_VisionSubystem = new VisionSubystem(new Camera[]{LeftCam, RightCam}/*new Camera[]{}/*new Camera[]{rightCam, leftCam}*/);
-    public final Swerve s_Swerve = new Swerve(s_VisionSubystem);
+    private final Swerve s_Swerve = new Swerve(s_VisionSubystem);
     private final Pivot s_Pivot = new Pivot(s_Swerve::getPose);
 
-    private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake, this);
-    private final FlyWheel s_FlyWheel = new FlyWheel(s_StateManager::getCurrentState, s_Swerve::getPose);
-    public final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
+    private final Intake s_Intake = new Intake(s_Pivot::shouldMoveIntake);
+    private final FlyWheel s_FlyWheel = new FlyWheel();
+    private final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
     private final Hopper s_Hopper = new Hopper(s_LedHandler);
 
-    private boolean intakeAmpMode = false;
 
     public SendableChooser<Command> autoChooser;
 
@@ -124,7 +111,6 @@ public class RobotContainer {
         autoChooser.addOption("5 Piece Auto", new FivePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper, s_LedHandler));
         autoChooser.addOption("3 Piece Auto", new ThreePiece(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper, s_LedHandler));
         autoChooser.addOption("Test", new RunFivePiecePath(s_Swerve, s_Pivot, s_FlyWheel, s_Intake, s_Hopper, s_LedHandler));
-        autoChooser.addOption("254", new OnePieceSource(s_Swerve, s_Hopper, s_FlyWheel, s_Pivot));
         autoChooser.addOption("Do nothing", null);
 
         SmartDashboard.putData(autoChooser);
@@ -153,58 +139,18 @@ public class RobotContainer {
 
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, intakeAmpMode));
+        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler));
+        homeIntake.onTrue(new InstantCommand(() -> s_Intake.setIntakeAsHomed()).alongWith(new InstantCommand(() -> s_Pivot.setPivotAsHomed())));
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
             
-        InverseToggleIntake.whileTrue(new ScoreAmp(s_Intake, s_Hopper, s_LedHandler, intakeAmpMode));
+        InverseToggleIntake.whileTrue( new InverseToggleIntake(s_Intake, s_Hopper));
 
-        AmpState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.AMP)));
-        ShuttleState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.SHUTTLE)));
-        A10BRRRRRState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.A10BRRRRR)));
-        NormalState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.NORMAL)));
-
-        //subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
-        shoot.onTrue(new InstantCommand(this::runShootBasedOnState));
-        assist.onTrue(new InstantCommand(this::runAssistBasedOnState));
-
-      //aimbot.whileTrue(new RegularShoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));
+        subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
+        aimbot.whileTrue(new Shoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));
         shooterIntake.toggleOnTrue(new ShooterIntake(s_Pivot, s_FlyWheel, s_Hopper));
     }
 
-    private void runAssistBasedOnState() {
-        switch(s_StateManager.getCurrentState()) {
-            case NORMAL:
-                break;
-            case SHUTTLE:
-                new ShuttleAssist(
-                        s_Swerve,
-                        s_FlyWheel,
-                        s_Pivot,
-                        () -> -driver.getRawAxis(translationAxis),
-                        () -> -driver.getRawAxis(strafeAxis)
-                    );
-                break;
-            case AMP:
-                break;
-            case A10BRRRRR:
-                break;
-        }
-    }
-
-    private void runShootBasedOnState() {
-        switch(s_StateManager.getCurrentState()) {
-            case NORMAL:
-                break;
-            case SHUTTLE:
-                new ShuttleShoot(s_Hopper, s_FlyWheel::isReady, () -> s_Pivot.getController().atGoal()).withTimeout(1.5);
-                break;
-            case AMP:
-                break;
-            case A10BRRRRR:
-                break;
-        }
-    }
     public LEDHandler getLedHandlerInstance() {
         return s_LedHandler;
     }
@@ -216,5 +162,4 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
-
 }

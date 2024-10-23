@@ -15,8 +15,6 @@ public class FieldLayout {
     public static final double FIELD_LENGTH = 16.451;
     public static final double FIELD_WIDTH = 8.211;
 
-    public static final double BLUE_WING_LINE = 231.2;
-    public static final double RED_WING_LINE = 422.01;
     public static class FieldPiece {
 
         /* We only care about the speakers for autonomous controls. */

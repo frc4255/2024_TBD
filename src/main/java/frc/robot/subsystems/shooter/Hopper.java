@@ -50,6 +50,10 @@ public class Hopper extends SubsystemBase{
     }
 
     public void periodic() {
-        
+        if (hasGamePiece()) {
+            if (sHandler.getCurrentPriority() < LEDStates.HAS_NOTE.getPriority()) {
+                sHandler.request(LEDStates.HAS_NOTE);
+            }
+        }
     }
 }

@@ -21,7 +21,7 @@ import frc.robot.subsystems.shooter.FlyWheel;
 import frc.robot.subsystems.shooter.Hopper;
 import frc.robot.subsystems.shooter.Pivot;
 
-public class RegularShoot extends Command {
+public class Shoot extends Command {
     private Hopper s_Hopper;
     private FlyWheel s_Flywheel;
     private Pivot s_Pivot;
@@ -35,7 +35,7 @@ public class RegularShoot extends Command {
 
     private Pose2d robotPose = new Pose2d();
 
-    public RegularShoot(Hopper s_Hopper, FlyWheel s_Flywheel, Pivot s_Pivot, Swerve s_Swerve, DoubleSupplier translationSup,
+    public Shoot(Hopper s_Hopper, FlyWheel s_Flywheel, Pivot s_Pivot, Swerve s_Swerve, DoubleSupplier translationSup,
             DoubleSupplier strafeSup, LEDHandler s_LedHandler) {
         this.s_Hopper = s_Hopper;
         this.s_Flywheel = s_Flywheel;
@@ -56,13 +56,11 @@ public class RegularShoot extends Command {
     public void initialize() {
         robotPose = s_Swerve.getPose();
 
-        s_Flywheel.shoot();
+        s_Flywheel.run();
 
         s_Pivot.enable();
         s_Pivot.alignPivotToSpeaker();
-
         s_LedHandler.request(LEDStates.SHOOTING);
-
     }
 
     @Override
@@ -96,13 +94,14 @@ public class RegularShoot extends Command {
         if (s_Flywheel.isReady() && s_Pivot.getController().atGoal() && m_DrivetrainPID.atSetpoint()) {
             s_Hopper.setMotorsSpeed(-0.5, 0.5);
             s_Hopper.setHasGamePiece(false);
+            s_LedHandler.request(LEDStates.SHOOTING);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (s_LedHandler.getPreviousPriority() <= 6) {
-            s_LedHandler.request(LEDStates.NOTHING);
+        if (s_LedHandler.getPreviousPriority() < 5) {
+            s_LedHandler.hardRequest(LEDStates.NOTHING);
         }
         s_LedHandler.requestPrev();
         s_Flywheel.idle();

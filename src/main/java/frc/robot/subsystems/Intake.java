@@ -5,13 +5,11 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.Intake.Setpoints;
-import frc.robot.Constants.LEDs.LEDStates;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
 import java.lang.Math;
@@ -34,7 +32,7 @@ public class Intake extends ProfiledPIDSubsystem {
     /* Suppliers */
     private Supplier<Boolean> m_CollisionAvoidanceSupplier;
 
-    public Intake(Supplier<Boolean> m_ShouldMoveIntake, RobotContainer m_RobotContainer) {
+    public Intake(Supplier<Boolean> m_ShouldMoveIntake) {
 
         super(new ProfiledPIDController(
             Constants.Intake.P, 
@@ -90,7 +88,7 @@ public class Intake extends ProfiledPIDSubsystem {
         m_IntakeMotor.setControl(m_intakeRequest.withOutput(-0.7));
     }
     public void runIntakeForAmp() {
-        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.575));
+        m_IntakeMotor.setControl(m_intakeRequest.withOutput(0.6));
     }
 
     public void stopIntake() {
@@ -111,16 +109,11 @@ public class Intake extends ProfiledPIDSubsystem {
     public double getPivotPosition() {
         return ((m_IntakePivotMotor.getPosition().getValueAsDouble()) / 86.02)*(2*Math.PI);
     }
-
-    public TalonFX getIntakeMotor() {
-        return m_IntakeMotor;
-    }
     
     @Override
     public void periodic() {
         super.periodic();
 
-        SmartDashboard.putNumber("Intake motor current", m_IntakeMotor.getTorqueCurrent().getValueAsDouble());
         if (!isHomed) {
             return;
         }
@@ -131,7 +124,7 @@ public class Intake extends ProfiledPIDSubsystem {
         } else if (isRunning) {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.DEPLOY));
         } else if (ampMode) {
-            setGoal(2.15);
+            setGoal(2);
         } else {
             setGoal(Constants.Intake.intakeSetpoints.get(Setpoints.STOW));
         }

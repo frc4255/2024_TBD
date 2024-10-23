@@ -32,7 +32,7 @@ public class ThreePiece extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                     new WaitCommand(0.3),
                     new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.75),
-                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, false).withTimeout(2)
+                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2)
                 )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.25),
@@ -40,7 +40,7 @@ public class ThreePiece extends SequentialCommandGroup {
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(
                     new WaitCommand(1.25),
-                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, false).withTimeout(2.5)
+                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2.5)
                 )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5)

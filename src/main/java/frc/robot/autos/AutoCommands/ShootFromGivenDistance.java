@@ -27,7 +27,7 @@ public class ShootFromGivenDistance extends Command {
     public void initialize() {
         s_Pivot.enable();
 
-        s_Flywheel.start(); //TODO:
+        s_Flywheel.run();
         s_Pivot.alignPivotToGivenDistance(distance);
     }
 
