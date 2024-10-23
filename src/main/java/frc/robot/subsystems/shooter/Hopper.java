@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -19,15 +21,16 @@ public class Hopper extends SubsystemBase{
 
     private Rev2mDistanceSensor distSensor; 
 
+    CurrentLimitsConfigs starMotorCurrentLimits = new CurrentLimitsConfigs();
+    CurrentLimitsConfigs compliantMotorCurrentLimits = new CurrentLimitsConfigs();
+    OpenLoopRampsConfigs hopperMotorRamping = new OpenLoopRampsConfigs();
+
     private LEDHandler sHandler;
 
     private boolean m_hasGamePiece = false;
 
     public Hopper(LEDHandler sHandler) {
         this.sHandler = sHandler;
-
-        distSensor = new Rev2mDistanceSensor(Port.kOnboard);
-        distSensor.setAutomaticMode(true);
     }
 
     public void setMotorsSpeed(double speed0, double speed1) {

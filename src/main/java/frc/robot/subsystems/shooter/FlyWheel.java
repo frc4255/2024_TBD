@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import frc.robot.StateManager.RobotStateMachine;
 import frc.robot.utils.Utils;
 
@@ -32,6 +35,10 @@ public class FlyWheel extends SubsystemBase{
     private final TalonFX m_LeftFlywheelMotor;
 
     private VoltageOut m_rightRequest = new VoltageOut(0.0);
+
+    CurrentLimitsConfigs rightMotorCurrentLimits = new CurrentLimitsConfigs();
+    CurrentLimitsConfigs leftMotorCurrentLimits = new CurrentLimitsConfigs();
+    OpenLoopRampsConfigs flyWheelMotorRamping = new OpenLoopRampsConfigs();
     private VoltageOut m_leftRequest = new VoltageOut(0.0);
 
     private boolean activated = false;
@@ -52,6 +59,22 @@ public class FlyWheel extends SubsystemBase{
 
         m_RightPIDController.setTolerance(200);
         m_LeftPIDController.setTolerance(200);
+
+        /* Motors on Right side of FlyWheel */
+        rightMotorCurrentLimits.StatorCurrentLimitEnable = true;   
+        rightMotorCurrentLimits.StatorCurrentLimit = ShooterConstants.CurrentLimits.FLYWHEEL_RIGHT_MOTOR_CURRENTLIMIT; //Current limit in AMPS
+
+        /* Motors on Left side of Flywheel */
+        leftMotorCurrentLimits.StatorCurrentLimitEnable = true;   
+        leftMotorCurrentLimits.StatorCurrentLimit = ShooterConstants.CurrentLimits.FLYWHEEL_RIGHT_MOTOR_CURRENTLIMIT; //Current limit in AMPS
+        
+        flyWheelMotorRamping.VoltageOpenLoopRampPeriod = ShooterConstants.HOPPER_MOTOR_RAMPING_TIME;
+
+        m_RightFlywheelMotor.getConfigurator().apply(rightMotorCurrentLimits);
+        m_RightFlywheelMotor.getConfigurator().apply(flyWheelMotorRamping);
+
+        m_LeftFlywheelMotor.getConfigurator().apply(leftMotorCurrentLimits);
+        m_LeftFlywheelMotor.getConfigurator().apply(flyWheelMotorRamping);
     }
 
     public double getRightFlywheelRPM() {
