@@ -6,6 +6,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.subsystems.LEDHandler;
+import com.revrobotics.*;
+import com.revrobotics.Rev2mDistanceSensor.Port;
 
 public class Hopper extends SubsystemBase{
 
@@ -15,12 +17,17 @@ public class Hopper extends SubsystemBase{
     private DutyCycleOut m_HopperMotor0Request = new DutyCycleOut(0);
     private DutyCycleOut m_HopperMotor1Request = new DutyCycleOut(0);
 
+    private Rev2mDistanceSensor distSensor; 
+
     private LEDHandler sHandler;
 
     private boolean m_hasGamePiece = false;
 
     public Hopper(LEDHandler sHandler) {
         this.sHandler = sHandler;
+
+        distSensor = new Rev2mDistanceSensor(Port.kOnboard);
+        distSensor.setAutomaticMode(true);
     }
 
     public void setMotorsSpeed(double speed0, double speed1) {
@@ -50,6 +57,10 @@ public class Hopper extends SubsystemBase{
     }
 
     public void periodic() {
-        
+        if (distSensor.getRange() < 1) {
+            m_hasGamePiece = true;
+        } else {
+            m_hasGamePiece = false;
+        }
     }
 }
