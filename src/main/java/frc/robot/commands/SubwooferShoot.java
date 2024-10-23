@@ -19,30 +19,31 @@ public class SubwooferShoot extends Command {
         this.s_Pivot = s_Pivot;
         this.s_LedHandler = s_LedHandler;
 
-        addRequirements(s_Hopper, s_Flywheel, s_Pivot, s_LedHandler);
+        addRequirements(s_Hopper, s_Flywheel, s_Pivot);
     }
 
     @Override
     public void initialize() {
         s_Pivot.enable();
 
-        s_Flywheel.run();
-        s_Pivot.set(0.36);
+        s_Flywheel.start();
+        s_Pivot.set(0.425);
         System.out.println(s_Pivot.getController().getGoal());
+        s_LedHandler.request(LEDStates.SHOOTING);
+
     }
 
     @Override
     public void execute() {
         if (s_Flywheel.isReady() && s_Pivot.getController().atGoal()) {
-            s_LedHandler.request(LEDStates.SHOOTING);
             s_Hopper.setMotorsSpeed(0, 0.5);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        s_LedHandler.requestPrev();
-        s_Flywheel.idle();
+        s_LedHandler.request(LEDStates.NOTHING);
+        s_Flywheel.stop();
         s_Hopper.stop();
         s_Pivot.set(0.01);
     }

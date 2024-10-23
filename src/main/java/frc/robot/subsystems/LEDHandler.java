@@ -27,6 +27,8 @@ public class LEDHandler extends SubsystemBase {
     private LEDStates previousLEDState = LEDStates.NOTHING;
     private LEDStates tempoLEDState = LEDStates.NOTHING;
 
+    
+
 
     public LEDHandler(BooleanSupplier intakeHomedSupplier, BooleanSupplier pivotHomedSupplier, BooleanSupplier trapHomedSupplier) {
         this.trapHomedSupplier = trapHomedSupplier;
@@ -41,9 +43,6 @@ public class LEDHandler extends SubsystemBase {
     
     public void request(LEDStates requestedLEDState) {
         if (currentLEDState == requestedLEDState) {
-            return;
-        }
-        if (currentLEDState.getPriority() > requestedLEDState.getPriority()) {
             return;
         }
 
@@ -130,6 +129,16 @@ public class LEDHandler extends SubsystemBase {
         LEDs.setLEDs(DriverStation.isDSAttached() ? 0 : 255, DriverStation.isDSAttached() ? 255 : 0, 0, 0, 1, 1);
         LEDs.setLEDs(DriverStation.isFMSAttached() ? 0 : 255, DriverStation.isFMSAttached() ? 255 : 0, 0, 0, 2, 1);
     }
+
+        
+    public void ampModeState(boolean ampMode) {
+        if (ampMode) {
+            request(LEDStates.AMP_MODE);
+        } else {
+            request(LEDStates.NOTHING);
+        }
+    }
+    
 }
 //goal: make a method to change the LEDs on action but how do we listen to actions
 //step 1: copy other peoples code :thumbsup:

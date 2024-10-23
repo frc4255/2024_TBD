@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-
+import frc.robot.RobotContainer;
 import frc.robot.autos.AutoCommands.AutonShoot;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.subsystems.*;
@@ -31,14 +31,14 @@ public class FivePiece extends SequentialCommandGroup {
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.75),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path),
-                new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(1.75)
+                new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, false ).withTimeout(1.75)
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.25),
             new ParallelCommandGroup(
                 s_Swerve.followPathCommand(path0),
                 new SequentialCommandGroup(
                     new WaitCommand(1),
-                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(1.5)
+                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, false).withTimeout(1.5)
                 )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5),
@@ -46,7 +46,7 @@ public class FivePiece extends SequentialCommandGroup {
                 s_Swerve.followPathCommand(path1),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5),
-                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2)
+                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, false).withTimeout(2)
                 )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(1.5),
@@ -54,7 +54,7 @@ public class FivePiece extends SequentialCommandGroup {
                 s_Swerve.followPathCommand(path2),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5),
-                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler).withTimeout(2)
+                    new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, false).withTimeout(2)
                 )
             ),
             new AutonShoot(s_Hopper, s_Flywheel, s_Pivot).withTimeout(2)

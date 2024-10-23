@@ -28,6 +28,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -62,20 +63,22 @@ public class Swerve extends SubsystemBase {
                 getModulePositions(),
                 new Pose2d(),
                 VecBuilder.fill(0.1, 0.1, 0.1),
-                VecBuilder.fill(0.45, 0.45, 1)
+                VecBuilder.fill(0.45, 0.45, 6)
             );
 
         resetModulesToAbsolute();
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+
+        Rotation2d inverse = DriverStation.getAlliance().get() == Alliance.Red ?  new Rotation2d(Math.PI): new Rotation2d();
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.SWERVE_KINEMATICS.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    translation.getX(), 
+                                    translation.getX() , 
                                     translation.getY(), 
                                     rotation, 
-                                    getHeading()
+                                    getHeading().rotateBy(inverse)
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(), 
