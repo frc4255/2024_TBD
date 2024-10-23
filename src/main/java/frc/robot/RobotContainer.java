@@ -74,6 +74,7 @@ public class RobotContainer {
     private final POVButton A10BRRRRRState = new POVButton(driver, 270);
     private final POVButton NormalState = new POVButton(driver, 90);
     
+    private final JoystickButton assist = new JoystickButton(driver, XboxController.Button.kB.value);
 
     //private final POVButton subwooferShot = new POVButton(driver, 90); TODO: Rebind
     private final JoystickButton shoot = new JoystickButton(driver, XboxController.Button.kA.value);
@@ -165,8 +166,30 @@ public class RobotContainer {
 
         //subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
         shoot.onTrue(new InstantCommand(this::runShootBasedOnState));
+        assist.onTrue(new InstantCommand(this::runAssistBasedOnState));
+
       //aimbot.whileTrue(new RegularShoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));
         shooterIntake.toggleOnTrue(new ShooterIntake(s_Pivot, s_FlyWheel, s_Hopper));
+    }
+
+    private void runAssistBasedOnState() {
+        switch(s_StateManager.getCurrentState()) {
+            case NORMAL:
+                break;
+            case SHUTTLE:
+                new ShuttleAssist(
+                        s_Swerve,
+                        s_FlyWheel,
+                        s_Pivot,
+                        () -> -driver.getRawAxis(translationAxis),
+                        () -> -driver.getRawAxis(strafeAxis)
+                    );
+                break;
+            case AMP:
+                break;
+            case A10BRRRRR:
+                break;
+        }
     }
 
     private void runShootBasedOnState() {

@@ -8,17 +8,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Constants.LEDs.LEDStates;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.shooter.FlyWheel;
 import frc.robot.subsystems.shooter.Pivot;
-import frc.robot.FieldLayout;
-import frc.robot.FieldLayout.FieldPiece.POI;
+
 
 public class ShuttleAssist extends Command{
 
@@ -34,8 +31,14 @@ public class ShuttleAssist extends Command{
     Pose2d robotPose;
     Pose2d targetPose;
 
-    public ShuttleAssist() {
+    public ShuttleAssist(Swerve s_Swerve, FlyWheel s_Flywheel, Pivot s_Pivot, DoubleSupplier translationSup, DoubleSupplier strafeSup) {
+        this.s_Swerve = s_Swerve;
+        this.s_Flywheel = s_Flywheel;
+        this.s_Pivot = s_Pivot;
+        this.translationSup = translationSup;
+        this.strafeSup = strafeSup;
 
+        addRequirements(s_Swerve, s_Flywheel, s_Pivot);
     }
 
     @Override
