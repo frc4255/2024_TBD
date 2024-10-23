@@ -75,7 +75,7 @@ public class FlyWheel extends SubsystemBase{
     public void idle() {
         shooting = false;
     }
-    
+
     public void stop() {
         activated = false;
     }
@@ -121,9 +121,13 @@ public class FlyWheel extends SubsystemBase{
                 setFlywheelSpeeds(6500, 6500);
                 break;
             case SHUTTLE:
-                if (Math.abs(Utils.getDistanceFromOppWing(poseSupplier, DriverStation.getAlliance().get())) <= 2) { //TODO: Don't call get alliance every time
-                    //TODO: Linear Regression
+                if (!shooting) {
+                    m_LeftFlywheelMotor.stopMotor();
+                    m_RightFlywheelMotor.stopMotor();
+                    break;
                 }
+
+                setFlywheelSpeeds(6500, 6500);
                 break;
             case A10BRRRRR:
                 setFlywheelSpeeds(3000, 3000);

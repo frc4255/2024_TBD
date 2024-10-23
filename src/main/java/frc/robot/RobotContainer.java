@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
+import javax.swing.text.AbstractDocument.BranchElement;
+
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -74,7 +76,7 @@ public class RobotContainer {
     
 
     //private final POVButton subwooferShot = new POVButton(driver, 90); TODO: Rebind
-    private final JoystickButton aimbot = new JoystickButton(driver, XboxController.Button.kA.value);
+    private final JoystickButton shoot = new JoystickButton(driver, XboxController.Button.kA.value);
     /* Subsystems */
 
     private final StateManager s_StateManager = new StateManager();
@@ -162,11 +164,24 @@ public class RobotContainer {
         NormalState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.NORMAL)));
 
         //subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
-        
-        aimbot.whileTrue(new RegularShoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));
+        shoot.onTrue(new InstantCommand(this::runShootBasedOnState));
+      //aimbot.whileTrue(new RegularShoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis), s_LedHandler));
         shooterIntake.toggleOnTrue(new ShooterIntake(s_Pivot, s_FlyWheel, s_Hopper));
     }
 
+    private void runShootBasedOnState() {
+        switch(s_StateManager.getCurrentState()) {
+            case NORMAL:
+                break;
+            case SHUTTLE:
+                new ShuttleShoot(s_Hopper, s_FlyWheel::isReady, () -> s_Pivot.getController().atGoal()).withTimeout(1.5);
+                break;
+            case AMP:
+                break;
+            case A10BRRRRR:
+                break;
+        }
+    }
     public LEDHandler getLedHandlerInstance() {
         return s_LedHandler;
     }
