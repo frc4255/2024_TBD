@@ -21,7 +21,7 @@ import frc.robot.subsystems.shooter.FlyWheel;
 import frc.robot.subsystems.shooter.Hopper;
 import frc.robot.subsystems.shooter.Pivot;
 
-public class Shoot extends Command {
+public class RegularShoot extends Command {
     private Hopper s_Hopper;
     private FlyWheel s_Flywheel;
     private Pivot s_Pivot;
@@ -35,7 +35,7 @@ public class Shoot extends Command {
 
     private Pose2d robotPose = new Pose2d();
 
-    public Shoot(Hopper s_Hopper, FlyWheel s_Flywheel, Pivot s_Pivot, Swerve s_Swerve, DoubleSupplier translationSup,
+    public RegularShoot(Hopper s_Hopper, FlyWheel s_Flywheel, Pivot s_Pivot, Swerve s_Swerve, DoubleSupplier translationSup,
             DoubleSupplier strafeSup, LEDHandler s_LedHandler) {
         this.s_Hopper = s_Hopper;
         this.s_Flywheel = s_Flywheel;
@@ -56,7 +56,7 @@ public class Shoot extends Command {
     public void initialize() {
         robotPose = s_Swerve.getPose();
 
-        s_Flywheel.start();
+        s_Flywheel.shoot();
 
         s_Pivot.enable();
         s_Pivot.alignPivotToSpeaker();
@@ -105,7 +105,7 @@ public class Shoot extends Command {
             s_LedHandler.request(LEDStates.NOTHING);
         }
         s_LedHandler.requestPrev();
-        s_Flywheel.stop();
+        s_Flywheel.idle();
         s_Hopper.stop();
         s_Pivot.set(0.01);
     }

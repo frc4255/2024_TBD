@@ -121,6 +121,10 @@ public class Pivot extends ProfiledPIDSubsystem {
         setGoal(MathUtil.clamp(MathUtil.interpolate(startDist.getValue(), endDist.getValue(), t), 0.0, 0.71));
     }
 
+    public void anglePivotForShuttle() {
+
+    }
+    
     public void alignPivotToGivenDistance(double distance) {
         /* 
             * Get two Hashmaps containing the two maps that surround our current distance

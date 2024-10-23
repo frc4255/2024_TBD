@@ -71,6 +71,11 @@ public class FlyWheel extends SubsystemBase{
         activated = true;
 
     }
+
+    public void idle() {
+        shooting = false;
+    }
+    
     public void stop() {
         activated = false;
     }
