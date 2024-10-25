@@ -10,18 +10,18 @@ public class ShooterConstants {
     public static final double MAX_DISTANCE = 7;
     public static final double MIN_DISTANCE = 1.5;
 
-    public static final double INTAKE_MOTOR_RAMPING_TIME = 0.0; //TODO tune this (its in seconds)
-    public static final double HOPPER_MOTOR_RAMPING_TIME = 0.0; //TODO tune this (its in seconds)
-    public static final double FLYWHEEL_MOTORS_RAMPING_TIME = 0.0; //TODO tune this (its in seconds) KEEP THIS LOW
+    public static final double INTAKE_MOTOR_RAMPING_TIME = 1.0; //TODO tune this (its in seconds)
+    public static final double HOPPER_MOTOR_RAMPING_TIME = 1.0; //TODO tune this (its in seconds)
+    public static final double FLYWHEEL_MOTORS_RAMPING_TIME = 0.3; //TODO tune this (its in seconds) KEEP THIS LOW
 
     public static final class CurrentLimits {
-        public static final int FLYWHEEL_LEFT_MOTOR_CURRENTLIMIT = 0; //TODO tune this 
-        public static final int FLYWHEEL_RIGHT_MOTOR_CURRENTLIMIT = 0; //TODO tune this 
+        public static final int FLYWHEEL_LEFT_MOTOR_CURRENTLIMIT = 40; //TODO tune this 
+        public static final int FLYWHEEL_RIGHT_MOTOR_CURRENTLIMIT = 50; //TODO tune this 
 
-        public static final int HOPPER_STAR_MOTOR_CURRENTLIMIT = 0; //TODO tune this
-        public static final int HOPPER_COMPLIANT_MOTOR_CURRENTLIMIT = 0; //TODO tune this
+        public static final int HOPPER_STAR_MOTOR_CURRENTLIMIT = 15; //TODO tune this
+        public static final int HOPPER_COMPLIANT_MOTOR_CURRENTLIMIT = 15; //TODO tune this
 
-        public static final int INTAKE_MOTOR_CURRENTLIMIT = 0; //TODO tune this
+        public static final int INTAKE_MOTOR_CURRENTLIMIT = 15; //TODO tune this
 
 
     }
