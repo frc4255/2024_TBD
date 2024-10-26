@@ -2,8 +2,6 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
-import javax.swing.text.AbstractDocument.BranchElement;
-
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -90,8 +88,6 @@ public class RobotContainer {
     public final LEDHandler s_LedHandler = new LEDHandler(s_Intake::isHomed, s_Pivot::isHomed, () -> false);
     private final Hopper s_Hopper = new Hopper(s_LedHandler);
 
-    private boolean intakeAmpMode = false;
-
     public SendableChooser<Command> autoChooser;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -153,15 +149,30 @@ public class RobotContainer {
 
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler, intakeAmpMode));
+        runIntake.whileTrue(new ToggleIntake(s_Intake, s_Hopper, s_LedHandler));
 
         //shootNote.toggleOnTrue(new RunHopperForShot(s_Hopper));
             
-        InverseToggleIntake.whileTrue(new ScoreAmp(s_Intake, s_Hopper, s_LedHandler, intakeAmpMode));
+        InverseToggleIntake.whileTrue(new ScoreAmp(s_Intake, s_Hopper, s_LedHandler));
 
-        AmpState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.AMP)));
-        ShuttleState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.SHUTTLE)));
-        A10BRRRRRState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.A10BRRRRR)));
+        AmpState.onTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.AMP)),
+                new InstantCommand(() -> s_LedHandler.request(LEDStates.AMP_MODE))
+            )
+        );
+        ShuttleState.onTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.SHUTTLE)),
+                new InstantCommand(() -> s_LedHandler.request(LEDStates.SHUTTLE_MODE))
+            )
+        );
+        A10BRRRRRState.onTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.A10BRRRRR)),
+                new InstantCommand(() -> s_LedHandler.request(LEDStates.NOTHING))
+            )
+        );
         NormalState.onTrue(new InstantCommand(() -> s_StateManager.setRobotState(RobotStateMachine.NORMAL)));
 
         //subwooferShot.toggleOnTrue(new SubwooferShoot(s_Hopper, s_FlyWheel, s_Pivot, s_LedHandler));
@@ -195,6 +206,8 @@ public class RobotContainer {
     private void runShootBasedOnState() {
         switch(s_StateManager.getCurrentState()) {
             case NORMAL:
+                new RegularShoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis),
+                        () -> -driver.getRawAxis(strafeAxis), s_LedHandler);
                 break;
             case SHUTTLE:
                 new ShuttleShoot(s_Hopper, s_FlyWheel::isReady, () -> s_Pivot.getController().atGoal()).withTimeout(1.5);
@@ -202,6 +215,8 @@ public class RobotContainer {
             case AMP:
                 break;
             case A10BRRRRR:
+                new RegularShoot(s_Hopper, s_FlyWheel, s_Pivot, s_Swerve, () -> -driver.getRawAxis(translationAxis),
+                            () -> -driver.getRawAxis(strafeAxis), s_LedHandler);
                 break;
         }
     }

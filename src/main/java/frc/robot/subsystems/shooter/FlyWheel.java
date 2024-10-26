@@ -130,10 +130,10 @@ public class FlyWheel extends SubsystemBase{
         switch (stateMachineSupplier.get()) {
             case NORMAL:
 
-                if (Utils.getDistance(poseSupplier) <= 5) {
+                /*if (Utils.getDistance(poseSupplier) <= 5) {
                     setFlywheelSpeeds(4000, 4000);
                     break;
-                }
+                }*/
                 
                 if (!shooting) {
                     m_LeftFlywheelMotor.stopMotor();

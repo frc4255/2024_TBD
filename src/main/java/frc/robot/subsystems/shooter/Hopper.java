@@ -30,6 +30,8 @@ public class Hopper extends SubsystemBase{
     private boolean m_hasGamePiece = false;
 
     public Hopper(LEDHandler sHandler) {
+        distSensor = new Rev2mDistanceSensor(Port.kOnboard);
+        distSensor.setAutomaticMode(true);
         this.sHandler = sHandler;
     }
 
@@ -51,10 +53,6 @@ public class Hopper extends SubsystemBase{
         return m_CompliantMotor.getStatorCurrent().getValueAsDouble();
     }
 
-    public void setHasGamePiece(boolean hasGamePeice) {
-        m_hasGamePiece = hasGamePeice;
-    }
-
     public boolean hasGamePiece() {
         return m_hasGamePiece;
     }
@@ -65,5 +63,5 @@ public class Hopper extends SubsystemBase{
         } else {
             m_hasGamePiece = false;
         }
-    }
+    } 
 }

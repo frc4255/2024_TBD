@@ -95,7 +95,6 @@ public class RegularShoot extends Command {
 
         if (s_Flywheel.isReady() && s_Pivot.getController().atGoal() && m_DrivetrainPID.atSetpoint()) {
             s_Hopper.setMotorsSpeed(-0.5, 0.5);
-            s_Hopper.setHasGamePiece(false);
         }
     }
 
